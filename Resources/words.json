@@ -1,0 +1,7502 @@
+[
+  {
+    "id": 1,
+    "category": "Rodzina i Ludzie",
+    "polish": "człowiek",
+    "translation": "человек",
+    "transcription": "[ˈt͡ʂwɔvjɛk]",
+    "example": "Każdy człowiek ma prawo do szczęścia.",
+    "imageName": "human_being",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "To jest dobry człowiek.",
+      "Tłum ludzi czekał na autobus.",
+      "Człowiek uczy się całe życie."
+    ]
+  },
+  {
+    "id": 2,
+    "category": "Rodzina i Ludzie",
+    "polish": "kobieta",
+    "translation": "женщина",
+    "transcription": "[kɔˈbjɛta]",
+    "example": "Ta kobieta jest znaną aktorką.",
+    "imageName": "woman_portrait",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Elegancka kobieta weszła do kawiarni.",
+      "Dzień Kobiet jest w marcu.",
+      "Rozmawiałem z młodą kobietą."
+    ]
+  },
+  {
+    "id": 3,
+    "category": "Rodzina i Ludzie",
+    "polish": "dziecko",
+    "translation": "ребенок",
+    "transcription": "[ˈdʑɛt͡skɔ]",
+    "example": "Dziecko bawi się w parku.",
+    "imageName": "child_playing",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "To jest moje najmłodsze dziecko.",
+      "Dzieci lubią słodycze.",
+      "Płacz dziecka obudził mnie w nocy."
+    ]
+  },
+  {
+    "id": 4,
+    "category": "Rodzina i Ludzie",
+    "polish": "rodzina",
+    "translation": "семья",
+    "transcription": "[rɔˈdʑina]",
+    "example": "Rodzina jest dla mnie najważniejsza.",
+    "imageName": "family_group",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Spotykamy się z całą rodziną.",
+      "On pochodzi z dużej rodziny.",
+      "Zdjęcie rodzinne."
+    ]
+  },
+  {
+    "id": 5,
+    "category": "Rodzina i Ludzie",
+    "polish": "matka",
+    "translation": "мать",
+    "transcription": "[ˈmatka]",
+    "example": "Matka opiekuje się dzieckiem.",
+    "imageName": "mother_icon",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Moja matka pracuje w szpitalu.",
+      "Dzień Matki.",
+      "Miłość matki jest bezwarunkowa."
+    ]
+  },
+  {
+    "id": 6,
+    "category": "Rodzina i Ludzie",
+    "polish": "ojciec",
+    "translation": "отец",
+    "transcription": "[ˈɔjt͡ɕɛt͡s]",
+    "example": "Mój ojciec jest inżynierem.",
+    "imageName": "father_icon",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ojciec zabrał mnie na ryby.",
+      "Jestem dumny z mojego ojca.",
+      "To jest samochód ojca."
+    ]
+  },
+  {
+    "id": 7,
+    "category": "Rodzina i Ludzie",
+    "polish": "babcia",
+    "translation": "бабушка",
+    "transcription": "[ˈbapʨ̑a]",
+    "example": "Babcia piecze najlepsze ciasto.",
+    "imageName": "grandmother",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jadę do babci na wakacje.",
+      "Babcia opowiadała mi bajki.",
+      "Kochana babcia."
+    ]
+  },
+  {
+    "id": 8,
+    "category": "Rodzina i Ludzie",
+    "polish": "dziadek",
+    "translation": "дедушка",
+    "transcription": "[ˈdʑadɛk]",
+    "example": "Dziadek czyta gazetę.",
+    "imageName": "grandfather",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Mój dziadek ma siwe włosy.",
+      "Poszedłem z dziadkiem na spacer.",
+      "To jest zegarek po dziadku."
+    ]
+  },
+  {
+    "id": 9,
+    "category": "Rodzina i Ludzie",
+    "polish": "przyjaciel",
+    "translation": "друг",
+    "transcription": "[pʂɨˈjaʨ̑ɛl]",
+    "example": "Prawdziwy przyjaciel zawsze pomoże.",
+    "imageName": "friend_man",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Znamy się od lat, to mój przyjaciel.",
+      "Idę do kina z przyjacielem.",
+      "On nie ma wielu przyjaciół."
+    ]
+  },
+  {
+    "id": 10,
+    "category": "Rodzina i Ludzie",
+    "polish": "lekarz",
+    "translation": "врач",
+    "transcription": "[ˈlɛkaʂ]",
+    "example": "Muszę iść do lekarza.",
+    "imageName": "doctor_medical",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Lekarz przepisał mi lekarstwa.",
+      "Ona chce zostać lekarzem.",
+      "Wizyta u lekarza."
+    ]
+  },
+  {
+    "id": 11,
+    "category": "Dom",
+    "polish": "dom",
+    "translation": "дом",
+    "transcription": "[dɔm]",
+    "example": "Wracam do domu.",
+    "imageName": "house_building",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "To jest mój rodzinny dom.",
+      "Czuj się jak w domu.",
+      "Budujemy nowy dom."
+    ]
+  },
+  {
+    "id": 12,
+    "category": "Dom",
+    "polish": "okno",
+    "translation": "окно",
+    "transcription": "[ˈɔknɔ]",
+    "example": "Otwórz okno, proszę.",
+    "imageName": "window_open",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Patrzę przez okno na ulicę.",
+      "Umyłem okna na święta.",
+      "Okno wychodzi na ogród."
+    ]
+  },
+  {
+    "id": 13,
+    "category": "Dom",
+    "polish": "drzwi",
+    "translation": "дверь",
+    "transcription": "[dʐvʲi]",
+    "example": "Zamknij drzwi za sobą.",
+    "imageName": "door_closed",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ktoś puka do drzwi.",
+      "Drzwi wejściowe są otwarte.",
+      "Klucz do drzwi."
+    ]
+  },
+  {
+    "id": 14,
+    "category": "Dom",
+    "polish": "stół",
+    "translation": "стол",
+    "transcription": "[stuw]",
+    "example": "Obiad stoi na stole.",
+    "imageName": "table_furniture",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Usiądźmy przy stole.",
+      "To jest drewniany stół.",
+      "Połóż książkę na stole."
+    ]
+  },
+  {
+    "id": 15,
+    "category": "Dom",
+    "polish": "krzesło",
+    "translation": "стул",
+    "transcription": "[ˈkʂɛswɔ]",
+    "example": "To krzesło jest wygodne.",
+    "imageName": "chair_wooden",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Przysuń sobie krzesło.",
+      "Krzesło ma cztery nogi.",
+      "Kupiłem nowe krzesła do kuchni."
+    ]
+  },
+  {
+    "id": 16,
+    "category": "Dom",
+    "polish": "łóżko",
+    "translation": "кровать",
+    "transcription": "[ˈwuʂkɔ]",
+    "example": "Jestem zmęczony, idę do łóżka.",
+    "imageName": "bed_bedroom",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Pościel swoje łóżko.",
+      "Leżę w łóżku i czytam.",
+      "To jest podwójne łóżko."
+    ]
+  },
+  {
+    "id": 17,
+    "category": "Dom",
+    "polish": "kuchnia",
+    "translation": "кухня",
+    "transcription": "[ˈkuxɲa]",
+    "example": "Gotuję obiad w kuchni.",
+    "imageName": "kitchen_room",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Mamy dużą i jasną kuchnię.",
+      "Kuchnia polska jest smaczna.",
+      "Stolik w kuchni."
+    ]
+  },
+  {
+    "id": 18,
+    "category": "Dom",
+    "polish": "klucz",
+    "translation": "ключ",
+    "transcription": "[kluʧ̑]",
+    "example": "Zgubiłem klucz do domu.",
+    "imageName": "key_metal",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Masz klucz do bramy?",
+      "To jest klucz francuski (narzędzie).",
+      "Klucz do sukcesu."
+    ]
+  },
+  {
+    "id": 19,
+    "category": "Dom",
+    "polish": "telefon",
+    "translation": "телефон",
+    "transcription": "[tɛˈlɛfɔn]",
+    "example": "Twój telefon dzwoni.",
+    "imageName": "phone_smartphone",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jaki masz numer telefonu?",
+      "Rozmawiam przez telefon.",
+      "Kupiłem nowy telefon."
+    ]
+  },
+  {
+    "id": 20,
+    "category": "Dom",
+    "polish": "książka",
+    "translation": "книга",
+    "transcription": "[ˈkɕɔ̃ʂka]",
+    "example": "Czytam ciekawą książkę.",
+    "imageName": "book_reading",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Książka leży na półce.",
+      "Wypożyczyłem książkę z biblioteki.",
+      "Lubię zapach starych książek."
+    ]
+  },
+  {
+    "id": 21,
+    "category": "Miasto",
+    "polish": "miasto",
+    "translation": "город",
+    "transcription": "[ˈmjastɔ]",
+    "example": "Lubię duże miasta.",
+    "imageName": "city_skyline",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Mieszkam w centrum miasta.",
+      "To miasto ma długą historię.",
+      "Wycieczka do miasta."
+    ]
+  },
+  {
+    "id": 22,
+    "category": "Miasto",
+    "polish": "ulica",
+    "translation": "улица",
+    "transcription": "[uˈlʲiʦ̑a]",
+    "example": "Na tej ulicy jest duży ruch.",
+    "imageName": "street_view",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Przejdź na drugą stronę ulicy.",
+      "Mieszkam na ulicy Polnej.",
+      "To jest ślepa ulica."
+    ]
+  },
+  {
+    "id": 23,
+    "category": "Miasto",
+    "polish": "sklep",
+    "translation": "магазин",
+    "transcription": "[sklɛp]",
+    "example": "Idę do sklepu po bułki.",
+    "imageName": "shop_store",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ten sklep jest otwarty całą dobę.",
+      "Kupiłem to w sklepie spożywczym.",
+      "W sklepie była kolejka."
+    ]
+  },
+  {
+    "id": 24,
+    "category": "Miasto",
+    "polish": "bank",
+    "translation": "банк",
+    "transcription": "[baŋk]",
+    "example": "Muszę wypłacić pieniądze z banku.",
+    "imageName": "bank_building",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Pracuję w banku.",
+      "Konto w banku.",
+      "Bank jest zamknięty."
+    ]
+  },
+  {
+    "id": 25,
+    "category": "Miasto",
+    "polish": "apteka",
+    "translation": "аптека",
+    "transcription": "[apˈtɛka]",
+    "example": "Leki kupisz w aptece.",
+    "imageName": "pharmacy_sign",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Gdzie jest najbliższa apteka?",
+      "Apteka całodobowa.",
+      "Idę do apteki."
+    ]
+  },
+  {
+    "id": 26,
+    "category": "Miasto",
+    "polish": "szkoła",
+    "translation": "школа",
+    "transcription": "[ˈʂkɔwa]",
+    "example": "Dzieci idą do szkoły.",
+    "imageName": "school_building",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Lubię moją szkołę.",
+      "Szkoła podstawowa.",
+      "Po szkole idziemy na lody."
+    ]
+  },
+  {
+    "id": 27,
+    "category": "Miasto",
+    "polish": "praca",
+    "translation": "работа",
+    "transcription": "[ˈpraʦ̑a]",
+    "example": "Szukam nowej pracy.",
+    "imageName": "work_office",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jestem w pracy.",
+      "To ciężka praca.",
+      "Wracam z pracy do domu."
+    ]
+  },
+  {
+    "id": 28,
+    "category": "Miasto",
+    "polish": "samochód",
+    "translation": "автомобиль",
+    "transcription": "[saˈmɔxut]",
+    "example": "Kupiłem nowy samochód.",
+    "imageName": "car_red",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jadę samochodem.",
+      "Samochód stoi w garażu.",
+      "Prawo jazdy na samochód."
+    ]
+  },
+  {
+    "id": 29,
+    "category": "Miasto",
+    "polish": "autobus",
+    "translation": "автобус",
+    "transcription": "[aʊ̯ˈtɔbus]",
+    "example": "Czekam na autobus.",
+    "imageName": "bus_city",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jadę do pracy autobusem.",
+      "Autobus spóźnił się.",
+      "Bilet na autobus."
+    ]
+  },
+  {
+    "id": 30,
+    "category": "Miasto",
+    "polish": "pociąg",
+    "translation": "поезд",
+    "transcription": "[ˈpɔʨ̑ɔŋk]",
+    "example": "Pociąg odjeżdża z peronu pierwszego.",
+    "imageName": "train_railway",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Lubię podróżować pociągiem.",
+      "Wsiadaj do pociągu.",
+      "Dworzec pociągów."
+    ]
+  },
+  {
+    "id": 31,
+    "category": "Jedzenie",
+    "polish": "chleb",
+    "translation": "хлеб",
+    "transcription": "[xlɛp]",
+    "example": "Świeży chleb pachnie pięknie.",
+    "imageName": "bread_loaf",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Poproszę bochenek chleba.",
+      "Jem chleb z masłem.",
+      "Czerstwy chleb."
+    ]
+  },
+  {
+    "id": 32,
+    "category": "Jedzenie",
+    "polish": "woda",
+    "translation": "вода",
+    "transcription": "[ˈvɔda]",
+    "example": "Chce mi się pić wodę.",
+    "imageName": "water_glass",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Pij dużo wody.",
+      "Woda gazowana czy niegazowana?",
+      "Zimna woda."
+    ]
+  },
+  {
+    "id": 33,
+    "category": "Jedzenie",
+    "polish": "kawa",
+    "translation": "кофе",
+    "transcription": "[ˈkava]",
+    "example": "Rano piję mocną kawę.",
+    "imageName": "coffee_cup",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Masz ochotę na kawę?",
+      "Kawa z mlekiem.",
+      "Zapach kawy."
+    ]
+  },
+  {
+    "id": 34,
+    "category": "Jedzenie",
+    "polish": "herbata",
+    "translation": "чай",
+    "transcription": "[xɛrˈbata]",
+    "example": "Zrobię ci herbaty.",
+    "imageName": "tea_cup",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Lubię zieloną herbatę.",
+      "Herbata z cytryną.",
+      "Gorąca herbata."
+    ]
+  },
+  {
+    "id": 35,
+    "category": "Jedzenie",
+    "polish": "obiad",
+    "translation": "обед",
+    "transcription": "[ˈɔbjat]",
+    "example": "Co jest dziś na obiad?",
+    "imageName": "dinner_meal",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jemy obiad o czternastej.",
+      "Zapraszam na obiad.",
+      "Pyszny obiad."
+    ]
+  },
+  {
+    "id": 36,
+    "category": "Jedzenie",
+    "polish": "mięso",
+    "translation": "мясо",
+    "transcription": "[ˈmʲjɛ̃sɔ]",
+    "example": "Kupiłem świeże mięso.",
+    "imageName": "meat_raw",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Nie jem mięsa, jestem wegetarianinem.",
+      "Mięso drobiowe.",
+      "Pieczenie mięsa."
+    ]
+  },
+  {
+    "id": 37,
+    "category": "Jedzenie",
+    "polish": "jajko",
+    "translation": "яйцо",
+    "transcription": "[ˈjajkɔ]",
+    "example": "Na śniadanie zjadłem jajko.",
+    "imageName": "egg_food",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jajko na twardo.",
+      "Kupiłem dziesięć jajek.",
+      "Jajecznica z dwóch jajek."
+    ]
+  },
+  {
+    "id": 38,
+    "category": "Jedzenie",
+    "polish": "jabłko",
+    "translation": "яблоко",
+    "transcription": "[ˈjapwkɔ]",
+    "example": "To jabłko jest czerwone.",
+    "imageName": "apple_fruit",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Zjadłem soczyste jabłko.",
+      "Szarlotka z jabłkami.",
+      "Sok z jabłek."
+    ]
+  },
+  {
+    "id": 39,
+    "category": "Jedzenie",
+    "polish": "cukier",
+    "translation": "сахар",
+    "transcription": "[ˈʦ̑ukʲɛr]",
+    "example": "Nie słodzę, nie używam cukru.",
+    "imageName": "sugar_spoon",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Cukier puder.",
+      "Kup kilogram cukru.",
+      "Słodki jak cukier."
+    ]
+  },
+  {
+    "id": 40,
+    "category": "Jedzenie",
+    "polish": "masło",
+    "translation": "масло",
+    "transcription": "[ˈmaswɔ]",
+    "example": "Posmaruj chleb masłem.",
+    "imageName": "butter_block",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Bułka z masłem.",
+      "Masło się roztopiło.",
+      "Kostka masła."
+    ]
+  },
+  {
+    "id": 41,
+    "category": "Czas",
+    "polish": "czas",
+    "translation": "время",
+    "transcription": "[ʧ̑as]",
+    "example": "Nie mam teraz czasu.",
+    "imageName": "clock_time",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Czas szybko leci.",
+      "To był dobry czas.",
+      "Czas to pieniądz."
+    ]
+  },
+  {
+    "id": 42,
+    "category": "Czas",
+    "polish": "dzień",
+    "translation": "день",
+    "transcription": "[dʑɛɲ]",
+    "example": "Miłego dnia!",
+    "imageName": "day_sun",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jaki dziś dzień tygodnia?",
+      "Cały dzień pracowałem.",
+      "Dzień dobry."
+    ]
+  },
+  {
+    "id": 43,
+    "category": "Czas",
+    "polish": "noc",
+    "translation": "ночь",
+    "transcription": "[nɔʦ̑]",
+    "example": "W nocy było ciemno.",
+    "imageName": "night_moon",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Dobra noc (dobranoc).",
+      "Pracuję w nocy.",
+      "Gwiazdy na niebie w nocy."
+    ]
+  },
+  {
+    "id": 44,
+    "category": "Czas",
+    "polish": "tydzień",
+    "translation": "неделя",
+    "transcription": "[ˈtɨʥ̑ɛɲ]",
+    "example": "Jadę na urlop za tydzień.",
+    "imageName": "calendar_week",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "W tym tygodniu mam dużo pracy.",
+      "Koniec tygodnia (weekend).",
+      "Dni tygodnia."
+    ]
+  },
+  {
+    "id": 45,
+    "category": "Czas",
+    "polish": "rok",
+    "translation": "год",
+    "transcription": "[rɔk]",
+    "example": "Wszystkiego najlepszego z okazji nowego roku.",
+    "imageName": "calendar_year",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Mam 20 lat (dosł. 20 roków - niereg.).",
+      "To był trudny rok.",
+      "Rok temu byłem w górach."
+    ]
+  },
+  {
+    "id": 46,
+    "category": "Czas",
+    "polish": "godzina",
+    "translation": "час",
+    "transcription": "[ɡɔˈdʑina]",
+    "example": "Która jest godzina?",
+    "imageName": "watch_clock",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Czekam od godziny.",
+      "Spotkanie o godzinie ósmej.",
+      "Pół godziny."
+    ]
+  },
+  {
+    "id": 47,
+    "category": "Czas",
+    "polish": "dzisiaj",
+    "translation": "сегодня",
+    "transcription": "[ˈdʑiɕaj]",
+    "example": "Co dzisiaj robisz?",
+    "imageName": "calendar_today",
+    "partOfSpeech": "przysł.",
+    "examplesList": [
+      "Dzisiaj jest ładna pogoda.",
+      "Dzisiaj mam wolne.",
+      "Do zobaczenia dzisiaj wieczorem."
+    ]
+  },
+  {
+    "id": 48,
+    "category": "Czas",
+    "polish": "jutro",
+    "translation": "завтра",
+    "transcription": "[ˈjutrɔ]",
+    "example": "Jutro pójdę do kina.",
+    "imageName": "calendar_tomorrow",
+    "partOfSpeech": "przysł.",
+    "examplesList": [
+      "Do jutra!",
+      "Jutro będzie futro (przysłowie).",
+      "Zrób to jutro."
+    ]
+  },
+  {
+    "id": 49,
+    "category": "Natura",
+    "polish": "drzewo",
+    "translation": "дерево",
+    "transcription": "[ˈdʐɛvɔ]",
+    "example": "To drzewo jest bardzo stare.",
+    "imageName": "tree_nature",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ptak siedzi na drzewie.",
+      "Drzewa w lesie.",
+      "Sadzić drzewa."
+    ]
+  },
+  {
+    "id": 50,
+    "category": "Natura",
+    "polish": "słońce",
+    "translation": "солнце",
+    "transcription": "[ˈswɔɲt͡sɛ]",
+    "example": "Słońce świeci jasno.",
+    "imageName": "sun_sky",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Lubię opalać się na słońcu.",
+      "Zachód słońca.",
+      "Okulary przeciwsłoneczne."
+    ]
+  },
+  {
+    "id": 51,
+    "category": "Ciało",
+    "polish": "głowa",
+    "translation": "голова",
+    "transcription": "[ˈɡwɔva]",
+    "example": "Boli mnie głowa.",
+    "imageName": "head_body",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Miej głowę na karku.",
+      "Załóż czapkę na głowę.",
+      "Kiwnął głową."
+    ]
+  },
+  {
+    "id": 52,
+    "category": "Ciało",
+    "polish": "ręka",
+    "translation": "рука",
+    "transcription": "[ˈrɛŋka]",
+    "example": "Podaj mi rękę.",
+    "imageName": "hand_body",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Myj ręce przed jedzeniem.",
+      "Trzymam to w ręce.",
+      "Złamana ręka."
+    ]
+  },
+  {
+    "id": 53,
+    "category": "Ciało",
+    "polish": "noga",
+    "translation": "нога",
+    "transcription": "[ˈnɔɡa]",
+    "example": "Boli mnie noga.",
+    "imageName": "leg_body",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Złamał nogę na nartach.",
+      "Stół ma cztery nogi.",
+      "Idziemy noga w nogę."
+    ]
+  },
+  {
+    "id": 54,
+    "category": "Ciało",
+    "polish": "oko",
+    "translation": "глаз",
+    "transcription": "[ˈɔkɔ]",
+    "example": "Coś wpadło mi do oka.",
+    "imageName": "eye_human",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ona ma niebieskie oczy.",
+      "Miej na niego oko.",
+      "Zamknij oczy."
+    ]
+  },
+  {
+    "id": 55,
+    "category": "Ciało",
+    "polish": "serce",
+    "translation": "сердце",
+    "transcription": "[ˈsɛrʦ̑ɛ]",
+    "example": "Serce bije mocno.",
+    "imageName": "heart_organ",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Kocham cię całym sercem.",
+      "Złamane serce.",
+      "Serce miasta."
+    ]
+  },
+  {
+    "id": 56,
+    "category": "Ciało",
+    "polish": "włosy",
+    "translation": "волосы",
+    "transcription": "[ˈvwɔsɨ]",
+    "example": "Ona ma długie włosy.",
+    "imageName": "hair_style",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Muszę umyć włosy.",
+      "Obciąłem włosy.",
+      "Blond włosy."
+    ]
+  },
+  {
+    "id": 57,
+    "category": "Czynności",
+    "polish": "być",
+    "translation": "быть",
+    "transcription": "[bɨt͡ɕ]",
+    "example": "Chcę być lekarzem.",
+    "imageName": "to_be_exist",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Jutro będę w domu.",
+      "Gdzie byłeś?",
+      "To musi być prawda."
+    ]
+  },
+  {
+    "id": 58,
+    "category": "Czynności",
+    "polish": "mieć",
+    "translation": "иметь",
+    "transcription": "[mʲjɛt͡ɕ]",
+    "example": "Mam dwa psy.",
+    "imageName": "to_have",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Czy masz czas?",
+      "Ona ma ładne oczy.",
+      "Nie mam pieniędzy."
+    ]
+  },
+  {
+    "id": 59,
+    "category": "Czynności",
+    "polish": "robić",
+    "translation": "делать",
+    "transcription": "[ˈrɔbʲit͡ɕ]",
+    "example": "Co robisz?",
+    "imageName": "doing_action",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Lubię robić zdjęcia.",
+      "Robię obiad.",
+      "Nic nie robię."
+    ]
+  },
+  {
+    "id": 60,
+    "category": "Czynności",
+    "polish": "iść",
+    "translation": "идти",
+    "transcription": "[iɕt͡ɕ]",
+    "example": "Idę do sklepu.",
+    "imageName": "walking_legs",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Idziemy na spacer.",
+      "Gdzie idziesz?",
+      "Czas iść do domu."
+    ]
+  },
+  {
+    "id": 61,
+    "category": "Czynności",
+    "polish": "jechać",
+    "translation": "ехать",
+    "transcription": "[ˈjɛxaʨ̑]",
+    "example": "Jadę samochodem.",
+    "imageName": "driving_car",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Jedziemy na wakacje.",
+      "Autobus jedzie wolno.",
+      "Gdzie jedziesz?"
+    ]
+  },
+  {
+    "id": 62,
+    "category": "Czynności",
+    "polish": "jeść",
+    "translation": "есть",
+    "transcription": "[jɛɕt͡ɕ]",
+    "example": "Lubię jeść pizzę.",
+    "imageName": "eating_food",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Co jesz?",
+      "Jemy śniadanie.",
+      "Nie jedz tego."
+    ]
+  },
+  {
+    "id": 63,
+    "category": "Czynności",
+    "polish": "spać",
+    "translation": "спать",
+    "transcription": "[spaʨ̑]",
+    "example": "Chcę mi się spać.",
+    "imageName": "sleeping_bed",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Dziecko już śpi.",
+      "Lubię długo spać.",
+      "Spać jak kamień."
+    ]
+  },
+  {
+    "id": 64,
+    "category": "Czynności",
+    "polish": "czytać",
+    "translation": "читать",
+    "transcription": "[ˈʧ̑ɨtaʨ̑]",
+    "example": "Lubię czytać książki.",
+    "imageName": "reading_book",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Ona czyta gazetę.",
+      "Czytam dzieciom bajki.",
+      "Przeczytałem to w internecie."
+    ]
+  },
+  {
+    "id": 65,
+    "category": "Czynności",
+    "polish": "pisać",
+    "translation": "писать",
+    "transcription": "[ˈpʲisaʨ̑]",
+    "example": "Piszę list.",
+    "imageName": "writing_pen",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Długopis nie pisze.",
+      "Jak się to pisze?",
+      "Piszę wiadomość."
+    ]
+  },
+  {
+    "id": 66,
+    "category": "Czynności",
+    "polish": "rozumieć",
+    "translation": "понимать",
+    "transcription": "[rɔˈzumjɛt͡ɕ]",
+    "example": "Nie rozumiem po polsku.",
+    "imageName": "understanding_head",
+    "partOfSpeech": "czas.",
+    "examplesList": [
+      "Czy rozumiesz?",
+      "Rozumiem twój problem.",
+      "Wszystko rozumiem."
+    ]
+  },
+  {
+    "id": 67,
+    "category": "Przymiotniki",
+    "polish": "dobry",
+    "translation": "хороший",
+    "transcription": "[ˈdɔbrɨ]",
+    "example": "To jest dobry pomysł.",
+    "imageName": "good_thumbs_up",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Dzień dobry.",
+      "On jest dobrym człowiekiem.",
+      "Dobre jedzenie."
+    ]
+  },
+  {
+    "id": 68,
+    "category": "Przymiotniki",
+    "polish": "zły",
+    "translation": "плохой / злой",
+    "transcription": "[zwɨ]",
+    "example": "Mam zły humor.",
+    "imageName": "bad_thumb_down",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "To był zły dzień.",
+      "Zły pies.",
+      "Nie bądź zły."
+    ]
+  },
+  {
+    "id": 69,
+    "category": "Przymiotniki",
+    "polish": "duży",
+    "translation": "большой",
+    "transcription": "[ˈduʐɨ]",
+    "example": "To jest duży dom.",
+    "imageName": "big_elephant",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Mam duży problem.",
+      "Duże miasto.",
+      "On jest już duży (dorosły)."
+    ]
+  },
+  {
+    "id": 70,
+    "category": "Przymiotniki",
+    "polish": "mały",
+    "translation": "маленький",
+    "transcription": "[ˈmawɨ]",
+    "example": "To jest mały piesek.",
+    "imageName": "small_mouse",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Małe dziecko.",
+      "Mam mało czasu.",
+      "Mały problem."
+    ]
+  },
+  {
+    "id": 71,
+    "category": "Przymiotniki",
+    "polish": "nowy",
+    "translation": "новый",
+    "transcription": "[ˈnɔvɨ]",
+    "example": "Kupiłem nowy telefon.",
+    "imageName": "new_badge",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Nowy Rok.",
+      "To jest nowa kolekcja.",
+      "Szukam nowej pracy."
+    ]
+  },
+  {
+    "id": 72,
+    "category": "Przymiotniki",
+    "polish": "stary",
+    "translation": "старый",
+    "transcription": "[ˈstarɨ]",
+    "example": "To jest stary budynek.",
+    "imageName": "old_book",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Stary przyjaciel.",
+      "Jestem za stary na to.",
+      "Stare miasto."
+    ]
+  },
+  {
+    "id": 73,
+    "category": "Przymiotniki",
+    "polish": "ładny",
+    "translation": "красивый",
+    "transcription": "[ˈwadnɨ]",
+    "example": "To jest ładny kwiat.",
+    "imageName": "pretty_flower",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Masz ładną sukienkę.",
+      "Ładna pogoda.",
+      "Ładnie wyglądasz."
+    ]
+  },
+  {
+    "id": 74,
+    "category": "Przymiotniki",
+    "polish": "zimny",
+    "translation": "холодный",
+    "transcription": "[ˈʑimnɨ]",
+    "example": "Nie lubię zimnej kawy.",
+    "imageName": "cold_ice",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Zimna woda.",
+      "Zimny wiatr.",
+      "Jest zimno."
+    ]
+  },
+  {
+    "id": 75,
+    "category": "Przymiotniki",
+    "polish": "ciepły",
+    "translation": "теплый",
+    "transcription": "[ˈʨ̑ɛpwɨ]",
+    "example": "Załóż ciepły sweter.",
+    "imageName": "warm_sun",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Ciepła herbata.",
+      "Ciepłe dni.",
+      "Jest ciepło."
+    ]
+  },
+  {
+    "id": 76,
+    "category": "Kolory",
+    "polish": "biały",
+    "translation": "белый",
+    "transcription": "[ˈbjawɨ]",
+    "example": "Biały śnieg.",
+    "imageName": "white_color",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Mam białego kota.",
+      "Biała koszula.",
+      "Orzeł Biały."
+    ]
+  },
+  {
+    "id": 77,
+    "category": "Kolory",
+    "polish": "czarny",
+    "translation": "черный",
+    "transcription": "[ˈʧ̑arnɨ]",
+    "example": "Czarny kot.",
+    "imageName": "black_color",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Piję czarną kawę.",
+      "Czarny charakter.",
+      "Ubieram się na czarno."
+    ]
+  },
+  {
+    "id": 78,
+    "category": "Kolory",
+    "polish": "czerwony",
+    "translation": "красный",
+    "transcription": "[ʧ̑ɛrˈvɔnɨ]",
+    "example": "Czerwone jabłko.",
+    "imageName": "red_color",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Zatrzymaj się na czerwonym świetle.",
+      "Czerwona róża.",
+      "Mam czerwoną twarz."
+    ]
+  },
+  {
+    "id": 79,
+    "category": "Kolory",
+    "polish": "zielony",
+    "translation": "зеленый",
+    "transcription": "[ʑɛˈlɔnɨ]",
+    "example": "Zielona trawa.",
+    "imageName": "green_color",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Zielone światło.",
+      "Zielone warzywa.",
+      "Mam pojęcie (zielone - idiom)."
+    ]
+  },
+  {
+    "id": 80,
+    "category": "Kolory",
+    "polish": "niebieski",
+    "translation": "синий",
+    "transcription": "[ɲɛˈbʲjɛskʲi]",
+    "example": "Niebieskie niebo.",
+    "imageName": "blue_color",
+    "partOfSpeech": "przym.",
+    "examplesList": [
+      "Mam niebieskie oczy.",
+      "Niebieski samochód.",
+      "Kolor niebieski."
+    ]
+  },
+  {
+    "id": 81,
+    "category": "Przyimki/Zaimki",
+    "polish": "ja",
+    "translation": "я",
+    "transcription": "[ja]",
+    "example": "Ja jestem Polakiem.",
+    "imageName": "me_person",
+    "partOfSpeech": "zaim.",
+    "examplesList": [
+      "To ja.",
+      "Ja też.",
+      "Ja nie wiem."
+    ]
+  },
+  {
+    "id": 82,
+    "category": "Przyimki/Zaimki",
+    "polish": "ty",
+    "translation": "ты",
+    "transcription": "[tɨ]",
+    "example": "Ty jesteś wysoki.",
+    "imageName": "you_person",
+    "partOfSpeech": "zaim.",
+    "examplesList": [
+      "A ty?",
+      "To ty zrobiłeś?",
+      "Ty i ja."
+    ]
+  },
+  {
+    "id": 83,
+    "category": "Przyimki/Zaimki",
+    "polish": "on",
+    "translation": "он",
+    "transcription": "[ɔn]",
+    "example": "On pracuje w biurze.",
+    "imageName": "he_person",
+    "partOfSpeech": "zaim.",
+    "examplesList": [
+      "Gdzie on jest?",
+      "On jest moim bratem.",
+      "On to lubi."
+    ]
+  },
+  {
+    "id": 84,
+    "category": "Przyimki/Zaimki",
+    "polish": "ona",
+    "translation": "она",
+    "transcription": "[ˈɔna]",
+    "example": "Ona jest ładna.",
+    "imageName": "she_person",
+    "partOfSpeech": "zaim.",
+    "examplesList": [
+      "Ona czyta książkę.",
+      "Czy ona tu mieszka?",
+      "To jest ona."
+    ]
+  },
+  {
+    "id": 85,
+    "category": "Przyimki/Zaimki",
+    "polish": "to",
+    "translation": "это / то",
+    "transcription": "[tɔ]",
+    "example": "Co to jest?",
+    "imageName": "that_pointing",
+    "partOfSpeech": "zaim.",
+    "examplesList": [
+      "To jest dom.",
+      "To ciekawe.",
+      "Lubię to."
+    ]
+  },
+  {
+    "id": 86,
+    "category": "Pytania",
+    "polish": "co",
+    "translation": "что",
+    "transcription": "[ʦ̑ɔ]",
+    "example": "Co robisz?",
+    "imageName": "what_question",
+    "partOfSpeech": "zaim.",
+    "examplesList": [
+      "Co się stało?",
+      "Co to znaczy?",
+      "Wiem, co myślisz."
+    ]
+  },
+  {
+    "id": 87,
+    "category": "Pytania",
+    "polish": "kto",
+    "translation": "кто",
+    "transcription": "[ktɔ]",
+    "example": "Kto to jest?",
+    "imageName": "who_question",
+    "partOfSpeech": "zaim.",
+    "examplesList": [
+      "Kto dzwonił?",
+      "Nie wiem, kto to zrobił.",
+      "Kto tam?"
+    ]
+  },
+  {
+    "id": 88,
+    "category": "Pytania",
+    "polish": "gdzie",
+    "translation": "где",
+    "transcription": "[ɡdʑɛ]",
+    "example": "Gdzie mieszkasz?",
+    "imageName": "where_map",
+    "partOfSpeech": "przysł.",
+    "examplesList": [
+      "Gdzie idziesz?",
+      "Gdzie jest toaleta?",
+      "Nie wiem, gdzie on jest."
+    ]
+  },
+  {
+    "id": 89,
+    "category": "Pytania",
+    "polish": "kiedy",
+    "translation": "когда",
+    "transcription": "[ˈkʲɛdɨ]",
+    "example": "Kiedy przyjedziesz?",
+    "imageName": "when_clock",
+    "partOfSpeech": "przysł.",
+    "examplesList": [
+      "Kiedy masz urodziny?",
+      "Od kiedy?",
+      "Nie wiem, kiedy wróci."
+    ]
+  },
+  {
+    "id": 90,
+    "category": "Pytania",
+    "polish": "jak",
+    "translation": "как",
+    "transcription": "[jak]",
+    "example": "Jak się masz?",
+    "imageName": "how_question",
+    "partOfSpeech": "przysł.",
+    "examplesList": [
+      "Jak masz na imię?",
+      "Jak to zrobić?",
+      "Jak długo?"
+    ]
+  },
+  {
+    "id": 91,
+    "category": "Liczby",
+    "polish": "jeden",
+    "translation": "один",
+    "transcription": "[ˈjɛdɛn]",
+    "example": "Jeden bilet poproszę.",
+    "imageName": "number_one",
+    "partOfSpeech": "licz.",
+    "examplesList": [
+      "Numer jeden.",
+      "Jeden raz.",
+      "Jeden plus jeden."
+    ]
+  },
+  {
+    "id": 92,
+    "category": "Liczby",
+    "polish": "dwa",
+    "translation": "два",
+    "transcription": "[dva]",
+    "example": "Mam dwa koty.",
+    "imageName": "number_two",
+    "partOfSpeech": "licz.",
+    "examplesList": [
+      "Dwa piwa proszę.",
+      "Raz, dwa, trzy.",
+      "Dwa lata temu."
+    ]
+  },
+  {
+    "id": 93,
+    "category": "Liczby",
+    "polish": "trzy",
+    "translation": "три",
+    "transcription": "[tʂɨ]",
+    "example": "Trzy razy dziennie.",
+    "imageName": "number_three",
+    "partOfSpeech": "licz.",
+    "examplesList": [
+      "Mam trzy siostry.",
+      "Trzy kilometry.",
+      "Trzeci (liczebnik porządkowy)."
+    ]
+  },
+  {
+    "id": 94,
+    "category": "Inne",
+    "polish": "tak",
+    "translation": "да",
+    "transcription": "[tak]",
+    "example": "Tak, poproszę.",
+    "imageName": "yes_check",
+    "partOfSpeech": "partykuła",
+    "examplesList": [
+      "Tak czy nie?",
+      "Oczywiście, że tak.",
+      "Myślę, że tak."
+    ]
+  },
+  {
+    "id": 95,
+    "category": "Inne",
+    "polish": "nie",
+    "translation": "нет",
+    "transcription": "[ɲɛ]",
+    "example": "Nie, dziękuję.",
+    "imageName": "no_cross",
+    "partOfSpeech": "partykuła",
+    "examplesList": [
+      "Nie wiem.",
+      "Nie lubię tego.",
+      "Nie ma za co."
+    ]
+  },
+  {
+    "id": 96,
+    "category": "Inne",
+    "polish": "dziękuję",
+    "translation": "спасибо",
+    "transcription": "[dʑɛŋˈkujɛ]",
+    "example": "Dziękuję za pomoc.",
+    "imageName": "thank_you",
+    "partOfSpeech": "zwrot",
+    "examplesList": [
+      "Dziękuję bardzo.",
+      "Nie, dziękuję.",
+      "Dziękuję, wzajemnie."
+    ]
+  },
+  {
+    "id": 97,
+    "category": "Inne",
+    "polish": "przepraszam",
+    "translation": "извините / простите",
+    "transcription": "[pʂɛˈpraʂam]",
+    "example": "Przepraszam, która godzina?",
+    "imageName": "sorry_sign",
+    "partOfSpeech": "zwrot",
+    "examplesList": [
+      "Przepraszam za spóźnienie.",
+      "Bardzo przepraszam.",
+      "Przepraszam, czy to wolne miejsce?"
+    ]
+  },
+  {
+    "id": 98,
+    "category": "Inne",
+    "polish": "proszę",
+    "translation": "пожалуйста",
+    "transcription": "[ˈprɔʂɛ]",
+    "example": "Poproszę kawę.",
+    "imageName": "please_hand",
+    "partOfSpeech": "zwrot",
+    "examplesList": [
+      "Proszę wejść.",
+      "Proszę bardzo.",
+      "Słucham proszę?"
+    ]
+  },
+  {
+    "id": 99,
+    "category": "Inne",
+    "polish": "dużo",
+    "translation": "много",
+    "transcription": "[ˈduʐɔ]",
+    "example": "Mam dużo pracy.",
+    "imageName": "many_lot",
+    "partOfSpeech": "przysł.",
+    "examplesList": [
+      "Dużo ludzi.",
+      "To kosztuje dużo pieniędzy.",
+      "Za dużo."
+    ]
+  },
+  {
+    "id": 100,
+    "category": "Inne",
+    "polish": "mało",
+    "translation": "мало",
+    "transcription": "[ˈmawɔ]",
+    "example": "Mam mało czasu.",
+    "imageName": "little_few",
+    "partOfSpeech": "przysł.",
+    "examplesList": [
+      "Mało brakowało.",
+      "To jest za mało.",
+      "Coraz mniej (stopień wyższy)."
+    ]
+  },
+  {
+    "id": 101,
+    "category": "Семья",
+    "polish": "brat",
+    "translation": "брат",
+    "transcription": "[brat]",
+    "example": "Mój brat jest starszy ode mnie.",
+    "imageName": "brother_person",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Mam jednego brata.",
+      "Brat pomaga mi w nauce.",
+      "To jest rower mojego brata."
+    ]
+  },
+  {
+    "id": 102,
+    "category": "Семья",
+    "polish": "siostra",
+    "translation": "сестра",
+    "transcription": "[ˈɕɔstra]",
+    "example": "Moja siostra ma na imię Anna.",
+    "imageName": "sister_person",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Bawię się z siostrą.",
+      "Siostra mieszka w innym mieście.",
+      "To jest lalka mojej siostry."
+    ]
+  },
+  {
+    "id": 103,
+    "category": "Семья",
+    "polish": "syn",
+    "translation": "сын",
+    "transcription": "[sɨn]",
+    "example": "Jego syn chodzi do szkoły.",
+    "imageName": "son_boy",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Jestem dumny z mojego syna.",
+      "Syn gra w piłkę nożną.",
+      "Jaki ojciec, taki syn."
+    ]
+  },
+  {
+    "id": 104,
+    "category": "Семья",
+    "polish": "córka",
+    "translation": "дочь",
+    "transcription": "[ˈʦ̑urka]",
+    "example": "Ich córka jest bardzo zdolna.",
+    "imageName": "daughter_girl",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kupiłem prezent dla córki.",
+      "Matka i córka idą na spacer.",
+      "Moja córka lubi rysować."
+    ]
+  },
+  {
+    "id": 105,
+    "category": "Семья",
+    "polish": "mąż",
+    "translation": "муж",
+    "transcription": "[mɔ̃ʂ]",
+    "example": "To jest mój mąż.",
+    "imageName": "husband_man",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Szukam prezentu dla męża.",
+      "Mąż i żona.",
+      "Jej mąż jest lekarzem."
+    ]
+  },
+  {
+    "id": 106,
+    "category": "Семья",
+    "polish": "żona",
+    "translation": "жена",
+    "transcription": "[ˈʐɔna]",
+    "example": "Jego żona świetnie gotuje.",
+    "imageName": "wife_woman",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kocham moją żonę.",
+      "Oni są mężem i żoną.",
+      "Żona pracuje w banku."
+    ]
+  },
+  {
+    "id": 107,
+    "category": "Люди",
+    "polish": "chłopak",
+    "translation": "парень / мальчик",
+    "transcription": "[ˈxwɔpak]",
+    "example": "Ten chłopak gra na gitarze.",
+    "imageName": "boy_guy",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "To jest mój chłopak (sympatia).",
+      "Chłopaki grają w piłkę.",
+      "Fajny chłopak."
+    ]
+  },
+  {
+    "id": 108,
+    "category": "Люди",
+    "polish": "dziewczyna",
+    "translation": "девушка",
+    "transcription": "[ʥ̑ɛfˈʧ̑ɨna]",
+    "example": "Piękna dziewczyna idzie ulicą.",
+    "imageName": "girl_young_woman",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "To jest moja dziewczyna.",
+      "Dziewczyny lubią zakupy.",
+      "Spotkałem miłą dziewczynę."
+    ]
+  },
+  {
+    "id": 109,
+    "category": "Действия",
+    "polish": "mówić",
+    "translation": "говорить",
+    "transcription": "[ˈmuvʲiʨ̑]",
+    "example": "On mówi po polsku.",
+    "imageName": "speaking_mouth",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Co mówisz?",
+      "Mów głośniej, proszę.",
+      "Nie mów nikomu."
+    ]
+  },
+  {
+    "id": 110,
+    "category": "Действия",
+    "polish": "słuchać",
+    "translation": "слушать",
+    "transcription": "[ˈswuxaʨ̑]",
+    "example": "Lubię słuchać muzyki.",
+    "imageName": "listening_ear",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Słuchaj uważnie.",
+      "On nigdy mnie nie słucha.",
+      "Słucham radia."
+    ]
+  },
+  {
+    "id": 111,
+    "category": "Действия",
+    "polish": "widzieć",
+    "translation": "видеть",
+    "transcription": "[ˈvʲiʥ̑eʨ̑]",
+    "example": "Widzę cię.",
+    "imageName": "seeing_eye",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Czy widzisz ten znak?",
+      "Dawno się nie widzieliśmy.",
+      "Widzę, że jesteś zajęty."
+    ]
+  },
+  {
+    "id": 112,
+    "category": "Действия",
+    "polish": "pracować",
+    "translation": "работать",
+    "transcription": "[praˈʦ̑ɔvaʨ̑]",
+    "example": "Muszę dzisiaj pracować.",
+    "imageName": "working_person",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "On pracuje w fabryce.",
+      "Pracuję nad nowym projektem.",
+      "Ciężko pracować."
+    ]
+  },
+  {
+    "id": 113,
+    "category": "Действия",
+    "polish": "szukać",
+    "translation": "искать",
+    "transcription": "[ˈʂukaʨ̑]",
+    "example": "Szukam moich kluczy.",
+    "imageName": "searching_lens",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Czego szukasz?",
+      "Szukam pracy.",
+      "Kto szuka, ten znajdzie."
+    ]
+  },
+  {
+    "id": 114,
+    "category": "Действия",
+    "polish": "chcieć",
+    "translation": "хотеть",
+    "transcription": "[xʨ̑eʨ̑]",
+    "example": "Chcę pojechać nad morze.",
+    "imageName": "wanting_thought",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Co chcesz zjeść?",
+      "Nie chcę tego robić.",
+      "Chcieć to móc."
+    ]
+  },
+  {
+    "id": 115,
+    "category": "Действия",
+    "polish": "lubić",
+    "translation": "любить (нравиться)",
+    "transcription": "[ˈlubʲiʨ̑]",
+    "example": "Lubię lody czekoladowe.",
+    "imageName": "liking_heart",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Czy lubisz sport?",
+      "Oni się nie lubią.",
+      "Lubię to zdjęcie."
+    ]
+  },
+  {
+    "id": 116,
+    "category": "Действия",
+    "polish": "kochać",
+    "translation": "любить (сильное чувство)",
+    "transcription": "[ˈkɔxaʨ̑]",
+    "example": "Kocham moją rodzinę.",
+    "imageName": "love_heart",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Ona kocha muzykę.",
+      "Kocham cię.",
+      "Kochać to dbać o kogoś."
+    ]
+  },
+  {
+    "id": 117,
+    "category": "Действия",
+    "polish": "kupować",
+    "translation": "покупать",
+    "transcription": "[kuˈpɔvaʨ̑]",
+    "example": "Kupuję chleb w piekarni.",
+    "imageName": "buying_cart",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Muszę kupić nowe buty.",
+      "Gdzie kupujesz warzywa?",
+      "Kup bilet."
+    ]
+  },
+  {
+    "id": 118,
+    "category": "Действия",
+    "polish": "płacić",
+    "translation": "платить",
+    "transcription": "[ˈpwaʨ̑iʨ̑]",
+    "example": "Płacę gotówką.",
+    "imageName": "paying_money",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Można płacić kartą?",
+      "Muszę zapłacić rachunki.",
+      "Płacę za obiad."
+    ]
+  },
+  {
+    "id": 119,
+    "category": "Еда",
+    "polish": "mleko",
+    "translation": "молоко",
+    "transcription": "[ˈmlɛkɔ]",
+    "example": "Piję kawę z mlekiem.",
+    "imageName": "milk_bottle",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kup karton mleka.",
+      "Mleko jest zdrowe.",
+      "Płatki z mlekiem."
+    ]
+  },
+  {
+    "id": 120,
+    "category": "Еда",
+    "polish": "ser",
+    "translation": "сыр",
+    "transcription": "[sɛr]",
+    "example": "Kanapka z serem.",
+    "imageName": "cheese_slice",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ser żółty.",
+      "Ser biały (twaróg).",
+      "Lubię sernik (ciasto z sera)."
+    ]
+  },
+  {
+    "id": 121,
+    "category": "Еда",
+    "polish": "owoce",
+    "translation": "фрукты",
+    "transcription": "[ɔˈvɔʦ̑ɛ]",
+    "example": "Owoce są pełne witamin.",
+    "imageName": "fruits_basket",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Lubię świeże owoce.",
+      "Sałatka owocowa.",
+      "Myj owoce przed jedzeniem."
+    ]
+  },
+  {
+    "id": 122,
+    "category": "Еда",
+    "polish": "warzywa",
+    "translation": "овощи",
+    "transcription": "[vaˈʐɨva]",
+    "example": "Jem dużo warzyw.",
+    "imageName": "vegetables_mix",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zupa jarzynowa (z warzyw).",
+      "Kup ziemniaki i inne warzywa.",
+      "Warzywa na patelnię."
+    ]
+  },
+  {
+    "id": 123,
+    "category": "Еда",
+    "polish": "ziemniak",
+    "translation": "картофель",
+    "transcription": "[ˈʑɛmɲak]",
+    "example": "Obieram ziemniaki na obiad.",
+    "imageName": "potato_root",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Lubię placki ziemniaczane.",
+      "Ziemniaki z koperkiem.",
+      "Frytki są z ziemniaków."
+    ]
+  },
+  {
+    "id": 124,
+    "category": "Еда",
+    "polish": "zupa",
+    "translation": "суп",
+    "transcription": "[ˈzupa]",
+    "example": "Gorąca zupa pomidorowa.",
+    "imageName": "soup_bowl",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zupa jest za słona.",
+      "Talerz zupy.",
+      "Ugotowałem pyszną zupę."
+    ]
+  },
+  {
+    "id": 125,
+    "category": "Еда",
+    "polish": "sok",
+    "translation": "сок",
+    "transcription": "[sɔk]",
+    "example": "Poproszę sok pomarańczowy.",
+    "imageName": "juice_glass",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Świeżo wyciskany sok.",
+      "Sok jabłkowy.",
+      "Pijesz sok?"
+    ]
+  },
+  {
+    "id": 126,
+    "category": "Еда",
+    "polish": "piwo",
+    "translation": "пиво",
+    "transcription": "[ˈpʲivɔ]",
+    "example": "Zimne piwo w upalny dzień.",
+    "imageName": "beer_mug",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Idziemy na piwo?",
+      "Jedno jasne piwo proszę.",
+      "Polska słynie z dobrego piwa."
+    ]
+  },
+  {
+    "id": 127,
+    "category": "Места",
+    "polish": "biuro",
+    "translation": "офис",
+    "transcription": "[ˈbʲjurɔ]",
+    "example": "Pracuję w biurze w centrum.",
+    "imageName": "office_desk",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Jadę do biura.",
+      "Biuro jest otwarte od dziewiątej.",
+      "Praca biurowa."
+    ]
+  },
+  {
+    "id": 128,
+    "category": "Места",
+    "polish": "szpital",
+    "translation": "больница",
+    "transcription": "[ˈʂpʲital]",
+    "example": "Muszę jechać do szpitala.",
+    "imageName": "hospital_building",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Lekarz pracuje w szpitalu.",
+      "Odwiedziłem babcię w szpitalu.",
+      "Szpital miejski."
+    ]
+  },
+  {
+    "id": 129,
+    "category": "Места",
+    "polish": "restauracja",
+    "translation": "ресторан",
+    "transcription": "[rɛstaʊ̯ˈraʦ̑ja]",
+    "example": "Zjedzmy kolację w restauracji.",
+    "imageName": "restaurant_table",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "To jest droga restauracja.",
+      "Zarezerwowałem stolik w restauracji.",
+      "Kelner w restauracji."
+    ]
+  },
+  {
+    "id": 130,
+    "category": "Места",
+    "polish": "kino",
+    "translation": "кинотеатр / кино",
+    "transcription": "[ˈkʲinɔ]",
+    "example": "Idziemy do kina na nowy film.",
+    "imageName": "cinema_screen",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Bilety do kina.",
+      "Lubię polskie kino (filmy).",
+      "Spotkajmy się przed kinem."
+    ]
+  },
+  {
+    "id": 131,
+    "category": "Места",
+    "polish": "park",
+    "translation": "парк",
+    "transcription": "[park]",
+    "example": "Spaceruję po parku.",
+    "imageName": "park_bench",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W parku są ławki i drzewa.",
+      "Idę z psem do parku.",
+      "Park narodowy."
+    ]
+  },
+  {
+    "id": 132,
+    "category": "Места",
+    "polish": "kościół",
+    "translation": "церковь / костел",
+    "transcription": "[ˈkɔɕʨ̑uw]",
+    "example": "W niedzielę ludzie idą do kościoła.",
+    "imageName": "church_building",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Stary, gotycki kościół.",
+      "Dzwony kościoła.",
+      "Ślub w kościele."
+    ]
+  },
+  {
+    "id": 133,
+    "category": "Природа",
+    "polish": "morze",
+    "translation": "море",
+    "transcription": "[ˈmɔʐɛ]",
+    "example": "Jadę nad morze na wakacje.",
+    "imageName": "sea_beach",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Morze Bałtyckie.",
+      "Lubię szum morza.",
+      "Statek na morzu."
+    ]
+  },
+  {
+    "id": 134,
+    "category": "Природа",
+    "polish": "góry",
+    "translation": "горы",
+    "transcription": "[ˈɡurɨ]",
+    "example": "Kocham chodzić po górach.",
+    "imageName": "mountains_peak",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wysokie góry.",
+      "Jadę w góry na narty.",
+      "Widok na góry."
+    ]
+  },
+  {
+    "id": 135,
+    "category": "Природа",
+    "polish": "rzeka",
+    "translation": "река",
+    "transcription": "[ˈʐɛka]",
+    "example": "Wisła to najdłuższa rzeka w Polsce.",
+    "imageName": "river_flow",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Most nad rzeką.",
+      "Kąpać się w rzece.",
+      "Rzeka płynie do morza."
+    ]
+  },
+  {
+    "id": 136,
+    "category": "Природа",
+    "polish": "las",
+    "translation": "лес",
+    "transcription": "[las]",
+    "example": "Spacer po lesie jest zdrowy.",
+    "imageName": "forest_trees",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W lesie mieszkają zwierzęta.",
+      "Zgubiłem się w lesie.",
+      "Grzyby w lesie."
+    ]
+  },
+  {
+    "id": 137,
+    "category": "Природа",
+    "polish": "niebo",
+    "translation": "небо",
+    "transcription": "[ˈɲɛbɔ]",
+    "example": "Niebo jest dzisiaj błękitne.",
+    "imageName": "sky_clouds",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Gwiazdy na niebie.",
+      "Ptaki latają po niebie.",
+      "Bezchmurne niebo."
+    ]
+  },
+  {
+    "id": 138,
+    "category": "Природа",
+    "polish": "deszcz",
+    "translation": "дождь",
+    "transcription": "[dɛʂʧ̑]",
+    "example": "Pada deszcz.",
+    "imageName": "rain_cloud",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Weź parasol, bo będzie deszcz.",
+      "Po deszczu wyszło słońce.",
+      "Lubię zapach deszczu."
+    ]
+  },
+  {
+    "id": 139,
+    "category": "Природа",
+    "polish": "śnieg",
+    "translation": "снег",
+    "transcription": "[ɕɲɛk]",
+    "example": "Zimą pada śnieg.",
+    "imageName": "snow_flake",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Biały śnieg.",
+      "Lepimy bałwana ze śniegu.",
+      "Śnieg stopniał."
+    ]
+  },
+  {
+    "id": 140,
+    "category": "Природа",
+    "polish": "wiatr",
+    "translation": "ветер",
+    "transcription": "[vʲjatr]",
+    "example": "Silny wiatr wieje od morza.",
+    "imageName": "wind_blow",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wiatr zerwał mi czapkę.",
+      "Zimny wiatr.",
+      "Nie ma wiatru."
+    ]
+  },
+  {
+    "id": 141,
+    "category": "Природа",
+    "polish": "kot",
+    "translation": "кот",
+    "transcription": "[kɔt]",
+    "example": "Mój kot lubi spać.",
+    "imageName": "cat_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Czarny kot.",
+      "Kot pije mleko.",
+      "Bawić się z kotem."
+    ]
+  },
+  {
+    "id": 142,
+    "category": "Природа",
+    "polish": "pies",
+    "translation": "собака",
+    "transcription": "[pʲjɛs]",
+    "example": "Pies to najlepszy przyjaciel człowieka.",
+    "imageName": "dog_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wyprowadzam psa na spacer.",
+      "Uwaga, zły pies.",
+      "Szczeka jak pies."
+    ]
+  },
+  {
+    "id": 143,
+    "category": "Природа",
+    "polish": "ptak",
+    "translation": "птица",
+    "transcription": "[ptak]",
+    "example": "Ptak śpiewa na drzewie.",
+    "imageName": "bird_flying",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ptaki odlatują na zimę.",
+      "Wolny jak ptak.",
+      "Karmię ptaki w parku."
+    ]
+  },
+  {
+    "id": 144,
+    "category": "Вещи",
+    "polish": "pieniądze",
+    "translation": "деньги",
+    "transcription": "[pʲjɛˈɲɔnʣɛ]",
+    "example": "Nie mam przy sobie pieniędzy.",
+    "imageName": "money_notes",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Czas to pieniądz.",
+      "Zarabiać pieniądze.",
+      "Wydawać pieniądze."
+    ]
+  },
+  {
+    "id": 145,
+    "category": "Вещи",
+    "polish": "torba",
+    "translation": "сумка",
+    "transcription": "[ˈtɔrba]",
+    "example": "Ta torba jest ciężka.",
+    "imageName": "bag_handbag",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Spakuj rzeczy do torby.",
+      "Zgubiłem moją torbę.",
+      "Torba podróżna."
+    ]
+  },
+  {
+    "id": 146,
+    "category": "Вещи",
+    "polish": "zegarek",
+    "translation": "часы (наручные)",
+    "transcription": "[zɛˈɡarɛk]",
+    "example": "Mam nowy zegarek.",
+    "imageName": "watch_wrist",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Mój zegarek się spóźnia.",
+      "Patrzę na zegarek.",
+      "Drogi zegarek."
+    ]
+  },
+  {
+    "id": 147,
+    "category": "Вещи",
+    "polish": "okulary",
+    "translation": "очки",
+    "transcription": "[ɔkuˈlarɨ]",
+    "example": "Noszę okulary do czytania.",
+    "imageName": "glasses_spectacles",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Okulary przeciwsłoneczne.",
+      "Zgubiłem okulary.",
+      "Wyglądasz dobrze w okularach."
+    ]
+  },
+  {
+    "id": 148,
+    "category": "Вещи",
+    "polish": "długopis",
+    "translation": "ручка (шариковая)",
+    "transcription": "[dwuˈɡɔpʲis]",
+    "example": "Pożyczysz mi długopis?",
+    "imageName": "pen_writing",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Niebieski długopis.",
+      "Długopis się wypisał.",
+      "Podpisz to długopisem."
+    ]
+  },
+  {
+    "id": 149,
+    "category": "Вещи",
+    "polish": "komputer",
+    "translation": "компьютер",
+    "transcription": "[kɔmˈputɛr]",
+    "example": "Pracuję przy komputerze.",
+    "imageName": "computer_pc",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Gram na komputerze.",
+      "Mój komputer się zepsuł.",
+      "Laptop to komputer przenośny."
+    ]
+  },
+  {
+    "id": 150,
+    "category": "Одежда",
+    "polish": "buty",
+    "translation": "обувь / ботинки",
+    "transcription": "[ˈbutɨ]",
+    "example": "Zdejmij buty przed wejściem.",
+    "imageName": "shoes_pair",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wygodne buty.",
+      "Zimowe buty.",
+      "Kupiłem parę butów."
+    ]
+  },
+  {
+    "id": 151,
+    "category": "Одежда",
+    "polish": "kurtka",
+    "translation": "куртка",
+    "transcription": "[ˈkurtka]",
+    "example": "Załóż kurtkę, jest zimno.",
+    "imageName": "jacket_coat",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Skórzana kurtka.",
+      "Kurtka przeciwdeszczowa.",
+      "Zapnij kurtkę."
+    ]
+  },
+  {
+    "id": 152,
+    "category": "Одежда",
+    "polish": "spodnie",
+    "translation": "брюки / штаны",
+    "transcription": "[ˈspɔdɲɛ]",
+    "example": "Kupiłem dżinsowe spodnie.",
+    "imageName": "trousers_pants",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Czarne spodnie.",
+      "Spodnie są za długie.",
+      "Krótkie spodnie (szorty)."
+    ]
+  },
+  {
+    "id": 153,
+    "category": "Одежда",
+    "polish": "koszulka",
+    "translation": "футболка / майка",
+    "transcription": "[kɔˈʂulka]",
+    "example": "Mam na sobie białą koszulkę.",
+    "imageName": "tshirt_white",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Koszulka z nadrukiem.",
+      "Bawełniana koszulka.",
+      "Wypierz koszulkę."
+    ]
+  },
+  {
+    "id": 154,
+    "category": "Одежда",
+    "polish": "czapka",
+    "translation": "шапка",
+    "transcription": "[ˈʧ̑apka]",
+    "example": "Zimą noszę czapkę.",
+    "imageName": "hat_winter",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Czapka z daszkiem.",
+      "Ciepła czapka.",
+      "Zdejmij czapkę."
+    ]
+  },
+  {
+    "id": 155,
+    "category": "Одежда",
+    "polish": "sukienka",
+    "translation": "платье",
+    "transcription": "[suˈkʲjɛnka]",
+    "example": "Ona ma piękną sukienkę.",
+    "imageName": "dress_clothing",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Sukienka wieczorowa.",
+      "Letnia sukienka.",
+      "Kupiłam nową sukienkę."
+    ]
+  },
+  {
+    "id": 156,
+    "category": "Транспорт",
+    "polish": "rower",
+    "translation": "велосипед",
+    "transcription": "[ˈrɔvɛr]",
+    "example": "Jeżdżę do pracy rowerem.",
+    "imageName": "bicycle_ride",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ścieżka rowerowa.",
+      "Naprawić rower.",
+      "Wycieczka rowerowa."
+    ]
+  },
+  {
+    "id": 157,
+    "category": "Транспорт",
+    "polish": "samolot",
+    "translation": "самолет",
+    "transcription": "[saˈmɔlɔt]",
+    "example": "Lecę samolotem do Polski.",
+    "imageName": "airplane_flying",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Bilet na samolot.",
+      "Samolot startuje.",
+      "Boję się latać samolotem."
+    ]
+  },
+  {
+    "id": 158,
+    "category": "Транспорт",
+    "polish": "lotnisko",
+    "translation": "аэропорт",
+    "transcription": "[lɔtˈɲiskɔ]",
+    "example": "Jadę na lotnisko odebrać gościa.",
+    "imageName": "airport_terminal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Lotnisko Chopina w Warszawie.",
+      "Czekam na lotnisku.",
+      "Duże lotnisko."
+    ]
+  },
+  {
+    "id": 159,
+    "category": "Транспорт",
+    "polish": "dworzec",
+    "translation": "вокзал",
+    "transcription": "[ˈdvɔʐɛʦ̑]",
+    "example": "Pociąg odjeżdża z dworca głównego.",
+    "imageName": "train_station",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Spotkajmy się na dworcu.",
+      "Dworzec autobusowy.",
+      "Kasa na dworcu."
+    ]
+  },
+  {
+    "id": 160,
+    "category": "Транспорт",
+    "polish": "bilet",
+    "translation": "билет",
+    "transcription": "[ˈbʲilɛt]",
+    "example": "Poproszę bilet normalny.",
+    "imageName": "ticket_paper",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Bilet miesięczny.",
+      "Kontrola biletów.",
+      "Kup bilet w automacie."
+    ]
+  },
+  {
+    "id": 161,
+    "category": "Транспорт",
+    "polish": "droga",
+    "translation": "дорога / путь",
+    "transcription": "[ˈdrɔɡa]",
+    "example": "Ta droga jest niebezpieczna.",
+    "imageName": "road_way",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Szerokiej drogi!",
+      "Zgubiłem drogę.",
+      "Droga do domu."
+    ]
+  },
+  {
+    "id": 162,
+    "category": "Прилагательные",
+    "polish": "szybki",
+    "translation": "быстрый",
+    "transcription": "[ˈʂɨpkʲi]",
+    "example": "To jest szybki samochód.",
+    "imageName": "fast_speed",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Szybka decyzja.",
+      "Szybki internet.",
+      "Czas płynie szybko."
+    ]
+  },
+  {
+    "id": 163,
+    "category": "Прилагательные",
+    "polish": "wolny",
+    "translation": "медленный / свободный",
+    "transcription": "[ˈvɔlnɨ]",
+    "example": "Żółw jest wolny.",
+    "imageName": "slow_turtle",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Czy to miejsce jest wolne?",
+      "Mam wolny czas.",
+      "Wolny kraj."
+    ]
+  },
+  {
+    "id": 164,
+    "category": "Прилагательные",
+    "polish": "drogi",
+    "translation": "дорогой",
+    "transcription": "[ˈdrɔɡʲi]",
+    "example": "Ten zegarek jest bardzo drogi.",
+    "imageName": "expensive_diamond",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Mój drogi przyjacielu.",
+      "Drogie życie.",
+      "To dla mnie za drogie."
+    ]
+  },
+  {
+    "id": 165,
+    "category": "Прилагательные",
+    "polish": "tani",
+    "translation": "дешевый",
+    "transcription": "[ˈtaɲi]",
+    "example": "Szukam taniego hotelu.",
+    "imageName": "cheap_price",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Tanie zakupy.",
+      "To jest tanie mięso.",
+      "Tanie linie lotnicze."
+    ]
+  },
+  {
+    "id": 166,
+    "category": "Прилагательные",
+    "polish": "wysoki",
+    "translation": "высокий",
+    "transcription": "[vɨˈsɔkʲi]",
+    "example": "On jest bardzo wysoki.",
+    "imageName": "tall_giraffe",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Wysoki budynek.",
+      "Wysoka cena.",
+      "Wysokie góry."
+    ]
+  },
+  {
+    "id": 167,
+    "category": "Прилагательные",
+    "polish": "niski",
+    "translation": "низкий",
+    "transcription": "[ˈɲiskʲi]",
+    "example": "Ten stół jest za niski.",
+    "imageName": "low_short",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Niski człowiek.",
+      "Niskie ceny.",
+      "Niski poziom wody."
+    ]
+  },
+  {
+    "id": 168,
+    "category": "Прилагательные",
+    "polish": "młody",
+    "translation": "молодой",
+    "transcription": "[ˈmwɔdɨ]",
+    "example": "On jest jeszcze młody.",
+    "imageName": "young_boy",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Młodzi ludzie.",
+      "Młodszy brat.",
+      "Wyglądasz młodo."
+    ]
+  },
+  {
+    "id": 169,
+    "category": "Прилагательные",
+    "polish": "czysty",
+    "translation": "чистый",
+    "transcription": "[ˈʧ̑ɨstɨ]",
+    "example": "Lubię mieć czysty dom.",
+    "imageName": "clean_sparkle",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Czysta woda.",
+      "Czyste ubranie.",
+      "Czyste powietrze."
+    ]
+  },
+  {
+    "id": 170,
+    "category": "Прилагательные",
+    "polish": "brudny",
+    "translation": "грязный",
+    "transcription": "[ˈbrudnɨ]",
+    "example": "Twoje buty są brudne.",
+    "imageName": "dirty_mud",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Brudne naczynia.",
+      "Brudne ręce.",
+      "Nie jedz brudnymi rękami."
+    ]
+  },
+  {
+    "id": 171,
+    "category": "Прилагательные",
+    "polish": "trudny",
+    "translation": "трудный / сложный",
+    "transcription": "[ˈtrudnɨ]",
+    "example": "To jest trudne zadanie.",
+    "imageName": "hard_puzzle",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Język polski jest trudny.",
+      "Trudna sytuacja.",
+      "Miał trudne życie."
+    ]
+  },
+  {
+    "id": 172,
+    "category": "Прилагательные",
+    "polish": "łatwy",
+    "translation": "легкий (простой)",
+    "transcription": "[ˈwatfɨ]",
+    "example": "To był łatwy egzamin.",
+    "imageName": "easy_check",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Łatwy sposób.",
+      "To nie jest łatwe.",
+      "Poszło łatwo."
+    ]
+  },
+  {
+    "id": 173,
+    "category": "Прилагательные",
+    "polish": "smaczny",
+    "translation": "вкусный",
+    "transcription": "[ˈsmaʧ̑nɨ]",
+    "example": "To ciasto jest bardzo smaczne.",
+    "imageName": "tasty_food",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Smacznego! (Bon appétit)",
+      "Smaczny obiad.",
+      "Wszystko było smaczne."
+    ]
+  },
+  {
+    "id": 174,
+    "category": "Тело",
+    "polish": "twarz",
+    "translation": "лицо",
+    "transcription": "[tfaʂ]",
+    "example": "Umyj twarz.",
+    "imageName": "face_person",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ma smutną twarz.",
+      "Znajoma twarz.",
+      "Krem do twarzy."
+    ]
+  },
+  {
+    "id": 175,
+    "category": "Тело",
+    "polish": "usta",
+    "translation": "рот / губы",
+    "transcription": "[ˈusta]",
+    "example": "Pomalowała usta szminką.",
+    "imageName": "mouth_lips",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Otwórz usta.",
+      "Usta milczą, dusza śpiewa.",
+      "Czerwone usta."
+    ]
+  },
+  {
+    "id": 176,
+    "category": "Тело",
+    "polish": "ząb",
+    "translation": "зуб",
+    "transcription": "[zɔmp]",
+    "example": "Boli mnie ząb.",
+    "imageName": "tooth_white",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Myć zęby.",
+      "Wyrwać zęba.",
+      "Zdrowe zęby."
+    ]
+  },
+  {
+    "id": 177,
+    "category": "Тело",
+    "polish": "palec",
+    "translation": "палец",
+    "transcription": "[ˈpalɛʦ̑]",
+    "example": "Skaleczyłem się w palec.",
+    "imageName": "finger_pointing",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Palec u ręki.",
+      "Pokazywać palcem jest niegrzecznie.",
+      "Obrączka na palcu."
+    ]
+  },
+  {
+    "id": 178,
+    "category": "Тело",
+    "polish": "brzuch",
+    "translation": "живот",
+    "transcription": "[bʐux]",
+    "example": "Boli mnie brzuch z głodu.",
+    "imageName": "stomach_belly",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Leżeć na brzuchu.",
+      "Duży brzuch.",
+      "Ćwiczenia na brzuch."
+    ]
+  },
+  {
+    "id": 179,
+    "category": "Тело",
+    "polish": "plecy",
+    "translation": "спина",
+    "transcription": "[ˈplɛʦ̑ɨ]",
+    "example": "Mam proste plecy.",
+    "imageName": "back_body",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Bolą mnie plecy.",
+      "Odwrócił się plecami.",
+      "Nosić plecak na plecach."
+    ]
+  },
+  {
+    "id": 180,
+    "category": "Время",
+    "polish": "minuta",
+    "translation": "минута",
+    "transcription": "[mʲiˈnuta]",
+    "example": "Czekam pięć minut.",
+    "imageName": "minute_clock",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zaraz wracam, daj mi minutę.",
+      "W tej minucie.",
+      "Minuta ciszy."
+    ]
+  },
+  {
+    "id": 181,
+    "category": "Время",
+    "polish": "miesiąc",
+    "translation": "месяц",
+    "transcription": "[ˈmʲjɛɕɔnʦ̑]",
+    "example": "Styczeń to pierwszy miesiąc roku.",
+    "imageName": "calendar_month",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Jadę tam za miesiąc.",
+      "Miesiąc miodowy.",
+      "Ile miesięcy ma rok?"
+    ]
+  },
+  {
+    "id": 182,
+    "category": "Время",
+    "polish": "rano",
+    "translation": "утро / утром",
+    "transcription": "[ˈranɔ]",
+    "example": "Wstaję wcześnie rano.",
+    "imageName": "morning_sun",
+    "partOfSpeech": "сущ./нар.",
+    "examplesList": [
+      "Dobre rano (rzadziej używane, lepiej: Dzień dobry).",
+      "Od rana do wieczora.",
+      "Jutro rano."
+    ]
+  },
+  {
+    "id": 183,
+    "category": "Время",
+    "polish": "wieczór",
+    "translation": "вечер",
+    "transcription": "[ˈvʲjɛʧ̑ur]",
+    "example": "Dobry wieczór.",
+    "imageName": "evening_sunset",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Co robisz w wieczór wigilijny?",
+      "Dziś wieczorem idę do kina.",
+      "To był miły wieczór."
+    ]
+  },
+  {
+    "id": 184,
+    "category": "Числа",
+    "polish": "cztery",
+    "translation": "четыре",
+    "transcription": "[ˈʧ̑tɛrɨ]",
+    "example": "Stół ma cztery nogi.",
+    "imageName": "number_four",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "Cztery pory roku.",
+      "Godzina czwarta.",
+      "Mam cztery bilety."
+    ]
+  },
+  {
+    "id": 185,
+    "category": "Числа",
+    "polish": "pięć",
+    "translation": "пять",
+    "transcription": "[pʲjɛɲʨ̑]",
+    "example": "Mam pięć minut.",
+    "imageName": "number_five",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "Pięć palców u ręki.",
+      "Piątka (ocena w szkole).",
+      "Daj pięć (przybicie dłoni)."
+    ]
+  },
+  {
+    "id": 186,
+    "category": "Числа",
+    "polish": "sześć",
+    "translation": "шесть",
+    "transcription": "[ʂɛɕʨ̑]",
+    "example": "Wstaję o szóstej.",
+    "imageName": "number_six",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "Sześć złotych.",
+      "Mam sześć lat.",
+      "Szóstka w totolotka."
+    ]
+  },
+  {
+    "id": 187,
+    "category": "Числа",
+    "polish": "siedem",
+    "translation": "семь",
+    "transcription": "[ˈɕɛdɛm]",
+    "example": "Tydzień ma siedem dni.",
+    "imageName": "number_seven",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "Siedem cudów świata.",
+      "Siódma godzina.",
+      "Szczęśliwa siódemka."
+    ]
+  },
+  {
+    "id": 188,
+    "category": "Числа",
+    "polish": "osiem",
+    "translation": "восемь",
+    "transcription": "[ˈɔɕɛm]",
+    "example": "Pracuję osiem godzin dziennie.",
+    "imageName": "number_eight",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "Osiem lat.",
+      "Ósma rano.",
+      "Ośmiornica ma osiem ramion."
+    ]
+  },
+  {
+    "id": 189,
+    "category": "Числа",
+    "polish": "dziewięć",
+    "translation": "девять",
+    "transcription": "[ˈʥ̑ɛvʲjɛɲʨ̑]",
+    "example": "Kot ma podobno dziewięć żyć.",
+    "imageName": "number_nine",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "Dziewiąta wieczorem.",
+      "Dziewięć złotych.",
+      "Dziewięć miesięcy."
+    ]
+  },
+  {
+    "id": 190,
+    "category": "Числа",
+    "polish": "dziesięć",
+    "translation": "десять",
+    "transcription": "[ˈʥ̑ɛɕɛɲʨ̑]",
+    "example": "Mam dziesięć palców.",
+    "imageName": "number_ten",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "Dziesięć razy.",
+      "Strzał w dziesiątkę.",
+      "Dziesięć lat temu."
+    ]
+  },
+  {
+    "id": 191,
+    "category": "Числа",
+    "polish": "sto",
+    "translation": "сто",
+    "transcription": "[stɔ]",
+    "example": "Sto lat! (życzenia urodzinowe).",
+    "imageName": "number_hundred",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "To kosztuje sto złotych.",
+      "Sto kilometrów.",
+      "Jeden na sto."
+    ]
+  },
+  {
+    "id": 192,
+    "category": "Числа",
+    "polish": "tysiąc",
+    "translation": "тысяча",
+    "transcription": "[ˈtɨɕɔnʦ̑]",
+    "example": "Zarabiam trzy tysiące.",
+    "imageName": "number_thousand",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "Tysiąc spraw na głowie.",
+      "Jeden obraz wart więcej niż tysiąc słów.",
+      "Tysiąc lat."
+    ]
+  },
+  {
+    "id": 193,
+    "category": "Цвета",
+    "polish": "żółty",
+    "translation": "желтый",
+    "transcription": "[ˈʐuwtɨ]",
+    "example": "Żółte słońce.",
+    "imageName": "yellow_sun",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Żółty ser.",
+      "Żółta kartka (w sporcie).",
+      "Lubię kolor żółty."
+    ]
+  },
+  {
+    "id": 194,
+    "category": "Цвета",
+    "polish": "brązowy",
+    "translation": "коричневый",
+    "transcription": "[brɔ̃ˈzɔvɨ]",
+    "example": "Brązowe buty.",
+    "imageName": "brown_wood",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Brązowe oczy.",
+      "Brązowy cukier.",
+      "Brązowy medal."
+    ]
+  },
+  {
+    "id": 195,
+    "category": "Цвета",
+    "polish": "szary",
+    "translation": "серый",
+    "transcription": "[ˈʂarɨ]",
+    "example": "Szara myszka.",
+    "imageName": "grey_stone",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Szare niebo.",
+      "Szary kolor jest smutny.",
+      "Szare życie (codzienność)."
+    ]
+  },
+  {
+    "id": 196,
+    "category": "Приветствия",
+    "polish": "cześć",
+    "translation": "привет / пока",
+    "transcription": "[ʧ̑ɛɕʨ̑]",
+    "example": "Cześć, jak się masz?",
+    "imageName": "hello_wave",
+    "partOfSpeech": "межд.",
+    "examplesList": [
+      "Cześć, muszę już iść.",
+      "Powiedz wszystkim cześć.",
+      "No to cześć!"
+    ]
+  },
+  {
+    "id": 197,
+    "category": "Приветствия",
+    "polish": "dobranoc",
+    "translation": "спокойной ночи",
+    "transcription": "[dɔˈbranɔʦ̑]",
+    "example": "Idę spać, dobranoc.",
+    "imageName": "goodnight_moon",
+    "partOfSpeech": "фраза",
+    "examplesList": [
+      "Dobranoc, pchły na noc.",
+      "Powiedział cicho dobranoc.",
+      "Życzę dobranoc."
+    ]
+  },
+  {
+    "id": 198,
+    "category": "Inne",
+    "polish": "imię",
+    "translation": "имя",
+    "transcription": "[ˈimʲjɛ]",
+    "example": "Jak masz na imię?",
+    "imageName": "name_tag",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Moje imię to Piotr.",
+      "W imię prawa.",
+      "Znasz jego imię?"
+    ]
+  },
+  {
+    "id": 199,
+    "category": "Inne",
+    "polish": "nazwisko",
+    "translation": "фамилия",
+    "transcription": "[nazˈvʲiskɔ]",
+    "example": "Jakie jest twoje nazwisko?",
+    "imageName": "surname_id",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Proszę podać imię i nazwisko.",
+      "Mam trudne nazwisko.",
+      "Panieńskie nazwisko."
+    ]
+  },
+  {
+    "id": 200,
+    "category": "Inne",
+    "polish": "adres",
+    "translation": "адрес",
+    "transcription": "[ˈadrɛs]",
+    "example": "Podaj mi swój adres.",
+    "imageName": "address_map",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Adres zamieszkania.",
+      "Adres e-mail.",
+      "Nie znam tego adresu."
+    ]
+  },
+  {
+    "id": 201,
+    "category": "Дни недели",
+    "polish": "poniedziałek",
+    "translation": "понедельник",
+    "transcription": "[pɔɲɛˈʥ̑awɛk]",
+    "example": "Nie lubię poniedziałków.",
+    "imageName": "calendar_monday",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W poniedziałek idę do pracy.",
+      "Poniedziałek to pierwszy dzień tygodnia.",
+      "Spotkanie jest w poniedziałek."
+    ]
+  },
+  {
+    "id": 202,
+    "category": "Дни недели",
+    "polish": "wtorek",
+    "translation": "вторник",
+    "transcription": "[ˈftɔrɛk]",
+    "example": "We wtorek mam trening.",
+    "imageName": "calendar_tuesday",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Widzimy się we wtorek.",
+      "Wtorek to mój ulubiony dzień.",
+      "Sklep jest nieczynny we wtorki."
+    ]
+  },
+  {
+    "id": 203,
+    "category": "Дни недели",
+    "polish": "środa",
+    "translation": "среда",
+    "transcription": "[ˈɕrɔda]",
+    "example": "Środa to środek tygodnia.",
+    "imageName": "calendar_wednesday",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W środę idę do kina.",
+      "Popielcowa Środa.",
+      "Mamy spotkanie w środę rano."
+    ]
+  },
+  {
+    "id": 204,
+    "category": "Дни недели",
+    "polish": "czwartek",
+    "translation": "четверг",
+    "transcription": "[ˈʧ̑fartɛk]",
+    "example": "W czwartek jedziemy na wycieczkę.",
+    "imageName": "calendar_thursday",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Tłusty Czwartek.",
+      "Do zobaczenia w czwartek.",
+      "Czwartek jest przed piątkiem."
+    ]
+  },
+  {
+    "id": 205,
+    "category": "Дни недели",
+    "polish": "piątek",
+    "translation": "пятница",
+    "transcription": "[ˈpʲjɔntɛk]",
+    "example": "Dzięki Bogu, już piątek.",
+    "imageName": "calendar_friday",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W piątek wieczorem wychodzę ze znajomymi.",
+      "Piątek trzynastego.",
+      "Kończę pracę w piątek o szesnastej."
+    ]
+  },
+  {
+    "id": 206,
+    "category": "Дни недели",
+    "polish": "sobota",
+    "translation": "суббота",
+    "transcription": "[sɔˈbɔta]",
+    "example": "W sobotę sprzątam mieszkanie.",
+    "imageName": "calendar_saturday",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Sobota to dzień wolny.",
+      "Idziemy na imprezę w sobotę.",
+      "Wielka Sobota."
+    ]
+  },
+  {
+    "id": 207,
+    "category": "Дни недели",
+    "polish": "niedziela",
+    "translation": "воскресенье",
+    "transcription": "[ɲɛˈʥ̑ɛla]",
+    "example": "W niedzielę odpoczywam.",
+    "imageName": "calendar_sunday",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Niedzielny obiad.",
+      "Sklepy są zamknięte w niedzielę.",
+      "Spacer w niedzielę."
+    ]
+  },
+  {
+    "id": 208,
+    "category": "Дом",
+    "polish": "łazienka",
+    "translation": "ванная комната",
+    "transcription": "[waˈʑɛnka]",
+    "example": "Biorę prysznic w łazience.",
+    "imageName": "bathroom_interior",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Mamy małą łazienkę.",
+      "Zajęta łazienka.",
+      "Ręcznik w łazience."
+    ]
+  },
+  {
+    "id": 209,
+    "category": "Дом",
+    "polish": "sypialnia",
+    "translation": "спальня",
+    "transcription": "[sɨˈpʲjalɲa]",
+    "example": "Moja sypialnia jest jasna.",
+    "imageName": "bedroom_bed",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W sypialni stoi duże łóżko.",
+      "Idę do sypialni spać.",
+      "Kolor ścian w sypialni."
+    ]
+  },
+  {
+    "id": 210,
+    "category": "Дом",
+    "polish": "salon",
+    "translation": "гостиная / салон",
+    "transcription": "[ˈsalɔn]",
+    "example": "Oglądamy telewizję w salonie.",
+    "imageName": "living_room",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Goście siedzą w salonie.",
+      "Duży salon z kominkiem.",
+      "Meble do salonu."
+    ]
+  },
+  {
+    "id": 211,
+    "category": "Дом",
+    "polish": "podłoga",
+    "translation": "пол",
+    "transcription": "[pɔdˈwɔɡa]",
+    "example": "Podłoga jest śliska.",
+    "imageName": "floor_wood",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Drewniana podłoga.",
+      "Umyj podłogę.",
+      "Coś spadło na podłogę."
+    ]
+  },
+  {
+    "id": 212,
+    "category": "Дом",
+    "polish": "ściana",
+    "translation": "стена",
+    "transcription": "[ˈɕʨ̑ana]",
+    "example": "Powieś obraz na ścianie.",
+    "imageName": "wall_brick",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Białe ściany.",
+      "Ściana nośna.",
+      "Za ścianą mieszka sąsiad."
+    ]
+  },
+  {
+    "id": 213,
+    "category": "Дом",
+    "polish": "sufit",
+    "translation": "потолок",
+    "transcription": "[ˈsufʲit]",
+    "example": "Mucha siedzi na suficie.",
+    "imageName": "ceiling_lamp",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wysoki sufit.",
+      "Maluję sufit na biało.",
+      "Lampa wisi u sufitu."
+    ]
+  },
+  {
+    "id": 214,
+    "category": "Дом",
+    "polish": "dach",
+    "translation": "крыша",
+    "transcription": "[dax]",
+    "example": "Czerwony dach domu.",
+    "imageName": "roof_house",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kot chodzi po dachu.",
+      "Dach przecieka.",
+      "Mieszkać pod jednym dachem."
+    ]
+  },
+  {
+    "id": 215,
+    "category": "Дом",
+    "polish": "ogród",
+    "translation": "сад",
+    "transcription": "[ˈɔɡrut]",
+    "example": "Mam piękny ogród.",
+    "imageName": "garden_flowers",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Pracuję w ogrodzie.",
+      "Kwiaty w ogrodzie.",
+      "Ogród botaniczny."
+    ]
+  },
+  {
+    "id": 216,
+    "category": "Дом",
+    "polish": "schody",
+    "translation": "лестница / ступеньки",
+    "transcription": "[ˈsxɔdɨ]",
+    "example": "Wejdź po schodach na górę.",
+    "imageName": "stairs_steps",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Strome schody.",
+      "Spadł ze schodów.",
+      "Drewniane schody."
+    ]
+  },
+  {
+    "id": 217,
+    "category": "Дом",
+    "polish": "garaż",
+    "translation": "гараж",
+    "transcription": "[ˈɡaraʂ]",
+    "example": "Samochód stoi w garażu.",
+    "imageName": "garage_car",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zamykam garaż.",
+      "Garaż podziemny.",
+      "Tata jest w garażu."
+    ]
+  },
+  {
+    "id": 218,
+    "category": "Школа/Офис",
+    "polish": "ołówek",
+    "translation": "карандаш",
+    "transcription": "[ɔˈwuvɛk]",
+    "example": "Piszę ołówkiem.",
+    "imageName": "pencil_drawing",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zatemperuj ołówek.",
+      "Rysunek ołówkiem.",
+      "Gumka i ołówek."
+    ]
+  },
+  {
+    "id": 219,
+    "category": "Школа/Офис",
+    "polish": "zeszyt",
+    "translation": "тетрадь",
+    "transcription": "[ˈzɛʂɨt]",
+    "example": "Zapisz to w zeszycie.",
+    "imageName": "notebook_school",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zeszyt w kratkę.",
+      "Zeszyt w linię.",
+      "Kupiłem zeszyty do szkoły."
+    ]
+  },
+  {
+    "id": 220,
+    "category": "Школа/Офис",
+    "polish": "papier",
+    "translation": "бумага",
+    "transcription": "[ˈpapʲjɛr]",
+    "example": "Drukarka nie ma papieru.",
+    "imageName": "paper_sheet",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kartka papieru.",
+      "Papier toaletowy.",
+      "Torba z papieru."
+    ]
+  },
+  {
+    "id": 221,
+    "category": "Школа/Офис",
+    "polish": "tablica",
+    "translation": "доска (школьная / информационная)",
+    "transcription": "[taˈblʲiʦ̑a]",
+    "example": "Nauczyciel pisze na tablicy.",
+    "imageName": "blackboard_chalk",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Tablica rejestracyjna.",
+      "Zmaż tablicę.",
+      "Tablica ogłoszeń."
+    ]
+  },
+  {
+    "id": 222,
+    "category": "Школа/Офис",
+    "polish": "biurko",
+    "translation": "письменный стол",
+    "transcription": "[ˈbʲjurkɔ]",
+    "example": "Odrabiam lekcje przy biurku.",
+    "imageName": "desk_office",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Bałagan na biurku.",
+      "Wygodne biurko.",
+      "Siedzę przy biurku."
+    ]
+  },
+  {
+    "id": 223,
+    "category": "Профессии",
+    "polish": "nauczyciel",
+    "translation": "учитель",
+    "transcription": "[naʊ̯ˈʧ̑ɨʨ̑ɛl]",
+    "example": "Nauczyciel matematyki.",
+    "imageName": "teacher_classroom",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Lubię mojego nauczyciela.",
+      "Dzień Nauczyciela.",
+      "Nauczyciel zadaje pracę domową."
+    ]
+  },
+  {
+    "id": 224,
+    "category": "Профессии",
+    "polish": "uczeń",
+    "translation": "ученик",
+    "transcription": "[ˈuʧ̑ɛɲ]",
+    "example": "Wzorowy uczeń.",
+    "imageName": "student_boy",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Uczniowie wracają do szkoły.",
+      "Jestem uczniem liceum.",
+      "Pilny uczeń."
+    ]
+  },
+  {
+    "id": 225,
+    "category": "Профессии",
+    "polish": "policjant",
+    "translation": "полицейский",
+    "transcription": "[pɔˈlʲiʦ̑jant]",
+    "example": "Policjant kieruje ruchem.",
+    "imageName": "police_officer",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zadzwonić po policjanta.",
+      "Radiowóz policjanta.",
+      "Policjant dał mi mandat."
+    ]
+  },
+  {
+    "id": 226,
+    "category": "Профессии",
+    "polish": "kierowca",
+    "translation": "водитель",
+    "transcription": "[kʲjɛˈrɔfʦ̑a]",
+    "example": "Kierowca autobusu.",
+    "imageName": "driver_car",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Jestem dobrym kierowcą.",
+      "Kierowca ciężarówki.",
+      "Prawo jazdy kierowcy."
+    ]
+  },
+  {
+    "id": 227,
+    "category": "Профессии",
+    "polish": "sprzedawca",
+    "translation": "продавец",
+    "transcription": "[spʂɛˈdafʦ̑a]",
+    "example": "Zapytaj sprzedawcę o cenę.",
+    "imageName": "salesman_shop",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Miły sprzedawca.",
+      "Pracuję jako sprzedawca.",
+      "Sprzedawca w sklepie."
+    ]
+  },
+  {
+    "id": 228,
+    "category": "Профессии",
+    "polish": "kucharz",
+    "translation": "повар",
+    "transcription": "[ˈkuxaʂ]",
+    "example": "Kucharz gotuje zupę.",
+    "imageName": "chef_cooking",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Szef kuchni (główny kucharz).",
+      "Dobry kucharz.",
+      "Czapka kucharza."
+    ]
+  },
+  {
+    "id": 229,
+    "category": "Прилагательные",
+    "polish": "mokry",
+    "translation": "мокрый",
+    "transcription": "[ˈmɔkrɨ]",
+    "example": "Mam mokre włosy.",
+    "imageName": "wet_water",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Mokry od deszczu.",
+      "Mokra podłoga.",
+      "Pies jest mokry."
+    ]
+  },
+  {
+    "id": 230,
+    "category": "Прилагательные",
+    "polish": "suchy",
+    "translation": "сухой",
+    "transcription": "[ˈsuxɨ]",
+    "example": "Ręcznik jest suchy.",
+    "imageName": "dry_towel",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Suche pranie.",
+      "Mam sucho w gardle.",
+      "Suchy chleb."
+    ]
+  },
+  {
+    "id": 231,
+    "category": "Прилагательные",
+    "polish": "pełny",
+    "translation": "полный",
+    "transcription": "[ˈpɛwnɨ]",
+    "example": "Szklanka jest pełna.",
+    "imageName": "full_glass",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Pełny bak paliwa.",
+      "Jestem pełny (najedzony).",
+      "Pełny etat."
+    ]
+  },
+  {
+    "id": 232,
+    "category": "Прилагательные",
+    "polish": "pusty",
+    "translation": "пустой",
+    "transcription": "[ˈpustɨ]",
+    "example": "Pusty pokój.",
+    "imageName": "empty_box",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Pusta butelka.",
+      "Ulica jest pusta.",
+      "Pusty portfel."
+    ]
+  },
+  {
+    "id": 233,
+    "category": "Прилагательные",
+    "polish": "jasny",
+    "translation": "светлый / ясный",
+    "transcription": "[ˈjasnɨ]",
+    "example": "Jasny kolor.",
+    "imageName": "bright_light",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Jasne włosy (blond).",
+      "To jest jasne (zrozumiałe).",
+      "Jasny dzień."
+    ]
+  },
+  {
+    "id": 234,
+    "category": "Прилагательные",
+    "polish": "ciemny",
+    "translation": "темный",
+    "transcription": "[ˈʨ̑ɛmnɨ]",
+    "example": "Ciemna noc.",
+    "imageName": "dark_night",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Ciemne okulary.",
+      "Ciemny pokój.",
+      "Ciemne piwo."
+    ]
+  },
+  {
+    "id": 235,
+    "category": "Прилагательные",
+    "polish": "głośny",
+    "translation": "громкий / шумный",
+    "transcription": "[ˈɡwɔɕnɨ]",
+    "example": "Głośna muzyka.",
+    "imageName": "loud_speaker",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Głośny sąsiad.",
+      "Głośny śmiech.",
+      "Jest tu za głośno."
+    ]
+  },
+  {
+    "id": 236,
+    "category": "Прилагательные",
+    "polish": "cichy",
+    "translation": "тихий",
+    "transcription": "[ˈʨ̑ixɨ]",
+    "example": "Bądź cicho.",
+    "imageName": "quiet_shh",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Cichy głos.",
+      "Cicha ulica.",
+      "Cicha woda."
+    ]
+  },
+  {
+    "id": 237,
+    "category": "Прилагательные",
+    "polish": "długi",
+    "translation": "длинный / долгий",
+    "transcription": "[ˈdwuɡʲi]",
+    "example": "Długa droga.",
+    "imageName": "long_ruler",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Długie włosy.",
+      "To była długa noc.",
+      "Długi film."
+    ]
+  },
+  {
+    "id": 238,
+    "category": "Прилагательные",
+    "polish": "krótki",
+    "translation": "короткий",
+    "transcription": "[ˈkrutkʲi]",
+    "example": "Krótka spódnica.",
+    "imageName": "short_pencil",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Krótki czas.",
+      "Mam krótkie pytanie.",
+      "Krótkie włosy."
+    ]
+  },
+  {
+    "id": 239,
+    "category": "Прилагательные",
+    "polish": "gruby",
+    "translation": "толстый / жирный",
+    "transcription": "[ˈɡrubɨ]",
+    "example": "Gruba książka.",
+    "imageName": "thick_book",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Gruby kot.",
+      "Gruby sweter.",
+      "Grube pieniądze (dużo)."
+    ]
+  },
+  {
+    "id": 240,
+    "category": "Прилагательные",
+    "polish": "chudy",
+    "translation": "худой",
+    "transcription": "[ˈxudɨ]",
+    "example": "Chudy pies.",
+    "imageName": "thin_body",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "On jest bardzo chudy.",
+      "Chude mięso.",
+      "Chude lata (biedne)."
+    ]
+  },
+  {
+    "id": 241,
+    "category": "Глаголы",
+    "polish": "otwierać",
+    "translation": "открывать",
+    "transcription": "[ɔtfʲˈjɛraʨ̑]",
+    "example": "Otwieram okno.",
+    "imageName": "opening_door",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Sklep otwierają o dziewiątej.",
+      "Otwórz drzwi.",
+      "Otwierać oczy."
+    ]
+  },
+  {
+    "id": 242,
+    "category": "Глаголы",
+    "polish": "zamykać",
+    "translation": "закрывать",
+    "transcription": "[zaˈmɨkaʨ̑]",
+    "example": "Zamykam sklep.",
+    "imageName": "closing_door",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Zamknij drzwi.",
+      "Zamykam oczy.",
+      "Zamykać na klucz."
+    ]
+  },
+  {
+    "id": 243,
+    "category": "Глаголы",
+    "polish": "myć",
+    "translation": "мыть",
+    "transcription": "[mɨʨ̑]",
+    "example": "Myję ręce.",
+    "imageName": "washing_hands",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Myć naczynia.",
+      "Myć zęby.",
+      "Myć samochód."
+    ]
+  },
+  {
+    "id": 244,
+    "category": "Глаголы",
+    "polish": "gotować",
+    "translation": "готовить (еду) / варить",
+    "transcription": "[ɡɔˈtɔvaʨ̑]",
+    "example": "Lubię gotować.",
+    "imageName": "cooking_pot",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Mama gotuje zupę.",
+      "Woda się gotuje.",
+      "Ugotować jajko."
+    ]
+  },
+  {
+    "id": 245,
+    "category": "Глаголы",
+    "polish": "sprzątać",
+    "translation": "убирать (делать уборку)",
+    "transcription": "[ˈspʂɔntaʨ̑]",
+    "example": "Muszę posprzątać pokój.",
+    "imageName": "cleaning_broom",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Sprzątam w soboty.",
+      "Sprzątać ze stołu.",
+      "Sprzątaczka sprząta biuro."
+    ]
+  },
+  {
+    "id": 246,
+    "category": "Глаголы",
+    "polish": "pamiętać",
+    "translation": "помнить",
+    "transcription": "[paˈmʲjɛntaʨ̑]",
+    "example": "Pamiętam ten dzień.",
+    "imageName": "remembering_brain",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Nie pamiętam twojego imienia.",
+      "Musisz o tym pamiętać.",
+      "Pamiętaj, żeby kupić mleko."
+    ]
+  },
+  {
+    "id": 247,
+    "category": "Глаголы",
+    "polish": "zapomnieć",
+    "translation": "забыть",
+    "transcription": "[zaˈpɔmɲɛʨ̑]",
+    "example": "Zapomniałem kluczy.",
+    "imageName": "forgetting_question",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Nie zapomnij o mnie.",
+      "Zapomniałem, co chciałem powiedzieć.",
+      "Szybko zapomniał."
+    ]
+  },
+  {
+    "id": 248,
+    "category": "Глаголы",
+    "polish": "zaczynać",
+    "translation": "начинать",
+    "transcription": "[zaˈʧ̑ɨnaʨ̑]",
+    "example": "Zaczynamy lekcję.",
+    "imageName": "start_button",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Film zaczyna się o ósmej.",
+      "Zacząć od nowa.",
+      "Wszystko się kiedyś zaczyna."
+    ]
+  },
+  {
+    "id": 249,
+    "category": "Глаголы",
+    "polish": "kończyć",
+    "translation": "заканчивать",
+    "transcription": "[ˈkɔɲʧ̑ɨʨ̑]",
+    "example": "Kończę pracę.",
+    "imageName": "finish_flag",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Film się kończy.",
+      "Muszę to skończyć dzisiaj.",
+      "Wszystko dobre, co się dobrze kończy."
+    ]
+  },
+  {
+    "id": 250,
+    "category": "Глаголы",
+    "polish": "stać",
+    "translation": "стоять",
+    "transcription": "[staʨ̑]",
+    "example": "Stoję w kolejce.",
+    "imageName": "standing_person",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Samochód stoi na parkingu.",
+      "Nie stój tak.",
+      "Stać mnie na to (to have money for - idiom)."
+    ]
+  },
+  {
+    "id": 251,
+    "category": "Глаголы",
+    "polish": "siedzieć",
+    "translation": "сидеть",
+    "transcription": "[ˈɕɛʥ̑ɛʨ̑]",
+    "example": "Siedzę na krześle.",
+    "imageName": "sitting_chair",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Siedzieć w domu.",
+      "Pies siedzi.",
+      "Siedzieć przy stole."
+    ]
+  },
+  {
+    "id": 252,
+    "category": "Глаголы",
+    "polish": "leżeć",
+    "translation": "лежать",
+    "transcription": "[ˈlɛʐɛʨ̑]",
+    "example": "Leżę w łóżku.",
+    "imageName": "lying_bed",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Książka leży na stole.",
+      "Leżeć na plaży.",
+      "Nie chce mi się leżeć."
+    ]
+  },
+  {
+    "id": 253,
+    "category": "Глаголы",
+    "polish": "brać",
+    "translation": "брать",
+    "transcription": "[braʨ̑]",
+    "example": "Biorę prysznic.",
+    "imageName": "taking_hand",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Nie bierz tego.",
+      "Brać ślub.",
+      "Biorę urlop."
+    ]
+  },
+  {
+    "id": 254,
+    "category": "Глаголы",
+    "polish": "dać",
+    "translation": "дать",
+    "transcription": "[daʨ̑]",
+    "example": "Daj mi to.",
+    "imageName": "giving_hand",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Dasz radę!",
+      "Daj mi spokój.",
+      "Co mi dasz?"
+    ]
+  },
+  {
+    "id": 255,
+    "category": "Глаголы",
+    "polish": "pomagać",
+    "translation": "помогать",
+    "transcription": "[pɔˈmaɡaʨ̑]",
+    "example": "Lubię pomagać innym.",
+    "imageName": "helping_hands",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Pomóż mi, proszę.",
+      "Lekarz pomaga pacjentom.",
+      "To nie pomaga."
+    ]
+  },
+  {
+    "id": 256,
+    "category": "Глаголы",
+    "polish": "umieć",
+    "translation": "уметь",
+    "transcription": "[ˈumʲjɛʨ̑]",
+    "example": "Umiem pływać.",
+    "imageName": "skill_talent",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Czy umiesz mówić po polsku?",
+      "Nie umiem tego zrobić.",
+      "Ona umie śpiewać."
+    ]
+  },
+  {
+    "id": 257,
+    "category": "Глаголы",
+    "polish": "musieć",
+    "translation": "быть должным (must)",
+    "transcription": "[ˈmuɕɛʨ̑]",
+    "example": "Muszę iść do domu.",
+    "imageName": "must_sign",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Musisz to zobaczyć.",
+      "Nie musisz tego robić.",
+      "Pociąg musi odjechać."
+    ]
+  },
+  {
+    "id": 258,
+    "category": "Глаголы",
+    "polish": "biegać",
+    "translation": "бегать",
+    "transcription": "[ˈbʲjɛɡaʨ̑]",
+    "example": "Lubię biegać rano.",
+    "imageName": "running_shoes",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Dzieci biegają po podwórku.",
+      "Biegać w maratonie.",
+      "Szybko biegać."
+    ]
+  },
+  {
+    "id": 259,
+    "category": "Глаголы",
+    "polish": "pływać",
+    "translation": "плавать",
+    "transcription": "[ˈpwɨvaʨ̑]",
+    "example": "Umiem pływać.",
+    "imageName": "swimming_pool",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Ryby pływają w wodzie.",
+      "Pływamy w morzu.",
+      "Statek pływa."
+    ]
+  },
+  {
+    "id": 260,
+    "category": "Глаголы",
+    "polish": "latać",
+    "translation": "летать",
+    "transcription": "[ˈlataʨ̑]",
+    "example": "Ptaki latają.",
+    "imageName": "flying_bird",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Samoloty latają wysoko.",
+      "Latać samolotem.",
+      "Czas szybko leci (lata)."
+    ]
+  },
+  {
+    "id": 261,
+    "category": "Животные",
+    "polish": "krowa",
+    "translation": "корова",
+    "transcription": "[ˈkrɔva]",
+    "example": "Krowa daje mleko.",
+    "imageName": "cow_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Stado krów.",
+      "Krowa na łące.",
+      "Łaciata krowa."
+    ]
+  },
+  {
+    "id": 262,
+    "category": "Животные",
+    "polish": "świnia",
+    "translation": "свинья",
+    "transcription": "[ˈɕfʲiɲa]",
+    "example": "Różowa świnia.",
+    "imageName": "pig_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Brudny jak świnia.",
+      "Mięso wieprzowe jest ze świni.",
+      "Świnka morska."
+    ]
+  },
+  {
+    "id": 263,
+    "category": "Животные",
+    "polish": "koń",
+    "translation": "лошадь / конь",
+    "transcription": "[kɔɲ]",
+    "example": "Jeżdżę na koniu.",
+    "imageName": "horse_running",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Koń ma cztery kopyta.",
+      "Silny jak koń.",
+      "Wyścigi konne."
+    ]
+  },
+  {
+    "id": 264,
+    "category": "Животные",
+    "polish": "kura",
+    "translation": "курица",
+    "transcription": "[ˈkura]",
+    "example": "Kura znosi jajka.",
+    "imageName": "chicken_hen",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kura na podwórku.",
+      "Rosół z kury.",
+      "Kura domowa."
+    ]
+  },
+  {
+    "id": 265,
+    "category": "Животные",
+    "polish": "ryba",
+    "translation": "рыба",
+    "transcription": "[ˈrɨba]",
+    "example": "Ryba pływa w wodzie.",
+    "imageName": "fish_swimming",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Lubię łowić ryby.",
+      "Zdrów jak ryba.",
+      "Smażona ryba."
+    ]
+  },
+  {
+    "id": 266,
+    "category": "Животные",
+    "polish": "mysz",
+    "translation": "мышь",
+    "transcription": "[mɨʂ]",
+    "example": "Kot złapał mysz.",
+    "imageName": "mouse_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Szara mysz.",
+      "Mysz komputerowa.",
+      "Boi się myszy."
+    ]
+  },
+  {
+    "id": 267,
+    "category": "Еда",
+    "polish": "kurczak",
+    "translation": "цыпленок / курица (еда)",
+    "transcription": "[ˈkurʧ̑ak]",
+    "example": "Jem pieczonego kurczaka.",
+    "imageName": "chicken_meat",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kurczak z ryżem.",
+      "Sałatka z kurczakiem.",
+      "Skrzydełka z kurczaka."
+    ]
+  },
+  {
+    "id": 268,
+    "category": "Еда",
+    "polish": "ryż",
+    "translation": "рис",
+    "transcription": "[rɨʂ]",
+    "example": "Kurczak z ryżem.",
+    "imageName": "rice_bowl",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Gotować ryż.",
+      "Ryż jest biały.",
+      "Lubię zupę pomidorową z ryżem."
+    ]
+  },
+  {
+    "id": 269,
+    "category": "Еда",
+    "polish": "makaron",
+    "translation": "макароны",
+    "transcription": "[maˈkarɔn]",
+    "example": "Włosi kochają makaron.",
+    "imageName": "pasta_spaghetti",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Makaron z sosem.",
+      "Zupa z makaronem.",
+      "Gotować makaron."
+    ]
+  },
+  {
+    "id": 270,
+    "category": "Еда",
+    "polish": "sól",
+    "translation": "соль",
+    "transcription": "[sul]",
+    "example": "Podaj mi sól.",
+    "imageName": "salt_shaker",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zupa bez soli.",
+      "Sól morska.",
+      "Sól i pieprz."
+    ]
+  },
+  {
+    "id": 271,
+    "category": "Еда",
+    "polish": "pieprz",
+    "translation": "перец (черный)",
+    "transcription": "[pʲjɛpʂ]",
+    "example": "Lubię ostre przyprawy jak pieprz.",
+    "imageName": "pepper_black",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Sól i pieprz.",
+      "Pieprz czarny mielony.",
+      "Dodać pieprzu."
+    ]
+  },
+  {
+    "id": 272,
+    "category": "Тело",
+    "polish": "nos",
+    "translation": "нос",
+    "transcription": "[nɔs]",
+    "example": "Mam katar i zatkany nos.",
+    "imageName": "nose_face",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Długi nos.",
+      "Oddychać przez nos.",
+      "Mieć nosa (przeczucie)."
+    ]
+  },
+  {
+    "id": 273,
+    "category": "Тело",
+    "polish": "ucho",
+    "translation": "ухо",
+    "transcription": "[ˈuxɔ]",
+    "example": "Boli mnie ucho.",
+    "imageName": "ear_human",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Słuchać jednym uchem.",
+      "Ośle uszy.",
+      "Zatkaj uszy."
+    ]
+  },
+  {
+    "id": 274,
+    "category": "Тело",
+    "polish": "szyja",
+    "translation": "шея",
+    "transcription": "[ˈʂɨja]",
+    "example": "Boli mnie szyja.",
+    "imageName": "neck_body",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Długa szyja.",
+      "Szalik na szyi.",
+      "Rzucić się na szyję."
+    ]
+  },
+  {
+    "id": 275,
+    "category": "Тело",
+    "polish": "kolano",
+    "translation": "колено",
+    "transcription": "[kɔˈlanɔ]",
+    "example": "Uderzyłem się w kolano.",
+    "imageName": "knee_leg",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Na kolanach.",
+      "Zgiąć kolana.",
+      "Ból kolana."
+    ]
+  },
+  {
+    "id": 276,
+    "category": "Тело",
+    "polish": "stopa",
+    "translation": "стопа",
+    "transcription": "[ˈstɔpa]",
+    "example": "Mam dużą stopę.",
+    "imageName": "foot_human",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Boso (bez butów na stopach).",
+      "Stopa życiowa.",
+      "Odcisk stopy."
+    ]
+  },
+  {
+    "id": 277,
+    "category": "Природа",
+    "polish": "trawa",
+    "translation": "трава",
+    "transcription": "[ˈtrava]",
+    "example": "Trawa jest zielona.",
+    "imageName": "grass_green",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Leżeć na trawie.",
+      "Kosić trawę.",
+      "Trawnik przed domem."
+    ]
+  },
+  {
+    "id": 278,
+    "category": "Природа",
+    "polish": "ziemia",
+    "translation": "земля",
+    "transcription": "[ˈʑɛmʲja]",
+    "example": "Ziemia krąży wokół Słońca.",
+    "imageName": "earth_planet",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Leżeć na ziemi.",
+      "Czarna ziemia.",
+      "Ziemia ojczysta."
+    ]
+  },
+  {
+    "id": 279,
+    "category": "Природа",
+    "polish": "księżyc",
+    "translation": "луна / месяц",
+    "transcription": "[ˈkɕɛ̃ʐɨʦ̑]",
+    "example": "Księżyc świeci w nocy.",
+    "imageName": "moon_full",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Pełnia księżyca.",
+      "Lot na księżyc.",
+      "Księżyc w nowiu."
+    ]
+  },
+  {
+    "id": 280,
+    "category": "Природа",
+    "polish": "gwiazda",
+    "translation": "звезда",
+    "transcription": "[ˈɡvʲjazda]",
+    "example": "Gwiazda na niebie.",
+    "imageName": "star_shine",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Spadająca gwiazda.",
+      "Gwiazda filmowa.",
+      "Gwiazdka (Boże Narodzenie)."
+    ]
+  },
+  {
+    "id": 281,
+    "category": "Одежда",
+    "polish": "płaszcz",
+    "translation": "пальто / плащ",
+    "transcription": "[pwaʂʧ̑]",
+    "example": "Jesienią noszę płaszcz.",
+    "imageName": "coat_winter",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ciepły płaszcz.",
+      "Płaszcz przeciwdeszczowy.",
+      "Kieszeń w płaszczu."
+    ]
+  },
+  {
+    "id": 282,
+    "category": "Одежда",
+    "polish": "szalik",
+    "translation": "шарф",
+    "transcription": "[ˈʂalʲik]",
+    "example": "Owiń szyję szalikiem.",
+    "imageName": "scarf_winter",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wełniany szalik.",
+      "Szalik w kratkę.",
+      "Zgubiłem szalik."
+    ]
+  },
+  {
+    "id": 283,
+    "category": "Одежда",
+    "polish": "rękawiczki",
+    "translation": "перчатки",
+    "transcription": "[rɛ̃kaˈvʲiʧ̑kʲi]",
+    "example": "Zimą marzną ręce, załóż rękawiczki.",
+    "imageName": "gloves_winter",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Skórzane rękawiczki.",
+      "Para rękawiczek.",
+      "Rękawiczki robocze."
+    ]
+  },
+  {
+    "id": 284,
+    "category": "Одежда",
+    "polish": "skarpety",
+    "translation": "носки",
+    "transcription": "[skarˈpɛtɨ]",
+    "example": "Ciepłe skarpety.",
+    "imageName": "socks_pair",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Dziura w skarpecie.",
+      "Czyste skarpety.",
+      "Para skarpet."
+    ]
+  },
+  {
+    "id": 285,
+    "category": "Город",
+    "polish": "most",
+    "translation": "мост",
+    "transcription": "[mɔst]",
+    "example": "Przechodzę przez most.",
+    "imageName": "bridge_river",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Most nad rzeką.",
+      "Stary most.",
+      "Budowa mostu."
+    ]
+  },
+  {
+    "id": 286,
+    "category": "Город",
+    "polish": "rynek",
+    "translation": "рынок / площадь",
+    "transcription": "[ˈrɨnɛk]",
+    "example": "Spotkajmy się na rynku.",
+    "imageName": "market_square",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Stary Rynek w Krakowie.",
+      "Iść na rynek po warzywa.",
+      "Rynek pracy."
+    ]
+  },
+  {
+    "id": 287,
+    "category": "Разное",
+    "polish": "pomoc",
+    "translation": "помощь",
+    "transcription": "[ˈpɔmɔʦ̑]",
+    "example": "Potrzebuję pomocy.",
+    "imageName": "help_support",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Pomoc drogowa.",
+      "Dziękuję za pomoc.",
+      "Pierwsza pomoc."
+    ]
+  },
+  {
+    "id": 288,
+    "category": "Разное",
+    "polish": "zdrowie",
+    "translation": "здоровье",
+    "transcription": "[ˈzdrɔvʲjɛ]",
+    "example": "Zdrowie jest najważniejsze.",
+    "imageName": "health_heart",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Na zdrowie! (toast / po kichnięciu).",
+      "Dużo zdrowia.",
+      "Służba zdrowia."
+    ]
+  },
+  {
+    "id": 289,
+    "category": "Разное",
+    "polish": "życie",
+    "translation": "жизнь",
+    "transcription": "[ˈʐɨʨ̑ɛ]",
+    "example": "To jest moje życie.",
+    "imageName": "life_tree",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Cieszyć się życiem.",
+      "Całe życie.",
+      "Woda to życie."
+    ]
+  },
+  {
+    "id": 290,
+    "category": "Разное",
+    "polish": "świat",
+    "translation": "мир (свет)",
+    "transcription": "[ɕfʲjat]",
+    "example": "Podróżuję po świecie.",
+    "imageName": "world_globe",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Cały świat.",
+      "Koniec świata.",
+      "Mistrz świata."
+    ]
+  },
+  {
+    "id": 291,
+    "category": "Разное",
+    "polish": "pokój",
+    "translation": "комната / мир (отсутствие войны)",
+    "transcription": "[ˈpɔkuj]",
+    "example": "Mój pokój jest mały.",
+    "imageName": "room_door",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Pokój hotelowy.",
+      "Chcę spokoju (ciszy/pokoju).",
+      "Pokój na świecie."
+    ]
+  },
+  {
+    "id": 292,
+    "category": "Разное",
+    "polish": "pytanie",
+    "translation": "вопрос",
+    "transcription": "[pɨˈtaɲɛ]",
+    "example": "Mam pytanie.",
+    "imageName": "question_mark",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Trudne pytanie.",
+      "Odpowiedzieć na pytanie.",
+      "Zadać pytanie."
+    ]
+  },
+  {
+    "id": 293,
+    "category": "Разное",
+    "polish": "odpowiedź",
+    "translation": "ответ",
+    "transcription": "[ɔdˈpɔvʲjɛʨ̑]",
+    "example": "Znam odpowiedź.",
+    "imageName": "answer_check",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Dobra odpowiedź.",
+      "Czekam na odpowiedź.",
+      "Brak odpowiedzi."
+    ]
+  },
+  {
+    "id": 294,
+    "category": "Разное",
+    "polish": "problem",
+    "translation": "проблема",
+    "transcription": "[ˈprɔblɛm]",
+    "example": "To nie jest problem.",
+    "imageName": "problem_puzzle",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Mam duży problem.",
+      "Bez problemu.",
+      "Rozwiązać problem."
+    ]
+  },
+  {
+    "id": 295,
+    "category": "Разное",
+    "polish": "rzecz",
+    "translation": "вещь",
+    "transcription": "[ʐɛʧ̑]",
+    "example": "To ważna rzecz.",
+    "imageName": "thing_box",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Twoje rzeczy.",
+      "Dziwna rzecz.",
+      "Rzeczy osobiste."
+    ]
+  },
+  {
+    "id": 296,
+    "category": "Разное",
+    "polish": "miejsce",
+    "translation": "место",
+    "transcription": "[ˈmʲjɛjscɛ]",
+    "example": "To moje miejsce.",
+    "imageName": "place_location",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Piękne miejsce.",
+      "Nie ma miejsca.",
+      "Na twoim miejscu."
+    ]
+  },
+  {
+    "id": 297,
+    "category": "Разное",
+    "polish": "pół",
+    "translation": "пол / половина",
+    "transcription": "[puw]",
+    "example": "Pół godziny.",
+    "imageName": "half_circle",
+    "partOfSpeech": "числ.",
+    "examplesList": [
+      "Pół na pół.",
+      "Pół litra.",
+      "Północ (połowa nocy)."
+    ]
+  },
+  {
+    "id": 298,
+    "category": "Gramatyka",
+    "polish": "i",
+    "translation": "и",
+    "transcription": "[i]",
+    "example": "Ja i ty.",
+    "imageName": "ampersand_symbol",
+    "partOfSpeech": "союз",
+    "examplesList": [
+      "Chleb i masło.",
+      "Dzień i noc.",
+      "I co dalej?"
+    ]
+  },
+  {
+    "id": 299,
+    "category": "Gramatyka",
+    "polish": "ale",
+    "translation": "но",
+    "transcription": "[ˈalɛ]",
+    "example": "Chcę, ale nie mogę.",
+    "imageName": "but_contrast",
+    "partOfSpeech": "союз",
+    "examplesList": [
+      "Tanio, ale dobrze.",
+      "Ale numer!",
+      "Przepraszam, ale muszę iść."
+    ]
+  },
+  {
+    "id": 300,
+    "category": "Gramatyka",
+    "polish": "lub",
+    "translation": "или",
+    "transcription": "[lup]",
+    "example": "Kawa lub herbata.",
+    "imageName": "or_choice",
+    "partOfSpeech": "союз",
+    "examplesList": [
+      "Dziś lub jutro.",
+      "Jeden lub dwa.",
+      "Tak lub nie."
+    ]
+  },
+  {
+    "id": 301,
+    "category": "Чувства",
+    "polish": "miłość",
+    "translation": "любовь",
+    "transcription": "[ˈmʲiwɔɕʨ̑]",
+    "example": "Miłość jest najważniejsza.",
+    "imageName": "love_heart",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Pierwsza miłość.",
+      "Wyznanie miłości.",
+      "Miłość od pierwszego wejrzenia."
+    ]
+  },
+  {
+    "id": 302,
+    "category": "Чувства",
+    "polish": "radość",
+    "translation": "радость",
+    "transcription": "[ˈradɔɕʨ̑]",
+    "example": "Skakać z radości.",
+    "imageName": "joy_jumping",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Wielka radość.",
+      "Sprawiasz mi radość.",
+      "Łzy radości."
+    ]
+  },
+  {
+    "id": 303,
+    "category": "Чувства",
+    "polish": "strach",
+    "translation": "страх",
+    "transcription": "[strax]",
+    "example": "Czuję strach przed pająkami.",
+    "imageName": "fear_face",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Blady ze strachu.",
+      "Strach ma wielkie oczy.",
+      "Pokonać strach."
+    ]
+  },
+  {
+    "id": 304,
+    "category": "Чувства",
+    "polish": "złość",
+    "translation": "злость",
+    "transcription": "[zwɔɕʨ̑]",
+    "example": "Jego twarz była czerwona ze złości.",
+    "imageName": "anger_face",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Wyładować złość.",
+      "Czuję złość na siebie.",
+      "Złość piękności szkodzi."
+    ]
+  },
+  {
+    "id": 305,
+    "category": "Чувства",
+    "polish": "ból",
+    "translation": "боль",
+    "transcription": "[bul]",
+    "example": "Czuję silny ból głowy.",
+    "imageName": "pain_headache",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ból pleców.",
+      "Tabletka na ból.",
+      "Krzyczeć z bólu."
+    ]
+  },
+  {
+    "id": 306,
+    "category": "Абстрактное",
+    "polish": "sen",
+    "translation": "сон (сновидение / состояние)",
+    "transcription": "[sɛn]",
+    "example": "Miałem dziwny sen.",
+    "imageName": "dream_cloud",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Chce mi się spać (brak snu).",
+      "Dobry sen to zdrowie.",
+      "Sen na jawie."
+    ]
+  },
+  {
+    "id": 307,
+    "category": "Абстрактное",
+    "polish": "śmierć",
+    "translation": "смерть",
+    "transcription": "[ɕmʲjɛrʨ̑]",
+    "example": "To jest sprawa życia i śmierci.",
+    "imageName": "death_symbol",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Nagła śmierć.",
+      "Boję się śmierci.",
+      "Kara śmierci."
+    ]
+  },
+  {
+    "id": 308,
+    "category": "Абстрактное",
+    "polish": "prawda",
+    "translation": "правда",
+    "transcription": "[ˈpravda]",
+    "example": "Powiedz mi prawdę.",
+    "imageName": "truth_scale",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "To nie jest prawda.",
+      "Gorzka prawda.",
+      "Prawda cię wyzwoli."
+    ]
+  },
+  {
+    "id": 309,
+    "category": "Абстрактное",
+    "polish": "kłamstwo",
+    "translation": "ложь",
+    "transcription": "[ˈkwamstfɔ]",
+    "example": "Kłamstwo ma krótkie nogi.",
+    "imageName": "lie_fingers",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "To było kłamstwo.",
+      "Żyć w kłamstwie.",
+      "Małe kłamstwo."
+    ]
+  },
+  {
+    "id": 310,
+    "category": "Абстрактное",
+    "polish": "słowo",
+    "translation": "слово",
+    "transcription": "[ˈswɔvɔ]",
+    "example": "Dotrzymuję słowa.",
+    "imageName": "word_text",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jedno słowo.",
+      "Słowo honoru.",
+      "Szukam odpowiedniego słowa."
+    ]
+  },
+  {
+    "id": 311,
+    "category": "Путешествия",
+    "polish": "paszport",
+    "translation": "паспорт",
+    "transcription": "[ˈpaʂpɔrt]",
+    "example": "Pokaż paszport do kontroli.",
+    "imageName": "passport_document",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Zgubiłem paszport.",
+      "Ważny paszport.",
+      "Zdjęcie do paszportu."
+    ]
+  },
+  {
+    "id": 312,
+    "category": "Путешествия",
+    "polish": "bagaż",
+    "translation": "багаж",
+    "transcription": "[ˈbaɡaʂ]",
+    "example": "Mam ciężki bagaż.",
+    "imageName": "luggage_suitcase",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Odbiór bagażu.",
+      "Bagaż podręczny.",
+      "Zostawiłem bagaż w hotelu."
+    ]
+  },
+  {
+    "id": 313,
+    "category": "Путешествия",
+    "polish": "mapa",
+    "translation": "карта (географическая)",
+    "transcription": "[ˈmapa]",
+    "example": "Sprawdź na mapie, gdzie jesteśmy.",
+    "imageName": "map_location",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Mapa miasta.",
+      "Mapa Polski.",
+      "Google Maps (Mapy Google)."
+    ]
+  },
+  {
+    "id": 314,
+    "category": "Путешествия",
+    "polish": "hotel",
+    "translation": "отель",
+    "transcription": "[ˈxɔtɛl]",
+    "example": "Szukam taniego hotelu.",
+    "imageName": "hotel_building",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Rezerwacja hotelu.",
+      "Pokój w hotelu.",
+      "Hotel pięciogwiazdkowy."
+    ]
+  },
+  {
+    "id": 315,
+    "category": "Путешествия",
+    "polish": "wakacje",
+    "translation": "каникулы / отпуск",
+    "transcription": "[vaˈkaʦ̑jɛ]",
+    "example": "Jadę na wakacje do Hiszpanii.",
+    "imageName": "vacation_beach",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Letnie wakacje.",
+      "To były udane wakacje.",
+      "Koniec wakacji."
+    ]
+  },
+  {
+    "id": 316,
+    "category": "Путешествия",
+    "polish": "wycieczka",
+    "translation": "экскурсия / поездка",
+    "transcription": "[vɨˈʨ̑ɛʧ̑ka]",
+    "example": "Jedziemy na wycieczkę rowerową.",
+    "imageName": "trip_hike",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Wycieczka szkolna.",
+      "Wycieczka do lasu.",
+      "Przewodnik wycieczki."
+    ]
+  },
+  {
+    "id": 317,
+    "category": "Путешествия",
+    "polish": "walizka",
+    "translation": "чемодан",
+    "transcription": "[vaˈlʲizka]",
+    "example": "Spakuj walizkę.",
+    "imageName": "suitcase_travel",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Walizka na kółkach.",
+      "Duża walizka.",
+      "Moja walizka zaginęła."
+    ]
+  },
+  {
+    "id": 318,
+    "category": "Технологии",
+    "polish": "internet",
+    "translation": "интернет",
+    "transcription": "[inˈtɛrnɛt]",
+    "example": "Szukam informacji w internecie.",
+    "imageName": "internet_web",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Brak internetu.",
+      "Szybki internet.",
+      "Kupować przez internet."
+    ]
+  },
+  {
+    "id": 319,
+    "category": "Технологии",
+    "polish": "zdjęcie",
+    "translation": "фотография",
+    "transcription": "[zdjɛɲʨ̑ɛ]",
+    "example": "Zrób mi zdjęcie.",
+    "imageName": "photo_camera",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ładne zdjęcie.",
+      "Album na zdjęcia.",
+      "Zdjęcie profilowe."
+    ]
+  },
+  {
+    "id": 320,
+    "category": "Технологии",
+    "polish": "bateria",
+    "translation": "батарейка / аккумулятор",
+    "transcription": "[baˈtɛrʲja]",
+    "example": "Telefon ma słabą baterię.",
+    "imageName": "battery_charge",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Muszę naładować baterię.",
+      "Bateria się wyczerpała.",
+      "Wymienić baterie w pilocie."
+    ]
+  },
+  {
+    "id": 321,
+    "category": "Технологии",
+    "polish": "ładowarka",
+    "translation": "зарядное устройство",
+    "transcription": "[wadɔˈvarka]",
+    "example": "Gdzie jest moja ładowarka?",
+    "imageName": "charger_cable",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ładowarka do telefonu.",
+      "Podłącz ładowarkę.",
+      "Zepsuta ładowarka."
+    ]
+  },
+  {
+    "id": 322,
+    "category": "Технологии",
+    "polish": "ekran",
+    "translation": "экран",
+    "transcription": "[ˈɛkran]",
+    "example": "Patrzę w ekran komputera.",
+    "imageName": "screen_monitor",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Dotykowy ekran.",
+      "Pęknięty ekran.",
+      "Jasność ekranu."
+    ]
+  },
+  {
+    "id": 323,
+    "category": "Здоровье",
+    "polish": "lek",
+    "translation": "лекарство",
+    "transcription": "[lɛk]",
+    "example": "Muszę wziąć lek na ból głowy.",
+    "imageName": "medicine_pill",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Lekarz przepisał mi leki.",
+      "Lek przeciwbólowy.",
+      "Apteka z lekami."
+    ]
+  },
+  {
+    "id": 324,
+    "category": "Здоровье",
+    "polish": "grypa",
+    "translation": "грипп",
+    "transcription": "[ˈɡrɨpa]",
+    "example": "Mam grypę i leżę w łóżku.",
+    "imageName": "flu_thermometer",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Sezon na grypę.",
+      "Szczepionka na grypę.",
+      "Zaraziłem się grypą."
+    ]
+  },
+  {
+    "id": 325,
+    "category": "Здоровье",
+    "polish": "gorączka",
+    "translation": "температура / лихорадка",
+    "transcription": "[ɡɔˈrɔnʧ̑ka]",
+    "example": "Dziecko ma wysoką gorączkę.",
+    "imageName": "fever_thermometer",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Zmierzyć gorączkę.",
+      "Gorączka spadła.",
+      "Mam dreszcze i gorączkę."
+    ]
+  },
+  {
+    "id": 326,
+    "category": "Здоровье",
+    "polish": "katar",
+    "translation": "насморк",
+    "transcription": "[ˈkatar]",
+    "example": "Mam silny katar.",
+    "imageName": "runny_nose",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Krople na katar.",
+      "Katar sienny (alergia).",
+      "Męczy mnie katar."
+    ]
+  },
+  {
+    "id": 327,
+    "category": "Здоровье",
+    "polish": "kaszel",
+    "translation": "кашель",
+    "transcription": "[ˈkaʂɛl]",
+    "example": "Ten kaszel jest męczący.",
+    "imageName": "cough_person",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Syrop na kaszel.",
+      "Suchy kaszel.",
+      "Mokry kaszel."
+    ]
+  },
+  {
+    "id": 328,
+    "category": "Глаголы",
+    "polish": "wiedzieć",
+    "translation": "знать (информацию)",
+    "transcription": "[ˈvʲjɛʥ̑ɛʨ̑]",
+    "example": "Wiem, gdzie to jest.",
+    "imageName": "knowing_idea",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Nie wiem.",
+      "Skąd wiesz?",
+      "Chcę wiedzieć wszystko."
+    ]
+  },
+  {
+    "id": 329,
+    "category": "Глаголы",
+    "polish": "znać",
+    "translation": "знать (кого-то / что-то)",
+    "transcription": "[znaʨ̑]",
+    "example": "Znam tego człowieka.",
+    "imageName": "knowing_person",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Znam język polski.",
+      "Nie znamy się.",
+      "Znasz ten film?"
+    ]
+  },
+  {
+    "id": 330,
+    "category": "Глаголы",
+    "polish": "móc",
+    "translation": "мочь",
+    "transcription": "[muʦ̑]",
+    "example": "Czy mogę wejść?",
+    "imageName": "can_ability",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Nie mogę tego zrobić.",
+      "Możesz mi pomóc?",
+      "Wszystko może się zdarzyć."
+    ]
+  },
+  {
+    "id": 331,
+    "category": "Глаголы",
+    "polish": "czuć",
+    "translation": "чувствовать",
+    "transcription": "[ʧ̑uʨ̑]",
+    "example": "Czuję zapach kawy.",
+    "imageName": "feeling_heart",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Jak się czujesz?",
+      "Czuję się dobrze.",
+      "Czuć ból."
+    ]
+  },
+  {
+    "id": 332,
+    "category": "Глаголы",
+    "polish": "słyszeć",
+    "translation": "слышать",
+    "transcription": "[ˈswɨʂɛʨ̑]",
+    "example": "Słyszysz ten hałas?",
+    "imageName": "hearing_ear",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Nic nie słyszę.",
+      "Słyszałem o tym.",
+      "Dobrze mnie słychać?"
+    ]
+  },
+  {
+    "id": 333,
+    "category": "Глаголы",
+    "polish": "zobaczyć",
+    "translation": "увидеть",
+    "transcription": "[zɔˈbaʧ̑ɨʨ̑]",
+    "example": "Muszę to zobaczyć.",
+    "imageName": "seeing_eyes",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Do zobaczenia!",
+      "Chcę zobaczyć świat.",
+      "Zobaczymy, co da się zrobić."
+    ]
+  },
+  {
+    "id": 334,
+    "category": "Глаголы",
+    "polish": "znaleźć",
+    "translation": "найти",
+    "transcription": "[ˈznalɛɕʨ̑]",
+    "example": "Muszę znaleźć klucze.",
+    "imageName": "finding_magnifier",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Znalazłem pracę.",
+      "Trudno znaleźć dobrego pracownika.",
+      "Kto szuka, ten znajdzie."
+    ]
+  },
+  {
+    "id": 335,
+    "category": "Природа",
+    "polish": "ogień",
+    "translation": "огонь",
+    "transcription": "[ˈɔɡʲjɛɲ]",
+    "example": "Ogień w kominku.",
+    "imageName": "fire_flame",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Igrać z ogniem.",
+      "Nie ma dymu bez ognia.",
+      "Ogień się pali."
+    ]
+  },
+  {
+    "id": 336,
+    "category": "Природа",
+    "polish": "powietrze",
+    "translation": "воздух",
+    "transcription": "[pɔˈvʲjɛtʂɛ]",
+    "example": "Świeże powietrze.",
+    "imageName": "air_wind",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Idę na powietrze.",
+      "Zanieczyszczone powietrze.",
+      "Brak powietrza."
+    ]
+  },
+  {
+    "id": 337,
+    "category": "Природа",
+    "polish": "lód",
+    "translation": "лед",
+    "transcription": "[lut]",
+    "example": "Lód na jeziorze.",
+    "imageName": "ice_cube",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Zimny jak lód.",
+      "Lody waniliowe (deser).",
+      "Kruchy lód."
+    ]
+  },
+  {
+    "id": 338,
+    "category": "Природа",
+    "polish": "chmura",
+    "translation": "облако / туча",
+    "transcription": "[ˈxmura]",
+    "example": "Ciemna chmura na niebie.",
+    "imageName": "cloud_sky",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Bujać w chmurach.",
+      "Chmura deszczowa.",
+      "Dane w chmurze (IT)."
+    ]
+  },
+  {
+    "id": 339,
+    "category": "Природа",
+    "polish": "plaża",
+    "translation": "пляж",
+    "transcription": "[ˈplaʐa]",
+    "example": "Lubię leżeć na plaży.",
+    "imageName": "beach_sand",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Piaszczysta plaża.",
+      "Idziemy na plażę.",
+      "Plaża nad morzem."
+    ]
+  },
+  {
+    "id": 340,
+    "category": "Природа",
+    "polish": "piasek",
+    "translation": "песок",
+    "transcription": "[ˈpʲjasɛk]",
+    "example": "Gorący piasek.",
+    "imageName": "sand_beach",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Zamek z piasku.",
+      "Piasek w butach.",
+      "Chować głowę w piasek."
+    ]
+  },
+  {
+    "id": 341,
+    "category": "Дом",
+    "polish": "lustro",
+    "translation": "зеркало",
+    "transcription": "[ˈlustrɔ]",
+    "example": "Patrzę w lustro.",
+    "imageName": "mirror_reflection",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Rozbite lustro to pech.",
+      "Lustro w łazience.",
+      "Odbicie w lustrze."
+    ]
+  },
+  {
+    "id": 342,
+    "category": "Дом",
+    "polish": "dywan",
+    "translation": "ковер",
+    "transcription": "[ˈdɨvan]",
+    "example": "Miękki dywan na podłodze.",
+    "imageName": "carpet_rug",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Odkurzać dywan.",
+      "Latający dywan.",
+      "Czysty dywan."
+    ]
+  },
+  {
+    "id": 343,
+    "category": "Дом",
+    "polish": "lampa",
+    "translation": "лампа",
+    "transcription": "[ˈlampa]",
+    "example": "Włącz lampę.",
+    "imageName": "lamp_light",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Lampa biurkowa.",
+      "Lampa sufitowa.",
+      "Żarówka do lampy."
+    ]
+  },
+  {
+    "id": 344,
+    "category": "Дом",
+    "polish": "koc",
+    "translation": "плед / одеяло",
+    "transcription": "[kɔʦ̑]",
+    "example": "Przykryj się kocem.",
+    "imageName": "blanket_cozy",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ciepły koc.",
+      "Koc piknikowy.",
+      "Leżeć pod kocem."
+    ]
+  },
+  {
+    "id": 345,
+    "category": "Дом",
+    "polish": "poduszka",
+    "translation": "подушка",
+    "transcription": "[pɔˈduʂka]",
+    "example": "Śpię na miękkiej poduszce.",
+    "imageName": "pillow_sleep",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Poduszka powietrzna.",
+      "Poszewka na poduszkę.",
+      "Wygodna poduszka."
+    ]
+  },
+  {
+    "id": 346,
+    "category": "Дом",
+    "polish": "ręcznik",
+    "translation": "полотенце",
+    "transcription": "[ˈrɛɲʧ̑ɲik]",
+    "example": "Wytrzyj ręce ręcznikiem.",
+    "imageName": "towel_dry",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Mokry ręcznik.",
+      "Ręcznik papierowy.",
+      "Ręcznik plażowy."
+    ]
+  },
+  {
+    "id": 347,
+    "category": "Дом",
+    "polish": "mydło",
+    "translation": "мыло",
+    "transcription": "[ˈmɨdwɔ]",
+    "example": "Umyj ręce mydłem.",
+    "imageName": "soap_bar",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Mydło w płynie.",
+      "Pachnące mydło.",
+      "Bańki mydlane."
+    ]
+  },
+  {
+    "id": 348,
+    "category": "Дом",
+    "polish": "szczotka",
+    "translation": "щетка",
+    "transcription": "[ˈʃʧ̑ɔtka]",
+    "example": "Szczotka do włosów.",
+    "imageName": "brush_hair",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Szczotka do zębów.",
+      "Szczotka do butów.",
+      "Zamiatać szczotką."
+    ]
+  },
+  {
+    "id": 349,
+    "category": "Прилагательные",
+    "polish": "ważny",
+    "translation": "важный / действительный",
+    "transcription": "[ˈvaʐnɨ]",
+    "example": "To jest ważny dokument.",
+    "imageName": "important_stamp",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Bilet jest ważny.",
+      "Ważna sprawa.",
+      "Czuję się ważny."
+    ]
+  },
+  {
+    "id": 350,
+    "category": "Прилагательные",
+    "polish": "gotowy",
+    "translation": "готовый",
+    "transcription": "[ɡɔˈtɔvɨ]",
+    "example": "Obiad jest gotowy.",
+    "imageName": "ready_check",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Jesteś gotowy?",
+      "Gotowy do drogi.",
+      "Gotowe rozwiązanie."
+    ]
+  },
+  {
+    "id": 351,
+    "category": "Прилагательные",
+    "polish": "zajęty",
+    "translation": "занятый",
+    "transcription": "[zaˈjɛntɨ]",
+    "example": "Jestem teraz bardzo zajęty.",
+    "imageName": "busy_person",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "To miejsce jest zajęte.",
+      "Telefon jest zajęty.",
+      "Zajęta toaleta."
+    ]
+  },
+  {
+    "id": 352,
+    "category": "Прилагательные",
+    "polish": "otwarty",
+    "translation": "открытый",
+    "transcription": "[ɔtˈfartɨ]",
+    "example": "Sklep jest otwarty.",
+    "imageName": "open_sign",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Otwarte okno.",
+      "Otwarty człowiek.",
+      "Drzwi są otwarte."
+    ]
+  },
+  {
+    "id": 353,
+    "category": "Прилагательные",
+    "polish": "zamknięty",
+    "translation": "закрытый",
+    "transcription": "[zamˈkɲɛntɨ]",
+    "example": "Bank jest zamknięty.",
+    "imageName": "closed_sign",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Zamknięte drzwi.",
+      "Koło zamknięte.",
+      "Zamknięty w sobie."
+    ]
+  },
+  {
+    "id": 354,
+    "category": "Прилагательные",
+    "polish": "pyszny",
+    "translation": "вкусный (очень)",
+    "transcription": "[ˈpɨʂnɨ]",
+    "example": "To ciasto jest pyszne.",
+    "imageName": "delicious_food",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Pyszny obiad.",
+      "Wygląda pysznie.",
+      "To było pyszne."
+    ]
+  },
+  {
+    "id": 355,
+    "category": "Прилагательные",
+    "polish": "głodny",
+    "translation": "голодный",
+    "transcription": "[ˈɡwɔdnɨ]",
+    "example": "Jestem głodny jak wilk.",
+    "imageName": "hungry_person",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Głodne dzieci.",
+      "Nie idź spać głodny.",
+      "Polak głodny, to zły."
+    ]
+  },
+  {
+    "id": 356,
+    "category": "Прилагательные",
+    "polish": "chory",
+    "translation": "больной",
+    "transcription": "[ˈxɔrɨ]",
+    "example": "Jestem chory na grypę.",
+    "imageName": "sick_bed",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Chore gardło.",
+      "On jest psychicznie chory.",
+      "Zdrowy czy chory?"
+    ]
+  },
+  {
+    "id": 357,
+    "category": "Прилагательные",
+    "polish": "zdrowy",
+    "translation": "здоровый",
+    "transcription": "[ˈzdrɔvɨ]",
+    "example": "Zdrowy tryb życia.",
+    "imageName": "healthy_apple",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Zdrowe jedzenie.",
+      "Cały i zdrowy.",
+      "Wyglądasz zdrowo."
+    ]
+  },
+  {
+    "id": 358,
+    "category": "Люди",
+    "polish": "sąsiad",
+    "translation": "сосед",
+    "transcription": "[ˈsɔ̃ɕjat]",
+    "example": "Mój sąsiad jest bardzo miły.",
+    "imageName": "neighbor_man",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Sąsiad z góry.",
+      "Pomóc sąsiadowi.",
+      "Sąsiadka (kobieta)."
+    ]
+  },
+  {
+    "id": 359,
+    "category": "Люди",
+    "polish": "gość",
+    "translation": "гость",
+    "transcription": "[ɡɔɕʨ̑]",
+    "example": "Mamy gości na kolacji.",
+    "imageName": "guest_welcome",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Nieproszony gość.",
+      "Gość w dom, Bóg w dom.",
+      "Pokój dla gości."
+    ]
+  },
+  {
+    "id": 360,
+    "category": "Люди",
+    "polish": "szef",
+    "translation": "начальник / шеф",
+    "transcription": "[ʂɛf]",
+    "example": "Szef dał mi podwyżkę.",
+    "imageName": "boss_man",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Rozmowa z szefem.",
+      "Mój szef jest wymagający.",
+      "Szef kuchni."
+    ]
+  },
+  {
+    "id": 361,
+    "category": "Люди",
+    "polish": "kolega",
+    "translation": "коллега / приятель",
+    "transcription": "[kɔˈlɛɡa]",
+    "example": "To mój kolega z pracy.",
+    "imageName": "colleague_friend",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Kolega ze szkoły.",
+      "Idę z kolegami na piwo.",
+      "Dobry kolega."
+    ]
+  },
+  {
+    "id": 362,
+    "category": "Люди",
+    "polish": "ludzie",
+    "translation": "люди",
+    "transcription": "[ˈluʥ̑ɛ]",
+    "example": "Na ulicy jest dużo ludzi.",
+    "imageName": "people_crowd",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Młodzi ludzie.",
+      "Dziwni ludzie.",
+      "Co ludzie powiedzą?"
+    ]
+  },
+  {
+    "id": 363,
+    "category": "Время",
+    "polish": "teraz",
+    "translation": "сейчас",
+    "transcription": "[ˈtɛras]",
+    "example": "Muszę to zrobić teraz.",
+    "imageName": "now_clock",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "Teraz albo nigdy.",
+      "Co teraz?",
+      "Właśnie teraz."
+    ]
+  },
+  {
+    "id": 364,
+    "category": "Время",
+    "polish": "zaraz",
+    "translation": "сейчас (очень скоро) / немедленно",
+    "transcription": "[ˈzaras]",
+    "example": "Zaraz wracam.",
+    "imageName": "soon_clock",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "Zrób to zaraz.",
+      "Będę tam zaraz.",
+      "Zaraz się zacznie."
+    ]
+  },
+  {
+    "id": 365,
+    "category": "Время",
+    "polish": "potem",
+    "translation": "потом",
+    "transcription": "[ˈpɔtɛm]",
+    "example": "Zrobię to potem.",
+    "imageName": "later_arrow",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "Najpierw praca, potem zabawa.",
+      "A co potem?",
+      "Potem poszliśmy do kina."
+    ]
+  },
+  {
+    "id": 366,
+    "category": "Время",
+    "polish": "nigdy",
+    "translation": "никогда",
+    "transcription": "[ˈɲiɡdɨ]",
+    "example": "Nigdy nie mów nigdy.",
+    "imageName": "never_sign",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "Nigdy tam nie byłem.",
+      "Nigdy więcej.",
+      "Lepiej późno niż nigdy."
+    ]
+  },
+  {
+    "id": 367,
+    "category": "Время",
+    "polish": "zawsze",
+    "translation": "всегда",
+    "transcription": "[ˈzafʂɛ]",
+    "example": "Zawsze piję kawę rano.",
+    "imageName": "always_infinity",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "Na zawsze.",
+      "Zawsze chętny do pomocy.",
+      "Jak zawsze."
+    ]
+  },
+  {
+    "id": 368,
+    "category": "Время",
+    "polish": "często",
+    "translation": "часто",
+    "transcription": "[ˈʧ̑ɛ̃stɔ]",
+    "example": "Często chodzę do kina.",
+    "imageName": "often_frequency",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "Jak często?",
+      "Dość często.",
+      "Odwiedzam ich często."
+    ]
+  },
+  {
+    "id": 369,
+    "category": "Время",
+    "polish": "rzadko",
+    "translation": "редко",
+    "transcription": "[ˈʐatkɔ]",
+    "example": "Rzadko jem słodycze.",
+    "imageName": "rarely_diamond",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "To się rzadko zdarza.",
+      "Bardzo rzadko.",
+      "Rzadko bywam w domu."
+    ]
+  },
+  {
+    "id": 370,
+    "category": "Время",
+    "polish": "długo",
+    "translation": "долго",
+    "transcription": "[ˈdwuɡɔ]",
+    "example": "Jak długo tu jesteś?",
+    "imageName": "long_time",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "Za długo.",
+      "Długo czekaliśmy.",
+      "Krótko i długo."
+    ]
+  },
+  {
+    "id": 371,
+    "category": "Время",
+    "polish": "wcześnie",
+    "translation": "рано",
+    "transcription": "[ˈfʧ̑ɛɕɲɛ]",
+    "example": "Wstałem dzisiaj wcześnie.",
+    "imageName": "early_sun",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "Za wcześnie.",
+      "Wcześnie rano.",
+      "Przyjechał wcześniej."
+    ]
+  },
+  {
+    "id": 372,
+    "category": "Время",
+    "polish": "późno",
+    "translation": "поздно",
+    "transcription": "[ˈpuʑnɔ]",
+    "example": "Już jest późno, muszę iść.",
+    "imageName": "late_moon",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "Za późno.",
+      "Późno w nocy.",
+      "Lepiej późno niż wcale."
+    ]
+  },
+  {
+    "id": 373,
+    "category": "Места",
+    "polish": "wieś",
+    "translation": "деревня",
+    "transcription": "[vʲjɛɕ]",
+    "example": "Mieszkam na wsi.",
+    "imageName": "village_house",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Jadę na wieś.",
+      "Spokojna wieś.",
+      "Życie na wsi."
+    ]
+  },
+  {
+    "id": 374,
+    "category": "Места",
+    "polish": "las",
+    "translation": "лес",
+    "transcription": "[las]",
+    "example": "Idziemy na spacer do lasu.",
+    "imageName": "forest_trees",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ciemny las.",
+      "Zwierzęta w lesie.",
+      "Las szumi."
+    ]
+  },
+  {
+    "id": 375,
+    "category": "Вещи",
+    "polish": "pudełko",
+    "translation": "коробка",
+    "transcription": "[puˈdɛwkɔ]",
+    "example": "Prezent jest w pudełku.",
+    "imageName": "box_gift",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Pudełko kartonowe.",
+      "Puste pudełko.",
+      "Pudełko czekoladek."
+    ]
+  },
+  {
+    "id": 376,
+    "category": "Вещи",
+    "polish": "butelka",
+    "translation": "бутылка",
+    "transcription": "[buˈtɛlka]",
+    "example": "Butelka wody.",
+    "imageName": "bottle_glass",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Szklana butelka.",
+      "Odkręć butelkę.",
+      "Zwrot butelek."
+    ]
+  },
+  {
+    "id": 377,
+    "category": "Вещи",
+    "polish": "kubek",
+    "translation": "кружка",
+    "transcription": "[ˈkubɛk]",
+    "example": "Mój ulubiony kubek.",
+    "imageName": "mug_coffee",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Kubek kawy.",
+      "Rozbiłem kubek.",
+      "Kubek termiczny."
+    ]
+  },
+  {
+    "id": 378,
+    "category": "Вещи",
+    "polish": "nóż",
+    "translation": "нож",
+    "transcription": "[nuʂ]",
+    "example": "Ostry nóż.",
+    "imageName": "knife_cut",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Kroić nożem.",
+      "Nóż i widelec.",
+      "Nóż kuchenny."
+    ]
+  },
+  {
+    "id": 379,
+    "category": "Вещи",
+    "polish": "widelec",
+    "translation": "вилка",
+    "transcription": "[vʲiˈdɛlɛʦ̑]",
+    "example": "Jem widelcem.",
+    "imageName": "fork_silver",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Nóż i widelec.",
+      "Brudny widelec.",
+      "Metalowy widelec."
+    ]
+  },
+  {
+    "id": 380,
+    "category": "Вещи",
+    "polish": "łyżka",
+    "translation": "ложка",
+    "transcription": "[ˈwɨʂka]",
+    "example": "Łyżka zupy.",
+    "imageName": "spoon_soup",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Łyżka stołowa.",
+      "Mała łyżeczka.",
+      "Mieszać łyżką."
+    ]
+  },
+  {
+    "id": 381,
+    "category": "Вещи",
+    "polish": "talerz",
+    "translation": "тарелка",
+    "transcription": "[ˈtalɛʂ]",
+    "example": "Pusty talerz.",
+    "imageName": "plate_dish",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Głęboki talerz (na zupę).",
+      "Rozbić talerz.",
+      "Umyć talerze."
+    ]
+  },
+  {
+    "id": 382,
+    "category": "Вещи",
+    "polish": "szklanka",
+    "translation": "стакан",
+    "transcription": "[ˈʂklaŋka]",
+    "example": "Szklanka wody.",
+    "imageName": "glass_drink",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Pusta szklanka.",
+      "Szklanka herbaty.",
+      "Dno szklanki."
+    ]
+  },
+  {
+    "id": 383,
+    "category": "Цвета",
+    "polish": "pomarańczowy",
+    "translation": "оранжевый",
+    "transcription": "[pɔmaranˈʧ̑ɔvɨ]",
+    "example": "Pomarańczowy owoc.",
+    "imageName": "orange_color",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Kolor pomarańczowy.",
+      "Pomarańczowa kurtka.",
+      "Zachód słońca jest pomarańczowy."
+    ]
+  },
+  {
+    "id": 384,
+    "category": "Цвета",
+    "polish": "fioletowy",
+    "translation": "фиолетовый",
+    "transcription": "[fʲjɔlɛˈtɔvɨ]",
+    "example": "Fioletowe kwiaty.",
+    "imageName": "purple_flower",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Fioletowy kolor.",
+      "Fioletowa sukienka.",
+      "Siniak jest fioletowy."
+    ]
+  },
+  {
+    "id": 385,
+    "category": "Цвета",
+    "polish": "różowy",
+    "translation": "розовый",
+    "transcription": "[ruˈʐɔvɨ]",
+    "example": "Różowa pantera.",
+    "imageName": "pink_heart",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Różowe okulary (optymizm).",
+      "Kolor różowy.",
+      "Różowy prosiaczek."
+    ]
+  },
+  {
+    "id": 386,
+    "category": "Направления",
+    "polish": "prawo",
+    "translation": "право / направо",
+    "transcription": "[ˈpravɔ]",
+    "example": "Skręć w prawo.",
+    "imageName": "right_arrow",
+    "partOfSpeech": "сущ./нар.",
+    "examplesList": [
+      "Mam do tego prawo.",
+      "Po prawej stronie.",
+      "Prawo jazdy."
+    ]
+  },
+  {
+    "id": 387,
+    "category": "Направления",
+    "polish": "lewo",
+    "translation": "лево / налево",
+    "transcription": "[ˈlɛvɔ]",
+    "example": "Skręć w lewo.",
+    "imageName": "left_arrow",
+    "partOfSpeech": "сущ./нар.",
+    "examplesList": [
+      "Po lewej stronie.",
+      "Lewa ręka.",
+      "Na lewo i prawo."
+    ]
+  },
+  {
+    "id": 388,
+    "category": "Направления",
+    "polish": "prosto",
+    "translation": "прямо / просто",
+    "transcription": "[ˈprɔstɔ]",
+    "example": "Idź prosto.",
+    "imageName": "straight_arrow",
+    "partOfSpeech": "нар.",
+    "examplesList": [
+      "To jest prosto zrobione.",
+      "Prosto w oczy.",
+      "Droga prowadzi prosto."
+    ]
+  },
+  {
+    "id": 389,
+    "category": "Направления",
+    "polish": "góra",
+    "translation": "верх / гора",
+    "transcription": "[ˈɡura]",
+    "example": "Idź na górę.",
+    "imageName": "up_arrow",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Góra lodowa.",
+      "Ręce do góry.",
+      "Na górze (na piętrze)."
+    ]
+  },
+  {
+    "id": 390,
+    "category": "Направления",
+    "polish": "dół",
+    "translation": "низ / яма",
+    "transcription": "[duw]",
+    "example": "Zejdź na dół.",
+    "imageName": "down_arrow",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W dół rzeki.",
+      "Głową w dół.",
+      "Dół psychiczny."
+    ]
+  },
+  {
+    "id": 391,
+    "category": "Семья",
+    "polish": "wujek",
+    "translation": "дядя",
+    "transcription": "[ˈvujɛk]",
+    "example": "Mój wujek mieszka w Ameryce.",
+    "imageName": "uncle_man",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Wujek i ciocia.",
+      "Odwiedziny u wujka.",
+      "Wujek Dobra Rada."
+    ]
+  },
+  {
+    "id": 392,
+    "category": "Семья",
+    "polish": "ciocia",
+    "translation": "тетя",
+    "transcription": "[ˈʨ̑ɔʨ̑a]",
+    "example": "Ciocia upiekła ciasto.",
+    "imageName": "aunt_woman",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Ulubiona ciocia.",
+      "Jadę do cioci.",
+      "Ciocia z wujkiem."
+    ]
+  },
+  {
+    "id": 393,
+    "category": "Разное",
+    "polish": "imię",
+    "translation": "имя",
+    "transcription": "[ˈimʲjɛ]",
+    "example": "Jak masz na imię?",
+    "imageName": "name_tag",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Mam na imię Adam.",
+      "W imię zasad.",
+      "Drugie imię."
+    ]
+  },
+  {
+    "id": 394,
+    "category": "Разное",
+    "polish": "nazwisko",
+    "translation": "фамилия",
+    "transcription": "[nazˈvʲiskɔ]",
+    "example": "Jakie jest twoje nazwisko?",
+    "imageName": "surname_id",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Proszę podać nazwisko.",
+      "Zmieniła nazwisko po ślubie.",
+      "Trudne nazwisko."
+    ]
+  },
+  {
+    "id": 395,
+    "category": "Разное",
+    "polish": "wiek",
+    "translation": "возраст / век",
+    "transcription": "[vʲjɛk]",
+    "example": "W jakim jesteś wieku?",
+    "imageName": "age_years",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "XXI wiek.",
+      "Wiek emerytalny.",
+      "Średniowiecze (wieki średnie)."
+    ]
+  },
+  {
+    "id": 396,
+    "category": "Разное",
+    "polish": "rok",
+    "translation": "год",
+    "transcription": "[rɔk]",
+    "example": "Szczęśliwego Nowego Roku.",
+    "imageName": "year_calendar",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "W tym roku.",
+      "Rok szkolny.",
+      "Mam 30 lat (uwaga: lat, nie rok)."
+    ]
+  },
+  {
+    "id": 397,
+    "category": "Школа",
+    "polish": "lekcja",
+    "translation": "урок",
+    "transcription": "[ˈlɛkʦ̑ja]",
+    "example": "Lekcja matematyki.",
+    "imageName": "lesson_class",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Odrabiam lekcje.",
+      "Koniec lekcji.",
+      "To była dla mnie dobra lekcja."
+    ]
+  },
+  {
+    "id": 398,
+    "category": "Школа",
+    "polish": "pytanie",
+    "translation": "вопрос",
+    "transcription": "[pɨˈtaɲɛ]",
+    "example": "Mam pytanie do nauczyciela.",
+    "imageName": "question_mark",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Proste pytanie.",
+      "Zadawać pytania.",
+      "Bez pytań."
+    ]
+  },
+  {
+    "id": 399,
+    "category": "Школа",
+    "polish": "zadanie",
+    "translation": "задание / задача",
+    "transcription": "[zaˈdaɲɛ]",
+    "example": "Zadanie domowe.",
+    "imageName": "task_list",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Trudne zadanie.",
+      "Mam do wykonania zadanie.",
+      "Zadanie z matematyki."
+    ]
+  },
+  {
+    "id": 400,
+    "category": "Школа",
+    "polish": "egzamin",
+    "translation": "экзамен",
+    "transcription": "[ɛɡˈzamʲin]",
+    "example": "Zdaję egzamin na prawo jazdy.",
+    "imageName": "exam_paper",
+    "partOfSpeech": "rzecz.",
+    "examplesList": [
+      "Egzamin dojrzałości (matura).",
+      "Oblać egzamin.",
+      "Zdać egzamin."
+    ]
+  },
+  {
+    "id": 401,
+    "category": "Месяцы",
+    "polish": "styczeń",
+    "translation": "январь",
+    "transcription": "[ˈstɨʧ̑ɛɲ]",
+    "example": "W styczniu jest zimno.",
+    "imageName": "calendar_january",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Pierwszy dzień stycznia.",
+      "Urodziłem się w styczniu.",
+      "Styczeń to początek roku."
+    ]
+  },
+  {
+    "id": 402,
+    "category": "Месяцы",
+    "polish": "luty",
+    "translation": "февраль",
+    "transcription": "[ˈlutɨ]",
+    "example": "Luty jest krótkim miesiącem.",
+    "imageName": "calendar_february",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W lutym pada śnieg.",
+      "Walentynki są w lutym.",
+      "Koniec lutego."
+    ]
+  },
+  {
+    "id": 403,
+    "category": "Месяцы",
+    "polish": "marzec",
+    "translation": "март",
+    "transcription": "[ˈmaʐɛʦ̑]",
+    "example": "W marcu zaczyna się wiosna.",
+    "imageName": "calendar_march",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Marcowa pogoda.",
+      "Dzień Kobiet jest w marcu.",
+      "W marcu jak w garncu (przysłowie)."
+    ]
+  },
+  {
+    "id": 404,
+    "category": "Месяцы",
+    "polish": "kwiecień",
+    "translation": "апрель",
+    "transcription": "[kfʲˈjɛʨ̑ɛɲ]",
+    "example": "Kwiecień plecień (przysłowie).",
+    "imageName": "calendar_april",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W kwietniu wszystko kwitnie.",
+      "Prima aprilis w kwietniu.",
+      "Początek kwietnia."
+    ]
+  },
+  {
+    "id": 405,
+    "category": "Месяцы",
+    "polish": "maj",
+    "translation": "май",
+    "transcription": "[maj]",
+    "example": "Maj to piękny miesiąc.",
+    "imageName": "calendar_may",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Majówka (długi weekend w maju).",
+      "W maju jest ciepło.",
+      "3 maja to święto."
+    ]
+  },
+  {
+    "id": 406,
+    "category": "Месяцы",
+    "polish": "czerwiec",
+    "translation": "июнь",
+    "transcription": "[ˈʧ̑ɛrvʲjɛʦ̑]",
+    "example": "W czerwcu kończy się szkoła.",
+    "imageName": "calendar_june",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Początek lata w czerwcu.",
+      "Jadę na wakacje w czerwcu.",
+      "Ciepły czerwiec."
+    ]
+  },
+  {
+    "id": 407,
+    "category": "Месяцы",
+    "polish": "lipiec",
+    "translation": "июль",
+    "transcription": "[ˈlʲipʲjɛʦ̑]",
+    "example": "Lipiec jest bardzo gorący.",
+    "imageName": "calendar_july",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W lipcu kąpiemy się w morzu.",
+      "Urlop w lipcu.",
+      "Koniec lipca."
+    ]
+  },
+  {
+    "id": 408,
+    "category": "Месяцы",
+    "polish": "sierpień",
+    "translation": "август",
+    "transcription": "[ˈɕɛrpʲjɛɲ]",
+    "example": "W sierpniu zbieramy zboże.",
+    "imageName": "calendar_august",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Sierpniowe noce.",
+      "Wracam w sierpniu.",
+      "Upalny sierpień."
+    ]
+  },
+  {
+    "id": 409,
+    "category": "Месяцы",
+    "polish": "wrzesień",
+    "translation": "сентябрь",
+    "transcription": "[ˈvʐɛɕɛɲ]",
+    "example": "Szkoła zaczyna się we wrześniu.",
+    "imageName": "calendar_september",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Złota jesień we wrześniu.",
+      "Pierwszy września.",
+      "Wspomnienie września."
+    ]
+  },
+  {
+    "id": 410,
+    "category": "Месяцы",
+    "polish": "październik",
+    "translation": "октябрь",
+    "transcription": "[paʑˈʥ̑ɛrɲik]",
+    "example": "W październiku spadają liście.",
+    "imageName": "calendar_october",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zimny październik.",
+      "Studenci zaczynają w październiku.",
+      "Październikowe słońce."
+    ]
+  },
+  {
+    "id": 411,
+    "category": "Месяцы",
+    "polish": "listopad",
+    "translation": "ноябрь",
+    "transcription": "[lʲiˈstɔpad]",
+    "example": "Listopad jest smutnym miesiącem.",
+    "imageName": "calendar_november",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "W listopadzie często pada.",
+      "Święto Zmarłych w listopadzie.",
+      "Koniec listopada."
+    ]
+  },
+  {
+    "id": 412,
+    "category": "Месяцы",
+    "polish": "grudzień",
+    "translation": "декабрь",
+    "transcription": "[ˈɡruʥ̑ɛɲ]",
+    "example": "W grudniu są Święta.",
+    "imageName": "calendar_december",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zimny grudzień.",
+      "Sylwester w grudniu.",
+      "Grudniowy wieczór."
+    ]
+  },
+  {
+    "id": 413,
+    "category": "Времена года",
+    "polish": "wiosna",
+    "translation": "весна",
+    "transcription": "[ˈvʲjɔsna]",
+    "example": "Wiosną wszystko budzi się do życia.",
+    "imageName": "spring_flowers",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Czekam na wiosnę.",
+      "Pierwszy dzień wiosny.",
+      "Wiosenne porządki."
+    ]
+  },
+  {
+    "id": 414,
+    "category": "Времена года",
+    "polish": "zima",
+    "translation": "зима",
+    "transcription": "[ˈʑima]",
+    "example": "Zima w górach jest piękna.",
+    "imageName": "winter_snow",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Sroga zima.",
+      "Zimą nosimy ciepłe kurtki.",
+      "Sporty zimowe."
+    ]
+  },
+  {
+    "id": 415,
+    "category": "Погода",
+    "polish": "burza",
+    "translation": "гроза / буря",
+    "transcription": "[ˈbuʐa]",
+    "example": "Nadchodzi wielka burza.",
+    "imageName": "storm_lightning",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Boję się burzy.",
+      "Pioruny i burza.",
+      "Burza mózgów (idiom)."
+    ]
+  },
+  {
+    "id": 416,
+    "category": "Погода",
+    "polish": "mgła",
+    "translation": "туман",
+    "transcription": "[mɡwa]",
+    "example": "Gęsta mgła ogranicza widoczność.",
+    "imageName": "fog_mist",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Nic nie widać przez mgłę.",
+      "Mgła opadła.",
+      "Poranna mgła."
+    ]
+  },
+  {
+    "id": 417,
+    "category": "Погода",
+    "polish": "mróz",
+    "translation": "мороз",
+    "transcription": "[mrus]",
+    "example": "Na dworze jest silny mróz.",
+    "imageName": "frost_cold",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Mróz szczypie w uszy.",
+      "Minus dziesięć stopni mrozu.",
+      "Tęgi mróz."
+    ]
+  },
+  {
+    "id": 418,
+    "category": "Еда",
+    "polish": "śniadanie",
+    "translation": "завтрак",
+    "transcription": "[ɕɲaˈdaɲɛ]",
+    "example": "Jem śniadanie o ósmej.",
+    "imageName": "breakfast_meal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Co na śniadanie?",
+      "Smaczne śniadanie.",
+      "Drugie śniadanie."
+    ]
+  },
+  {
+    "id": 419,
+    "category": "Еда",
+    "polish": "kolacja",
+    "translation": "ужин",
+    "transcription": "[kɔˈlaʦ̑ja]",
+    "example": "Zaproś ją na kolację.",
+    "imageName": "dinner_evening",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Romantyczna kolacja.",
+      "Kolacja wigilijna.",
+      "Nie jem kolacji."
+    ]
+  },
+  {
+    "id": 420,
+    "category": "Еда",
+    "polish": "ciasto",
+    "translation": "торт / пирог / тесто",
+    "transcription": "[ˈʨ̑astɔ]",
+    "example": "Babcia upiekła ciasto.",
+    "imageName": "cake_piece",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ciasto czekoladowe.",
+      "Kawa i ciasto.",
+      "Zagnieść ciasto (surowe)."
+    ]
+  },
+  {
+    "id": 421,
+    "category": "Еда",
+    "polish": "lody",
+    "translation": "мороженое",
+    "transcription": "[ˈlɔdɨ]",
+    "example": "Dzieci lubią lody.",
+    "imageName": "ice_cream",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Gałka lodów.",
+      "Lody waniliowe.",
+      "Iść na lody."
+    ]
+  },
+  {
+    "id": 422,
+    "category": "Еда",
+    "polish": "wino",
+    "translation": "вино",
+    "transcription": "[ˈvʲinɔ]",
+    "example": "Czerwone wino.",
+    "imageName": "wine_glass",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kieliszek wina.",
+      "Wino wytrawne.",
+      "Białe wino."
+    ]
+  },
+  {
+    "id": 423,
+    "category": "Еда",
+    "polish": "olej",
+    "translation": "растительное масло / масло (техн.)",
+    "transcription": "[ˈɔlɛj]",
+    "example": "Smażę na oleju.",
+    "imageName": "oil_bottle",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Olej rzepakowy.",
+      "Wymiana oleju w samochodzie.",
+      "Dolać oliwy (oleju) do ognia."
+    ]
+  },
+  {
+    "id": 424,
+    "category": "Еда",
+    "polish": "pomidor",
+    "translation": "помидор",
+    "transcription": "[pɔˈmʲidɔr]",
+    "example": "Czerwony pomidor.",
+    "imageName": "tomato_red",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zupa pomidorowa.",
+      "Sałatka z pomidorów.",
+      "Sok pomidorowy."
+    ]
+  },
+  {
+    "id": 425,
+    "category": "Еда",
+    "polish": "ogórek",
+    "translation": "огурец",
+    "transcription": "[ɔˈɡurɛk]",
+    "example": "Ogórek jest zielony.",
+    "imageName": "cucumber_green",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ogórek kiszony.",
+      "Mizeria z ogórków.",
+      "Sezon ogórkowy."
+    ]
+  },
+  {
+    "id": 426,
+    "category": "Еда",
+    "polish": "cebula",
+    "translation": "лук (репчатый)",
+    "transcription": "[ʦ̑ɛˈbula]",
+    "example": "Płaczę, gdy kroję cebulę.",
+    "imageName": "onion_bulb",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zupa cebulowa.",
+      "Cebula ma warstwy.",
+      "Smak cebuli."
+    ]
+  },
+  {
+    "id": 427,
+    "category": "Еда",
+    "polish": "czosnek",
+    "translation": "чеснок",
+    "transcription": "[ˈʧ̑ɔsnɛk]",
+    "example": "Czosnek jest zdrowy.",
+    "imageName": "garlic_clove",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Sos czosnkowy.",
+      "Zapach czosnku.",
+      "Ząbek czosnku."
+    ]
+  },
+  {
+    "id": 428,
+    "category": "Еда",
+    "polish": "marchewka",
+    "translation": "морковь",
+    "transcription": "[marˈxɛfka]",
+    "example": "Zając je marchewkę.",
+    "imageName": "carrot_orange",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Sok z marchewki.",
+      "Groszek z marchewką.",
+      "Tarta marchewka."
+    ]
+  },
+  {
+    "id": 429,
+    "category": "Еда",
+    "polish": "banan",
+    "translation": "банан",
+    "transcription": "[ˈbanan]",
+    "example": "Obierz banana.",
+    "imageName": "banana_yellow",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kiść bananów.",
+      "Żółty jak banan.",
+      "Ciasto bananowe."
+    ]
+  },
+  {
+    "id": 430,
+    "category": "Еда",
+    "polish": "cytryna",
+    "translation": "лимон",
+    "transcription": "[ʦ̑ɨˈtrɨna]",
+    "example": "Herbata z cytryną.",
+    "imageName": "lemon_yellow",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kwaśny jak cytryna.",
+      "Sok z cytryny.",
+      "Kroić cytrynę."
+    ]
+  },
+  {
+    "id": 431,
+    "category": "Еда",
+    "polish": "pomarańcza",
+    "translation": "апельсин",
+    "transcription": "[pɔmaˈraɲʧ̑a]",
+    "example": "Soczysta pomarańcza.",
+    "imageName": "orange_fruit",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Sok z pomarańczy.",
+      "Skórka pomarańczy.",
+      "Kupić kilogram pomarańczy."
+    ]
+  },
+  {
+    "id": 432,
+    "category": "Животные",
+    "polish": "słoń",
+    "translation": "слон",
+    "transcription": "[swɔɲ]",
+    "example": "Słoń ma długą trąbę.",
+    "imageName": "elephant_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Słoń w składzie porcelany.",
+      "Duży jak słoń.",
+      "Afrykański słoń."
+    ]
+  },
+  {
+    "id": 433,
+    "category": "Животные",
+    "polish": "lew",
+    "translation": "лев",
+    "transcription": "[lɛf]",
+    "example": "Lew jest królem zwierząt.",
+    "imageName": "lion_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ryk lwa.",
+      "Walczyć jak lew.",
+      "Lwia część."
+    ]
+  },
+  {
+    "id": 434,
+    "category": "Животные",
+    "polish": "wilk",
+    "translation": "волк",
+    "transcription": "[vʲilk]",
+    "example": "Wilk mieszka w lesie.",
+    "imageName": "wolf_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Głodny jak wilk.",
+      "Nie wywołuj wilka z lasu.",
+      "Wilk morski."
+    ]
+  },
+  {
+    "id": 435,
+    "category": "Животные",
+    "polish": "niedźwiedź",
+    "translation": "медведь",
+    "transcription": "[ˈɲɛʥ̑vʲjɛʨ̑]",
+    "example": "Niedźwiedź śpi zimą.",
+    "imageName": "bear_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Niedźwiedź polarny.",
+      "Silny jak niedźwiedź.",
+      "Niedźwiedzia przysługa."
+    ]
+  },
+  {
+    "id": 436,
+    "category": "Животные",
+    "polish": "małpa",
+    "translation": "обезьяна",
+    "transcription": "[ˈmawpa]",
+    "example": "Małpa skacze po drzewach.",
+    "imageName": "monkey_animal",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Złośliwa małpa.",
+      "Małpi rozum.",
+      "Małpa w zoo."
+    ]
+  },
+  {
+    "id": 437,
+    "category": "Животные",
+    "polish": "pająk",
+    "translation": "паук",
+    "transcription": "[ˈpajɔŋk]",
+    "example": "Pająk plecie pajęczynę.",
+    "imageName": "spider_web",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Boję się pająków.",
+      "Czarna wdowa (pająk).",
+      "Pająk na ścianie."
+    ]
+  },
+  {
+    "id": 438,
+    "category": "Животные",
+    "polish": "mucha",
+    "translation": "муха",
+    "transcription": "[ˈmuxa]",
+    "example": "Mucha lata koło nosa.",
+    "imageName": "fly_insect",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Natrętna mucha.",
+      "Packa na muchy.",
+      "Nie skrzywdziłby muchy."
+    ]
+  },
+  {
+    "id": 439,
+    "category": "Животные",
+    "polish": "pszczoła",
+    "translation": "пчела",
+    "transcription": "[pʂʧ̑ɔwa]",
+    "example": "Pszczoła robi miód.",
+    "imageName": "bee_flower",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Pracowity jak pszczoła.",
+      "Użądlenie pszczoły.",
+      "Rój pszczół."
+    ]
+  },
+  {
+    "id": 440,
+    "category": "Прилагательные",
+    "polish": "mądry",
+    "translation": "умный / мудрый",
+    "transcription": "[ˈmɔ̃drɨ]",
+    "example": "To jest mądry człowiek.",
+    "imageName": "smart_brain",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Mądra decyzja.",
+      "Mądra sowa.",
+      "Bądź mądry."
+    ]
+  },
+  {
+    "id": 441,
+    "category": "Прилагательные",
+    "polish": "głupi",
+    "translation": "глупый",
+    "transcription": "[ˈɡwupʲi]",
+    "example": "To był głupi pomysł.",
+    "imageName": "silly_face",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Głupi żart.",
+      "Nie bądź głupi.",
+      "Głupie pytanie."
+    ]
+  },
+  {
+    "id": 442,
+    "category": "Прилагательные",
+    "polish": "bogaty",
+    "translation": "богатый",
+    "transcription": "[bɔˈɡatɨ]",
+    "example": "On jest bardzo bogaty.",
+    "imageName": "rich_money",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Bogaty w witaminy.",
+      "Bogaty dom.",
+      "Bogata wyobraźnia."
+    ]
+  },
+  {
+    "id": 443,
+    "category": "Прилагательные",
+    "polish": "biedny",
+    "translation": "бедный",
+    "transcription": "[ˈbʲjɛdnɨ]",
+    "example": "Biedny człowiek prosi o pomoc.",
+    "imageName": "poor_empty",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Och, ty biedny.",
+      "Biedna dieta.",
+      "Biednemu wiatr w oczy."
+    ]
+  },
+  {
+    "id": 444,
+    "category": "Прилагательные",
+    "polish": "silny",
+    "translation": "сильный",
+    "transcription": "[ˈɕilnɨ]",
+    "example": "On jest silny jak tur.",
+    "imageName": "strong_muscle",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Silny wiatr.",
+      "Silna wola.",
+      "Silny ból."
+    ]
+  },
+  {
+    "id": 445,
+    "category": "Прилагательные",
+    "polish": "słaby",
+    "translation": "слабый",
+    "transcription": "[ˈswabɨ]",
+    "example": "Czuję się słaby.",
+    "imageName": "weak_battery",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Słaba bateria.",
+      "Słaby punkt.",
+      "Słaba herbata."
+    ]
+  },
+  {
+    "id": 446,
+    "category": "Прилагательные",
+    "polish": "twardy",
+    "translation": "твердый / жесткий",
+    "transcription": "[ˈtfardɨ]",
+    "example": "Ten chleb jest twardy.",
+    "imageName": "hard_rock",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Twardy orzech do zgryzienia.",
+      "Twardy dysk.",
+      "Twardy charakter."
+    ]
+  },
+  {
+    "id": 447,
+    "category": "Прилагательные",
+    "polish": "miękki",
+    "translation": "мягкий",
+    "transcription": "[ˈmʲjɛ̃kːʲi]",
+    "example": "Miękki fotel.",
+    "imageName": "soft_pillow",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Miękkie lądowanie.",
+      "Miękkie serce.",
+      "Miękka poduszka."
+    ]
+  },
+  {
+    "id": 448,
+    "category": "Прилагательные",
+    "polish": "ostry",
+    "translation": "острый",
+    "transcription": "[ˈɔstrɨ]",
+    "example": "Uwaga, ostry nóż.",
+    "imageName": "sharp_knife",
+    "partOfSpeech": "прил.",
+    "examplesList": [
+      "Ostra papryka.",
+      "Ostry zakręt.",
+      "Ostre słowa."
+    ]
+  },
+  {
+    "id": 449,
+    "category": "Глаголы",
+    "polish": "wchodzić",
+    "translation": "входить",
+    "transcription": "[fxɔˈʥ̑iʨ̑]",
+    "example": "Proszę wchodzić.",
+    "imageName": "entering_door",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Wchodzić po schodach.",
+      "Wchodzić w grę.",
+      "Wchodzę do sklepu."
+    ]
+  },
+  {
+    "id": 450,
+    "category": "Глаголы",
+    "polish": "wychodzić",
+    "translation": "выходить",
+    "transcription": "[vɨxɔˈʥ̑iʨ̑]",
+    "example": "Wychodzę z domu.",
+    "imageName": "exiting_door",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Wychodzić za mąż (o kobiecie).",
+      "Wychodzić na spacer.",
+      "Wszystko wychodzi na jaw."
+    ]
+  },
+  {
+    "id": 451,
+    "category": "Глаголы",
+    "polish": "wracać",
+    "translation": "возвращаться",
+    "transcription": "[ˈvraʦaʨ̑]",
+    "example": "Kiedy wracasz?",
+    "imageName": "returning_arrow",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Wracać do domu.",
+      "Wracaj do zdrowia.",
+      "Wracać wspomnieniami."
+    ]
+  },
+  {
+    "id": 452,
+    "category": "Глаголы",
+    "polish": "dzwonić",
+    "translation": "звонить",
+    "transcription": "[ˈʣvɔɲiʨ̑]",
+    "example": "Muszę dzwonić do mamy.",
+    "imageName": "calling_phone",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Telefon dzwoni.",
+      "Dzwonić dzwonkiem.",
+      "Dzwonię po taksówkę."
+    ]
+  },
+  {
+    "id": 453,
+    "category": "Глаголы",
+    "polish": "spotykać",
+    "translation": "встречать",
+    "transcription": "[spɔˈtɨkaʨ̑]",
+    "example": "Często go spotykam.",
+    "imageName": "meeting_people",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Spotykać się z przyjaciółmi.",
+      "Miło cię spotkać.",
+      "Spotykać trudności."
+    ]
+  },
+  {
+    "id": 454,
+    "category": "Глаголы",
+    "polish": "zgubić",
+    "translation": "потерять",
+    "transcription": "[zɡuˈbʲiʨ̑]",
+    "example": "Zgubiłem portfel.",
+    "imageName": "lost_item",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Zgubić drogę.",
+      "Zgubić kilogramy.",
+      "Zgubiłem się."
+    ]
+  },
+  {
+    "id": 455,
+    "category": "Глаголы",
+    "polish": "naprawić",
+    "translation": "починить",
+    "transcription": "[naˈpravʲiʨ̑]",
+    "example": "Muszę naprawić samochód.",
+    "imageName": "repair_tools",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Naprawić błąd.",
+      "Czy da się to naprawić?",
+      "Naprawić kran."
+    ]
+  },
+  {
+    "id": 456,
+    "category": "Глаголы",
+    "polish": "tańczyć",
+    "translation": "танцевать",
+    "transcription": "[taɲˈʧ̑ɨʨ̑]",
+    "example": "Lubię tańczyć.",
+    "imageName": "dancing_couple",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Tańczyć walca.",
+      "Tańczyć do muzyki.",
+      "Zatańcz ze mną."
+    ]
+  },
+  {
+    "id": 457,
+    "category": "Глаголы",
+    "polish": "śpiewać",
+    "translation": "петь",
+    "transcription": "[ɕpʲjɛˈvaʨ̑]",
+    "example": "Ona ładnie śpiewa.",
+    "imageName": "singing_mic",
+    "partOfSpeech": "гл.",
+    "examplesList": [
+      "Śpiewać piosenkę.",
+      "Śpiewać w chórze.",
+      "Ptaki śpiewają."
+    ]
+  },
+  {
+    "id": 458,
+    "category": "Дом",
+    "polish": "pralka",
+    "translation": "стиральная машина",
+    "transcription": "[ˈpralka]",
+    "example": "Włącz pralkę.",
+    "imageName": "washing_machine",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zepsuta pralka.",
+      "Pranie w pralce.",
+      "Kupić nową pralkę."
+    ]
+  },
+  {
+    "id": 459,
+    "category": "Дом",
+    "polish": "lodówka",
+    "translation": "холодильник",
+    "transcription": "[lɔˈdufka]",
+    "example": "Mleko jest w lodówce.",
+    "imageName": "fridge_kitchen",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Pusta lodówka.",
+      "Magnes na lodówkę.",
+      "Schowaj to do lodówki."
+    ]
+  },
+  {
+    "id": 460,
+    "category": "Дом",
+    "polish": "telewizor",
+    "translation": "телевизор",
+    "transcription": "[tɛlɛˈvʲizɔr]",
+    "example": "Oglądam mecz w telewizorze.",
+    "imageName": "tv_screen",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wyłącz telewizor.",
+      "Pilot do telewizora.",
+      "Duży telewizor."
+    ]
+  },
+  {
+    "id": 461,
+    "category": "Дом",
+    "polish": "zmywarka",
+    "translation": "посудомоечная машина",
+    "transcription": "[zmɨˈvarka]",
+    "example": "Włóż naczynia do zmywarki.",
+    "imageName": "dishwasher_machine",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Tabletki do zmywarki.",
+      "Zmywarka nie działa.",
+      "Oszczędzać wodę dzięki zmywarce."
+    ]
+  },
+  {
+    "id": 462,
+    "category": "Дом",
+    "polish": "balkon",
+    "translation": "балкон",
+    "transcription": "[ˈbalkɔn]",
+    "example": "Wyjdźmy na balkon.",
+    "imageName": "balcony_view",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kwiaty na balkonie.",
+      "Widok z balkonu.",
+      "Palić na balkonie."
+    ]
+  },
+  {
+    "id": 463,
+    "category": "Дом",
+    "polish": "winda",
+    "translation": "лифт",
+    "transcription": "[ˈvʲinda]",
+    "example": "Jadę windą na piąte piętro.",
+    "imageName": "elevator_doors",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zepsuta winda.",
+      "Wezwać windę.",
+      "Utknąć w windzie."
+    ]
+  },
+  {
+    "id": 464,
+    "category": "Дом",
+    "polish": "kosz",
+    "translation": "корзина / мусорное ведро",
+    "transcription": "[kɔʂ]",
+    "example": "Wyrzuć to do kosza.",
+    "imageName": "trash_bin",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kosz na śmieci.",
+      "Kosz wiklinowy.",
+      "Grać w kosza (koszykówkę)."
+    ]
+  },
+  {
+    "id": 465,
+    "category": "Дом",
+    "polish": "piwnica",
+    "translation": "подвал",
+    "transcription": "[pʲivˈɲiʦ̑a]",
+    "example": "Ziemniaki trzymamy w piwnicy.",
+    "imageName": "cellar_door",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ciemna piwnica.",
+      "Zejść do piwnicy.",
+      "Klucz do piwnicy."
+    ]
+  },
+  {
+    "id": 466,
+    "category": "Одежда",
+    "polish": "garnitur",
+    "translation": "костюм (мужской)",
+    "transcription": "[ɡarˈɲitur]",
+    "example": "On wygląda elegancko w garniturze.",
+    "imageName": "suit_man",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ślubny garnitur.",
+      "Krawat i garnitur.",
+      "Garnitur szyty na miarę."
+    ]
+  },
+  {
+    "id": 467,
+    "category": "Одежда",
+    "polish": "krawat",
+    "translation": "галстук",
+    "transcription": "[ˈkravat]",
+    "example": "Muszę zawiązać krawat.",
+    "imageName": "tie_neck",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Jedwabny krawat.",
+      "Krawat w paski.",
+      "Poluzować krawat."
+    ]
+  },
+  {
+    "id": 468,
+    "category": "Одежда",
+    "polish": "spódnica",
+    "translation": "юбка",
+    "transcription": "[spudˈɲiʦ̑a]",
+    "example": "Ona nosi długą spódnicę.",
+    "imageName": "skirt_woman",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Krótka spódnica (minispódniczka).",
+      "Spódnica w kratkę.",
+      "Pasować do spódnicy."
+    ]
+  },
+  {
+    "id": 469,
+    "category": "Одежда",
+    "polish": "bluzka",
+    "translation": "блузка",
+    "transcription": "[ˈbluzka]",
+    "example": "Biała bluzka.",
+    "imageName": "blouse_top",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Elegancka bluzka.",
+      "Wyprasować bluzkę.",
+      "Bluzka z krótkim rękawem."
+    ]
+  },
+  {
+    "id": 470,
+    "category": "Одежда",
+    "polish": "pasek",
+    "translation": "ремень / пояс / полоска",
+    "transcription": "[ˈpasɛk]",
+    "example": "Skórzany pasek do spodni.",
+    "imageName": "belt_waist",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zapiąć pasek.",
+      "Bluzka w paski.",
+      "Pasek informacyjny (w TV)."
+    ]
+  },
+  {
+    "id": 471,
+    "category": "Город",
+    "polish": "tramwaj",
+    "translation": "трамвай",
+    "transcription": "[ˈtramvaj]",
+    "example": "Jadę tramwajem do centrum.",
+    "imageName": "tram_city",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Przystanek tramwajowy.",
+      "Tramwaj nr 5.",
+      "Czekać na tramwaj."
+    ]
+  },
+  {
+    "id": 472,
+    "category": "Город",
+    "polish": "taksówka",
+    "translation": "такси",
+    "transcription": "[takˈsufka]",
+    "example": "Zamówiłem taksówkę.",
+    "imageName": "taxi_car",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Postój taksówek.",
+      "Kierowca taksówki.",
+      "Zapłacić za taksówkę."
+    ]
+  },
+  {
+    "id": 473,
+    "category": "Город",
+    "polish": "chodnik",
+    "translation": "тротуар",
+    "transcription": "[ˈxɔdɲik]",
+    "example": "Idź chodnikiem, nie ulicą.",
+    "imageName": "sidewalk_path",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Równy chodnik.",
+      "Rower na chodniku.",
+      "Odśnieżać chodnik."
+    ]
+  },
+  {
+    "id": 474,
+    "category": "Город",
+    "polish": "skrzyżowanie",
+    "translation": "перекресток",
+    "transcription": "[skʃɨʐɔˈvaɲɛ]",
+    "example": "Skręć w prawo na skrzyżowaniu.",
+    "imageName": "intersection_road",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Duże skrzyżowanie.",
+      "Światła na skrzyżowaniu.",
+      "Przejść przez skrzyżowanie."
+    ]
+  },
+  {
+    "id": 475,
+    "category": "Город",
+    "polish": "policja",
+    "translation": "полиция",
+    "transcription": "[pɔˈlʲiʦ̑ja]",
+    "example": "Zadzwoń na policję.",
+    "imageName": "police_badge",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Komenda policji.",
+      "Samochód policji.",
+      "Policja przyjechała."
+    ]
+  },
+  {
+    "id": 476,
+    "category": "Тело",
+    "polish": "krew",
+    "translation": "кровь",
+    "transcription": "[krɛf]",
+    "example": "Leci mi krew z nosa.",
+    "imageName": "blood_drop",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Grupa krwi.",
+      "Krew nie woda.",
+      "Pobieranie krwi."
+    ]
+  },
+  {
+    "id": 477,
+    "category": "Тело",
+    "polish": "kość",
+    "translation": "кость",
+    "transcription": "[kɔɕʨ̑]",
+    "example": "Pies gryzie kość.",
+    "imageName": "bone_dog",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Złamana kość.",
+      "Kość słoniowa.",
+      "Sama skóra i kości."
+    ]
+  },
+  {
+    "id": 478,
+    "category": "Тело",
+    "polish": "skóra",
+    "translation": "кожа",
+    "transcription": "[ˈskura]",
+    "example": "Mam wrażliwą skórę.",
+    "imageName": "skin_care",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kurtka ze skóry.",
+      "Chroni skórę przed słońcem.",
+      "Gęsia skórka."
+    ]
+  },
+  {
+    "id": 479,
+    "category": "Люди",
+    "polish": "mężczyzna",
+    "translation": "мужчина",
+    "transcription": "[mɛ̃ˈʂʧ̑ɨzna]",
+    "example": "Przystojny mężczyzna.",
+    "imageName": "man_adult",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Prawdziwy mężczyzna.",
+      "Toaleta dla mężczyzn.",
+      "Rozmowa mężczyzn."
+    ]
+  },
+  {
+    "id": 480,
+    "category": "Люди",
+    "polish": "dorosły",
+    "translation": "взрослый",
+    "transcription": "[dɔˈrɔswɨ]",
+    "example": "Gdy będę dorosły, zostanę pilotem.",
+    "imageName": "adult_person",
+    "partOfSpeech": "сущ./прил.",
+    "examplesList": [
+      "Osoba dorosła.",
+      "Bilet dla dorosłych.",
+      "Zachowuj się jak dorosły."
+    ]
+  },
+  {
+    "id": 481,
+    "category": "Разное",
+    "polish": "urlop",
+    "translation": "отпуск",
+    "transcription": "[ˈurlɔp]",
+    "example": "Biorę urlop w sierpniu.",
+    "imageName": "vacation_relax",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Urlop wypoczynkowy.",
+      "Iść na urlop.",
+      "Urlop macierzyński."
+    ]
+  },
+  {
+    "id": 482,
+    "category": "Разное",
+    "polish": "święto",
+    "translation": "праздник",
+    "transcription": "[ˈɕfʲjɛntɔ]",
+    "example": "Boże Narodzenie to piękne święto.",
+    "imageName": "holiday_celebration",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wszystkiego najlepszego z okazji święta.",
+      "Dzień wolny od świąt.",
+      "Święto państwowe."
+    ]
+  },
+  {
+    "id": 483,
+    "category": "Разное",
+    "polish": "prezent",
+    "translation": "подарок",
+    "transcription": "[ˈprɛzɛnt]",
+    "example": "Dostałem prezent na urodziny.",
+    "imageName": "gift_box",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Kupić prezent.",
+      "Rozpakować prezent.",
+      "Prezent pod choinkę."
+    ]
+  },
+  {
+    "id": 484,
+    "category": "Разное",
+    "polish": "impreza",
+    "translation": "вечеринка / мероприятие",
+    "transcription": "[imˈprɛza]",
+    "example": "Idziemy na imprezę.",
+    "imageName": "party_confetti",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Udana impreza.",
+      "Impreza urodzinowa.",
+      "Robić imprezę."
+    ]
+  },
+  {
+    "id": 485,
+    "category": "Разное",
+    "polish": "muzyka",
+    "translation": "музыка",
+    "transcription": "[muˈzɨka]",
+    "example": "Słucham głośnej muzyki.",
+    "imageName": "music_notes",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Muzyka klasyczna.",
+      "Lubię polską muzykę.",
+      "Muzyka na żywo."
+    ]
+  },
+  {
+    "id": 486,
+    "category": "Разное",
+    "polish": "obraz",
+    "translation": "картина / образ",
+    "transcription": "[ˈɔbras]",
+    "example": "Piękny obraz wisi na ścianie.",
+    "imageName": "picture_frame",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Malować obraz.",
+      "Obraz nędzy i rozpaczy.",
+      "Galeria obrazów."
+    ]
+  },
+  {
+    "id": 487,
+    "category": "Разное",
+    "polish": "bankomat",
+    "translation": "банкомат",
+    "transcription": "[baŋˈkɔmat]",
+    "example": "Muszę wypłacić pieniądze z bankomatu.",
+    "imageName": "atm_machine",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Zepsuty bankomat.",
+      "Karta do bankomatu.",
+      "Gdzie jest najbliższy bankomat?"
+    ]
+  },
+  {
+    "id": 488,
+    "category": "Разное",
+    "polish": "karta",
+    "translation": "карта (банковская / игральная)",
+    "transcription": "[ˈkarta]",
+    "example": "Płacę kartą.",
+    "imageName": "card_payment",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Karta kredytowa.",
+      "Gra w karty.",
+      "Karta menu."
+    ]
+  },
+  {
+    "id": 489,
+    "category": "Разное",
+    "polish": "rachunek",
+    "translation": "счет (в ресторане / за услуги)",
+    "transcription": "[raˈxunɛk]",
+    "example": "Poproszę o rachunek.",
+    "imageName": "bill_receipt",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wysoki rachunek za prąd.",
+      "Płacić rachunki.",
+      "Rachunek sumienia."
+    ]
+  },
+  {
+    "id": 490,
+    "category": "Разное",
+    "polish": "portfel",
+    "translation": "кошелек",
+    "transcription": "[ˈpɔrtfɛl]",
+    "example": "Zgubiłem portfel z dokumentami.",
+    "imageName": "wallet_money",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Skórzany portfel.",
+      "Gruby portfel (dużo pieniędzy).",
+      "Schowaj pieniądze do portfela."
+    ]
+  },
+  {
+    "id": 491,
+    "category": "Вещи",
+    "polish": "plecak",
+    "translation": "рюкзак",
+    "transcription": "[ˈplɛʦ̑ak]",
+    "example": "Spakuj książki do plecaka.",
+    "imageName": "backpack_bag",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Ciężki plecak.",
+      "Plecak turystyczny.",
+      "Nosić plecak."
+    ]
+  },
+  {
+    "id": 492,
+    "category": "Вещи",
+    "polish": "papieros",
+    "translation": "сигарета",
+    "transcription": "[paˈpʲjɛrɔs]",
+    "example": "Palenie papierosów szkodzi.",
+    "imageName": "cigarette_smoke",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Paczka papierosów.",
+      "Zapalić papierosa.",
+      "Elektroniczny papieros."
+    ]
+  },
+  {
+    "id": 493,
+    "category": "Вещи",
+    "polish": "dym",
+    "translation": "дым",
+    "transcription": "[dɨm]",
+    "example": "Widzę dym nad lasem.",
+    "imageName": "smoke_cloud",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Nie ma dymu bez ognia.",
+      "Dym z komina.",
+      "Gęsty dym."
+    ]
+  },
+  {
+    "id": 494,
+    "category": "Вещи",
+    "polish": "śmieci",
+    "translation": "мусор",
+    "transcription": "[ˈɕmʲjɛʨ̑i]",
+    "example": "Wyrzuć śmieci.",
+    "imageName": "garbage_trash",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Segregacja śmieci.",
+      "Kubeł na śmieci.",
+      "Śmieciarka zabiera śmieci."
+    ]
+  },
+  {
+    "id": 495,
+    "category": "Разное",
+    "polish": "dowód",
+    "translation": "доказательство / удостоверение",
+    "transcription": "[ˈdɔvut]",
+    "example": "Dowód osobisty (paszport wewnętrzny).",
+    "imageName": "id_card",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Pokazać dowód.",
+      "Brak dowodów w sprawie.",
+      "Dowód miłości."
+    ]
+  },
+  {
+    "id": 496,
+    "category": "Разное",
+    "polish": "sukces",
+    "translation": "успех",
+    "transcription": "[ˈsukʦ̑ɛs]",
+    "example": "Gratuluję sukcesu.",
+    "imageName": "success_cup",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Osiągnąć sukces.",
+      "Klucz do sukcesu.",
+      "Wielki sukces."
+    ]
+  },
+  {
+    "id": 497,
+    "category": "Разное",
+    "polish": "błąd",
+    "translation": "ошибка",
+    "transcription": "[bwɔnt]",
+    "example": "Zrobiłem błąd w zadaniu.",
+    "imageName": "error_cross",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Wybaczyć błędy.",
+      "Błąd ortograficzny.",
+      "Uczyć się na błędach."
+    ]
+  },
+  {
+    "id": 498,
+    "category": "Разное",
+    "polish": "nadzieja",
+    "translation": "надежда",
+    "transcription": "[naˈʥ̑ɛja]",
+    "example": "Nadzieja umiera ostatnia.",
+    "imageName": "hope_sun",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Mam nadzieję.",
+      "Iskra nadziei.",
+      "Stracić nadzieję."
+    ]
+  },
+  {
+    "id": 499,
+    "category": "Разное",
+    "polish": "wojna",
+    "translation": "война",
+    "transcription": "[ˈvɔjna]",
+    "example": "Wojna to zło.",
+    "imageName": "war_conflict",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Druga wojna światowa.",
+      "Stan wojny.",
+      "Pokój i wojna."
+    ]
+  },
+  {
+    "id": 500,
+    "category": "Разное",
+    "polish": "koniec",
+    "translation": "конец",
+    "transcription": "[ˈkɔɲɛʦ̑]",
+    "example": "To już koniec filmu.",
+    "imageName": "end_sign",
+    "partOfSpeech": "сущ.",
+    "examplesList": [
+      "Koniec świata.",
+      "Na koniec.",
+      "Koniec języka za przewodnika."
+    ]
+  }
+]
