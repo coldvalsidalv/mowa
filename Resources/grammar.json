@@ -1,0 +1,25 @@
+{
+  "id": "lesson_1",
+  "order": 1,
+  "title": "Глагол Być (Быть)",
+  "level": "A0",
+  "description": "Самый важный глагол польского языка.",
+  "steps": [
+    {
+      "type": "theory",
+      "title": "Основа",
+      "content": "В польском языке, как и в английском, нельзя просто сказать 'Я студент'. Нужно сказать 'Я ЕСТЬ студент'. Глагол 'быть' - это **Być**."
+    },
+    {
+      "type": "theory",
+      "title": "Спряжение (Ед. число)",
+      "content": "Запомни формы:\n\nJa **jestem** (Я есть)\nTy **jesteś** (Ты есть)\nOn/Ona/Ono **jest** (Он/Она/Оно есть)"
+    },
+    {
+      "type": "quiz",
+      "question": "Cześć! Ja ____ Uladzislau.",
+      "answers": ["jest", "jesteś", "jestem"],
+      "correctAnswer": "jestem"
+    }
+  ]
+}
