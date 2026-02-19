@@ -5,6 +5,9 @@ struct HomeView: View {
     @StateObject var viewModel = StudySessionViewModel()
     @AppStorage("dayStreak") var dayStreak: Int = 1
     
+    // --- 1. НОВОЕ: Состояние для открытия шторки ---
+    @State private var showStreakSheet = false
+    
     let columns = [
         GridItem(.flexible(), spacing: 16),
         GridItem(.flexible(), spacing: 16)
@@ -28,21 +31,25 @@ struct HomeView: View {
                         
                         Spacer()
                         
-                        // ПЛАШКА СТРАЙКА
-                        HStack(spacing: 6) {
-                            Image(systemName: "flame.fill")
-                                .foregroundColor(.orange)
-                                .font(.title2)
-                            Text("\(dayStreak)")
-                                .font(.title2)
-                                .bold()
-                                .foregroundColor(.primary)
+                        // --- 2. ИЗМЕНЕНИЕ: Сделали кликабельным (Button) ---
+                        Button(action: {
+                            showStreakSheet = true
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "flame.fill")
+                                    .foregroundColor(.orange)
+                                    .font(.title2)
+                                Text("\(dayStreak)")
+                                    .font(.title2)
+                                    .bold()
+                                    .foregroundColor(.primary)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color(UIColor.secondarySystemGroupedBackground))
+                            .cornerRadius(16)
+                            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(Color(UIColor.secondarySystemGroupedBackground))
-                        .cornerRadius(16)
-                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                     }
                     .padding(.horizontal)
                     .padding(.top, 10)
@@ -73,7 +80,6 @@ struct HomeView: View {
                         }
                         
                         // ПОВТОРИТЬ (Кликабельная)
-                        // Если ReviewSelectionView существует - оставляем, если нет - можно заменить на FlashcardView(..., isReviewMode: true)
                         NavigationLink(destination: ReviewSelectionView()) {
                             HStack {
                                 ZStack {
@@ -123,7 +129,6 @@ struct HomeView: View {
                         .padding(.horizontal)
                         
                         LazyVGrid(columns: columns, spacing: 16) {
-                            // --- ИСПРАВЛЕНИЕ: Добавлен isReviewMode: false ---
                             NavigationLink(destination: FlashcardView(categories: ["Бюрократия"], isReviewMode: false)) {
                                 LessonCard(title: "Бюрократия", subtitle: "Продолжить", icon: "doc.text.fill", color: .orange, progress: 0.4)
                             }
@@ -136,7 +141,6 @@ struct HomeView: View {
                                 LessonCard(title: "Викторина", subtitle: "Проверь себя", icon: "gamecontroller.fill", color: .purple, progress: 0.8)
                             }
                             
-                            // "Случайное" - это тоже режим обучения, просто смешанный
                             NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false)) {
                                 LessonCard(title: "Случайное", subtitle: "Всё подряд", icon: "shuffle", color: .blue, progress: 0.2)
                             }
@@ -152,12 +156,15 @@ struct HomeView: View {
             .onAppear {
                 viewModel.objectWillChange.send()
             }
+            // --- 3. НОВОЕ: Открытие экрана StreakView ---
+            .sheet(isPresented: $showStreakSheet) {
+                StreakView()
+            }
         }
     }
     
     // MARK: - Helpers
     func getLearnedCount() -> Int {
-        // Убедись, что ProgressService существует, иначе верни 0
         return ProgressService.shared.getLearnedIDs().count
     }
 }

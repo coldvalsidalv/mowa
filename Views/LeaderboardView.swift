@@ -1,6 +1,22 @@
 import SwiftUI
 
-// Модель для участника рейтинга
+// MARK: - MODELS
+
+// Добавил модель Лиги
+enum LeagueType: String, CaseIterable {
+    case bronze = "Liga Brązowa"
+    case silver = "Liga Srebrna"
+    case gold = "Liga Złota"
+    
+    var color: Color {
+        switch self {
+        case .bronze: return .orange
+        case .silver: return .gray
+        case .gold: return .yellow
+        }
+    }
+}
+
 struct LeaderboardUser: Identifiable {
     let id = UUID()
     let rank: Int
@@ -10,8 +26,16 @@ struct LeaderboardUser: Identifiable {
     let isCurrentUser: Bool
 }
 
+// MARK: - MAIN VIEW
+
 struct LeaderboardView: View {
-    // Имитация данных (потом это придет с сервера)
+    // Состояние для анимации
+    @State private var podiumsVisible = false
+    // Состояние для вкладок (Рейтинг / Статистика)
+    @State private var selectedTab = 0
+    
+    // Имитация данных
+    let currentLeague: LeagueType = .bronze
     let users: [LeaderboardUser] = [
         LeaderboardUser(rank: 1, name: "Anna K.", xp: 2450, avatarColor: .purple, isCurrentUser: false),
         LeaderboardUser(rank: 2, name: "Marek W.", xp: 2100, avatarColor: .blue, isCurrentUser: false),
@@ -29,57 +53,159 @@ struct LeaderboardView: View {
                 Color(UIColor.systemGroupedBackground)
                     .ignoresSafeArea()
                 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        
-                        // ЗАГОЛОВОК
-                        VStack(spacing: 8) {
-                            Text("Liga Brązowa") // Бронзовая лига
-                                .font(.headline)
-                                .foregroundColor(.orange)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 6)
-                                .background(Color.orange.opacity(0.1))
-                                .cornerRadius(20)
-                            
-                            Text("Ranking Tygodnia")
-                                .font(.largeTitle)
-                                .bold()
-                            
-                            Text("Do końca: 2 dni")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        .padding(.top, 20)
-                        
-                        // ПОДИУМ (ТОП 3)
-                        HStack(alignment: .bottom, spacing: 16) {
-                            // 2-е место
-                            PodiumView(user: users[1], height: 140, color: .gray) // Серебро
-                            
-                            // 1-е место
-                            PodiumView(user: users[0], height: 170, color: .yellow) // Золото
-                                .scaleEffect(1.1) // Чуть больше
-                                .zIndex(1)
-                            
-                            // 3-е место
-                            PodiumView(user: users[2], height: 120, color: .brown) // Бронза
-                        }
-                        .padding(.horizontal)
-                        
-                        // СПИСОК ОСТАЛЬНЫХ
-                        LazyVStack(spacing: 12) {
-                            ForEach(users.dropFirst(3)) { user in
-                                LeaderboardRow(user: user)
+                VStack(spacing: 0) {
+                    // ПЕРЕКЛЮЧАТЕЛЬ (Рейтинг / Статистика)
+                    Picker("Tabs", selection: $selectedTab) {
+                        Text("Ranking").tag(0)
+                        Text("Statystyki").tag(1)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding()
+                    .background(Color(UIColor.secondarySystemGroupedBackground))
+                    
+                    if selectedTab == 0 {
+                        // === ВКЛАДКА РЕЙТИНГА ===
+                        ScrollView {
+                            VStack(spacing: 24) {
+                                // ЗАГОЛОВОК С ЛИГОЙ
+                                VStack(spacing: 8) {
+                                    HStack {
+                                        Image(systemName: "shield.fill")
+                                        Text(currentLeague.rawValue)
+                                    }
+                                    .font(.headline)
+                                    .foregroundColor(currentLeague.color)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 6)
+                                    .background(currentLeague.color.opacity(0.1))
+                                    .cornerRadius(20)
+                                    
+                                    Text("Ranking Tygodnia")
+                                        .font(.largeTitle)
+                                        .bold()
+                                    
+                                    Text("Do końca: 2 dni")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                }
+                                .padding(.top, 20)
+                                
+                                // ПОДИУМ (ТОП 3) с Анимацией
+                                HStack(alignment: .bottom, spacing: 16) {
+                                    // 2-е место
+                                    PodiumView(user: users[1], height: 140, color: .gray, isVisible: podiumsVisible)
+                                    
+                                    // 1-е место
+                                    PodiumView(user: users[0], height: 170, color: .yellow, isVisible: podiumsVisible)
+                                        .scaleEffect(1.1)
+                                        .zIndex(1)
+                                    
+                                    // 3-е место
+                                    PodiumView(user: users[2], height: 120, color: .brown, isVisible: podiumsVisible)
+                                }
+                                .padding(.horizontal)
+                                
+                                // СПИСОК ОСТАЛЬНЫХ
+                                LazyVStack(spacing: 12) {
+                                    ForEach(users.dropFirst(3)) { user in
+                                        LeaderboardRow(user: user)
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .padding(.bottom, 30)
                             }
                         }
-                        .padding(.horizontal)
-                        .padding(.bottom, 30)
+                    } else {
+                        // === ВКЛАДКА СТАТИСТИКИ ===
+                        StatisticsSubView()
+                            .transition(.opacity)
                     }
                 }
             }
             .navigationTitle("Liderzy")
             .navigationBarHidden(true)
+            .onAppear {
+                // Запуск анимации пьедестала
+                withAnimation(.spring(response: 0.7, dampingFraction: 0.6)) {
+                    podiumsVisible = true
+                }
+            }
+        }
+    }
+}
+
+// MARK: - VIEW: ЭКРАН СТАТИСТИКИ
+
+struct StatisticsSubView: View {
+    // Имитация дней обучения (1 - учил, 0 - пропустил)
+    let activityDays = [1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1]
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                // Карточки общей статистики
+                HStack(spacing: 16) {
+                    StatCard(title: "Słowa dzisiaj", value: "24", icon: "text.book.closed.fill", color: .blue)
+                    StatCard(title: "Dni z rzędu", value: "12", icon: "flame.fill", color: .orange)
+                }
+                .padding(.horizontal)
+                .padding(.top, 20)
+                
+                // Календарь активности
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Twoja aktywność")
+                        .font(.headline)
+                        .padding(.horizontal)
+                    
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 10) {
+                        ForEach(0..<28) { index in
+                            // Просто логика для раскраски дней для примера
+                            let isActive = index < activityDays.count && activityDays[index] == 1
+                            let isFuture = index > 20
+                            
+                            Circle()
+                                .fill(isFuture ? Color.gray.opacity(0.1) : (isActive ? Color.green : Color.red.opacity(0.3)))
+                                .frame(height: 35)
+                                .overlay(
+                                    Text("\(index + 1)")
+                                        .font(.caption2)
+                                        .foregroundColor(isFuture ? .gray : .white)
+                                )
+                        }
+                    }
+                    .padding()
+                    .background(Color(UIColor.secondarySystemGroupedBackground))
+                    .cornerRadius(20)
+                    .padding(.horizontal)
+                }
+                
+                // График (простая имитация)
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Postęp XP")
+                        .font(.headline)
+                        .padding(.horizontal)
+                    
+                    HStack(alignment: .bottom, spacing: 12) {
+                        ForEach(0..<7) { day in
+                            VStack {
+                                Spacer()
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.blue.opacity(day == 6 ? 1.0 : 0.4))
+                                    .frame(height: CGFloat([40, 60, 30, 80, 50, 90, 70][day]))
+                                Text(["Pn", "Wt", "Śr", "Cz", "Pt", "Sb", "Nd"][day])
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                    }
+                    .frame(height: 150)
+                    .padding()
+                    .background(Color(UIColor.secondarySystemGroupedBackground))
+                    .cornerRadius(20)
+                    .padding(.horizontal)
+                }
+            }
+            .padding(.bottom, 30)
         }
     }
 }
@@ -90,6 +216,7 @@ struct PodiumView: View {
     let user: LeaderboardUser
     let height: CGFloat
     let color: Color
+    let isVisible: Bool // Параметр для анимации
     
     var body: some View {
         VStack {
@@ -125,22 +252,28 @@ struct PodiumView: View {
                     .frame(width: 60, height: 60)
                 }
             }
+            // Анимация появления аватара (немного позже столбика)
+            .opacity(isVisible ? 1 : 0)
+            .offset(y: isVisible ? 0 : 20)
+            .animation(.easeOut.delay(0.2), value: isVisible)
             
             Text(user.name)
                 .font(.caption)
                 .bold()
                 .lineLimit(1)
+                .opacity(isVisible ? 1 : 0)
             
             Text("\(user.xp) XP")
                 .font(.caption2)
                 .foregroundColor(.gray)
+                .opacity(isVisible ? 1 : 0)
             
-            // Столбик пьедестала
+            // Столбик пьедестала (РАСТЕТ)
             Rectangle()
                 .fill(
                     LinearGradient(gradient: Gradient(colors: [color.opacity(0.6), color.opacity(0.3)]), startPoint: .top, endPoint: .bottom)
                 )
-                .frame(width: 80, height: height) // Высота зависит от места
+                .frame(width: 80, height: isVisible ? height : 0) // Анимация высоты
                 .cornerRadius(12, corners: [.topLeft, .topRight])
         }
     }
@@ -151,13 +284,11 @@ struct LeaderboardRow: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            // Номер
             Text("\(user.rank)")
                 .font(.headline)
                 .foregroundColor(.gray)
                 .frame(width: 30)
             
-            // Аватар
             Circle()
                 .fill(user.avatarColor.opacity(0.2))
                 .frame(width: 44, height: 44)
@@ -167,20 +298,21 @@ struct LeaderboardRow: View {
                         .foregroundColor(user.avatarColor)
                 )
             
-            // Имя
-            Text(user.name)
-                .font(.headline)
-                .foregroundColor(user.isCurrentUser ? .blue : .primary)
-            
-            if user.isCurrentUser {
-                Text("(Ty)")
-                    .font(.caption)
-                    .foregroundColor(.gray)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(user.name)
+                    .font(.headline)
+                    .foregroundColor(user.isCurrentUser ? .blue : .primary)
+                
+                // Добавил подпись лиги для красоты
+                if user.isCurrentUser {
+                    Text("Liga Brązowa")
+                        .font(.caption2)
+                        .foregroundColor(.orange)
+                }
             }
             
             Spacer()
             
-            // XP
             VStack(alignment: .trailing) {
                 Text("\(user.xp)")
                     .font(.headline)
@@ -200,7 +332,35 @@ struct LeaderboardRow: View {
     }
 }
 
-// Расширение для скругления конкретных углов (нужно для пьедестала)
+// Карточка для статистики
+struct StatCard: View {
+    let title: String
+    let value: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(color)
+            
+            Text(value)
+                .font(.title)
+                .bold()
+            
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.gray)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+    }
+}
+
+// Расширение для скругления (оставил твое)
 extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
