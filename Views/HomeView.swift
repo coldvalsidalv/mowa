@@ -1,310 +1,438 @@
 import SwiftUI
 import Combine
 
+// --- МОДЕЛИ ---
+enum ChallengeType {
+    case words, quiz, grammar
+}
+
+struct DailyChallenge: Identifiable, Equatable {
+    let id = UUID()
+    let title: String
+    let description: String
+    let target: Int
+    var currentProgress: Int
+    let reward: Int
+    let timeLeft: String
+    let type: ChallengeType
+    
+    var progress: Double { Double(currentProgress) / Double(target) }
+}
+
 struct HomeView: View {
     @StateObject var viewModel = StudySessionViewModel()
+    
+    // Хранилище данных
     @AppStorage("dayStreak") var dayStreak: Int = 1
+    @AppStorage("userXP") var userXP: Int = 1250
     
-    // --- 1. НОВОЕ: Состояние для открытия шторки ---
+    // Состояние UI
     @State private var showStreakSheet = false
+    @State private var showAllCompletedMessage = false
     
-    let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+    // Данные вызовов
+    @State private var challenges: [DailyChallenge] = [
+        DailyChallenge(title: "Утро лингвиста", description: "Выучи 5 новых слов", target: 5, currentProgress: 3, reward: 50, timeLeft: "2ч 15мин", type: .words),
+        DailyChallenge(title: "Грамматика", description: "Пройди 1 урок грамматики", target: 1, currentProgress: 0, reward: 75, timeLeft: "5ч 00мин", type: .grammar),
+        DailyChallenge(title: "Идеальная серия", description: "Пройди викторину без ошибок", target: 1, currentProgress: 0, reward: 100, timeLeft: "12ч 45мин", type: .quiz)
+    ]
+    
+    // Настройка сетки для карусели уроков
+    let gridRows = [
+        GridItem(.fixed(185), spacing: 16),
+        GridItem(.fixed(185), spacing: 16)
     ]
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    
-                    // 1. ПРИВЕТСТВИЕ + СТРАЙК
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Cześć, Uladzislau! 👋")
-                                .font(.title2)
-                                .bold()
-                            Text("Готов учить польский?")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                        }
+            ZStack {
+                Color(UIColor.systemGroupedBackground).ignoresSafeArea()
+                
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 24) {
                         
-                        Spacer()
-                        
-                        // --- 2. ИЗМЕНЕНИЕ: Сделали кликабельным (Button) ---
-                        Button(action: {
-                            showStreakSheet = true
-                        }) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "flame.fill")
-                                    .foregroundColor(.orange)
-                                    .font(.title2)
-                                Text("\(dayStreak)")
-                                    .font(.title2)
-                                    .bold()
-                                    .foregroundColor(.primary)
+                        // 1. ХЕДЕР
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Cześć, Uladzislau!").font(.title2).bold()
+                                Text("Готов учить польский?").font(.subheadline).foregroundColor(.gray)
                             }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Color(UIColor.secondarySystemGroupedBackground))
-                            .cornerRadius(16)
-                            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 10)
-                    
-                    // 2. ДНЕВНАЯ ЦЕЛЬ
-                    DailyGoalCard()
-                        .padding(.horizontal)
-                    
-                    // 3. СТАТИСТИКА
-                    VStack(spacing: 15) {
-                        HStack(spacing: 15) {
-                            // СЛОВА
-                            StatItem(
-                                value: "\(getLearnedCount())",
-                                label: "Слов изучено",
-                                icon: "textformat.abc",
-                                color: .green
-                            )
+                            Spacer()
                             
-                            // ГРАММАТИКА
-                            let grammarStats = viewModel.getGrammarStats()
-                            StatItem(
-                                value: "\(grammarStats.learned)/\(grammarStats.total)",
-                                label: "Грамматика",
-                                icon: "text.book.closed.fill",
-                                color: .pink
-                            )
+                            HStack(spacing: 12) {
+                                // БЕЙДЖ ЛИГИ (с переходом на RankingView)
+                                NavigationLink(destination: LeaderboardView()) {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "shield.fill")
+                                            .foregroundColor(Color(hex: "CD7F32")) // Бронзовый цвет
+                                        Text("Бронза")
+                                            .bold()
+                                            .foregroundColor(.primary)
+                                    }
+                                    .padding(.horizontal, 10).padding(.vertical, 8)
+                                    .background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(12)
+                                }
+                                
+                                // СТРИК
+                                Button(action: { showStreakSheet = true }) {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "flame.fill").foregroundColor(.orange)
+                                        Text("\(dayStreak)").bold().foregroundColor(.primary)
+                                    }
+                                    .padding(.horizontal, 10).padding(.vertical, 8)
+                                    .background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(12)
+                                }
+                            }
+                        }
+                        .padding(.horizontal).padding(.top, 10)
+                        
+                        // 2. ДНЕВНАЯ ЦЕЛЬ
+                        DailyGoalCard().padding(.horizontal)
+                        
+                        // 3. ЕЖЕДНЕВНЫЕ ВЫЗОВЫ
+                        if !challenges.isEmpty || showAllCompletedMessage {
+                            VStack(alignment: .leading, spacing: 16) {
+                                if !challenges.isEmpty {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "target").foregroundColor(.purple).font(.title3)
+                                        Text("Ежедневные вызовы").font(.title3).bold()
+                                    }
+                                    .padding(.horizontal)
+                                    .transition(.opacity)
+                                    
+                                    VStack(spacing: 16) {
+                                        ForEach(challenges) { challenge in
+                                            DailyChallengeRow(challenge: challenge) {
+                                                completeChallenge(challenge)
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                    
+                                } else {
+                                    VStack(spacing: 12) {
+                                        Image(systemName: "trophy.fill")
+                                            .font(.system(size: 40))
+                                            .foregroundColor(.yellow)
+                                            .padding(.top, 10)
+                                            .symbolEffect(.bounce, value: showAllCompletedMessage)
+                                        Text("Все вызовы выполнены!").font(.headline).foregroundColor(.primary)
+                                        Text("Отличная работа, так держать!").font(.caption).foregroundColor(.gray)
+                                    }
+                                    .frame(maxWidth: .infinity).padding(.vertical, 20)
+                                    .background(Color(UIColor.secondarySystemGroupedBackground).opacity(0.5))
+                                    .cornerRadius(16).padding(.horizontal)
+                                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                                }
+                            }
+                            .transition(.scale(scale: 0.01, anchor: .top).combined(with: .opacity))
                         }
                         
-                        // ПОВТОРИТЬ (Кликабельная)
+                        // 4. ПОВТОРЕНИЕ
                         NavigationLink(destination: ReviewSelectionView()) {
                             HStack {
                                 ZStack {
-                                    Circle()
-                                        .fill(Color.blue.opacity(0.1))
-                                        .frame(width: 50, height: 50)
-                                    Image(systemName: "arrow.clockwise")
-                                        .font(.title2)
-                                        .foregroundColor(.blue)
+                                    Circle().fill(Color.blue.opacity(0.1)).frame(width: 50, height: 50)
+                                    Image(systemName: "arrow.clockwise").font(.title2).foregroundColor(.blue)
                                 }
-                                
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("Повторение")
-                                        .font(.headline)
-                                        .foregroundColor(.primary)
-                                    Text("Закрепить изученный материал")
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
+                                    Text("Повторение").font(.headline).foregroundColor(.primary)
+                                    Text("Закрепить материал").font(.caption).foregroundColor(.gray)
                                 }
-                                
                                 Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.gray.opacity(0.4))
+                                Image(systemName: "chevron.right").foregroundColor(.gray.opacity(0.4))
                             }
-                            .padding()
-                            .background(Color(UIColor.secondarySystemGroupedBackground))
-                            .cornerRadius(20)
-                            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                        }
-                    }
-                    .padding(.horizontal)
-                    
-                    // 4. СЕТКА УРОКОВ
-                    VStack(alignment: .leading, spacing: 16) {
-                        HStack {
-                            Text("Твои уроки")
-                                .font(.title3)
-                                .bold()
-                            Spacer()
-                            NavigationLink(destination: LessonsView()) {
-                                Text("Все")
-                                    .font(.subheadline)
-                                    .foregroundColor(.blue)
-                            }
+                            .padding().background(Color(UIColor.secondarySystemGroupedBackground))
+                            .cornerRadius(20).shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                         }
                         .padding(.horizontal)
                         
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            NavigationLink(destination: FlashcardView(categories: ["Бюрократия"], isReviewMode: false)) {
-                                LessonCard(title: "Бюрократия", subtitle: "Продолжить", icon: "doc.text.fill", color: .orange, progress: 0.4)
-                            }
+                        // 5. БЫСТРАЯ ТРЕНИРОВКА (Обновленный дизайн)
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Быстрая тренировка").font(.title3).bold().padding(.horizontal)
                             
-                            NavigationLink(destination: FlashcardView(categories: ["Магазин"], isReviewMode: false)) {
-                                LessonCard(title: "Магазин", subtitle: "Новая тема", icon: "cart.fill", color: .green, progress: 0.0)
+                            HStack(spacing: 16) {
+                                NavigationLink(destination: QuizView()) {
+                                    PracticeCard(title: "Викторина", subtitle: "Тест", icon: "gamecontroller.fill", color: .purple)
+                                }
+                                NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false)) {
+                                    PracticeCard(title: "Случайное", subtitle: "Микс", icon: "shuffle", color: .blue)
+                                }
                             }
-                            
-                            NavigationLink(destination: QuizView()) {
-                                LessonCard(title: "Викторина", subtitle: "Проверь себя", icon: "gamecontroller.fill", color: .purple, progress: 0.8)
-                            }
-                            
-                            NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false)) {
-                                LessonCard(title: "Случайное", subtitle: "Всё подряд", icon: "shuffle", color: .blue, progress: 0.2)
-                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
+                        
+                        // 6. ТВОИ УРОКИ (Линейный прогресс)
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack {
+                                Text("Темы").font(.title3).bold()
+                                Spacer()
+                                NavigationLink(destination: LessonsView()) { Text("Все").font(.subheadline).foregroundColor(.blue) }
+                            }
+                            .padding(.horizontal)
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                LazyHGrid(rows: gridRows, spacing: 16) {
+                                    NavigationLink(destination: FlashcardView(categories: ["Бюрократия"], isReviewMode: false)) {
+                                        LessonCard(title: "Бюрократия", subtitle: "Продолжить", count: "25 слов", icon: "doc.text.fill", color: .orange, progress: 0.4)
+                                    }
+                                    NavigationLink(destination: FlashcardView(categories: ["Магазин"], isReviewMode: false)) {
+                                        LessonCard(title: "Магазин", subtitle: "Новая тема", count: "18 слов", icon: "cart.fill", color: .green, progress: 0.0)
+                                    }
+                                    NavigationLink(destination: FlashcardView(categories: ["Путешествия"], isReviewMode: false)) {
+                                        LessonCard(title: "Путешествия", subtitle: "Пора в путь", count: "30 слов", icon: "airplane", color: .cyan, progress: 0.1)
+                                    }
+                                    NavigationLink(destination: FlashcardView(categories: ["Семья"], isReviewMode: false)) {
+                                        LessonCard(title: "Семья", subtitle: "Родные", count: "15 слов", icon: "figure.2.and.child.holdinghands", color: .pink, progress: 0.0)
+                                    }
+                                    NavigationLink(destination: FlashcardView(categories: ["Еда"], isReviewMode: false)) {
+                                        LessonCard(title: "Еда", subtitle: "Ресторан", count: "40 слов", icon: "fork.knife", color: .red, progress: 0.0)
+                                    }
+                                    NavigationLink(destination: FlashcardView(categories: ["Спорт"], isReviewMode: false)) {
+                                        LessonCard(title: "Спорт", subtitle: "Активность", count: "20 слов", icon: "figure.run", color: .indigo, progress: 0.0)
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .padding(.bottom, 20)
+                            }
+                            .frame(height: 410)
+                        }
                     }
+                    .padding(.bottom, 30)
                 }
-                .padding(.bottom, 30)
             }
-            .navigationTitle("")
-            .navigationBarHidden(true)
+            .navigationTitle("").navigationBarHidden(true)
             .background(Color(UIColor.systemGroupedBackground))
-            .onAppear {
-                viewModel.objectWillChange.send()
-            }
-            // --- 3. НОВОЕ: Открытие экрана StreakView ---
-            .sheet(isPresented: $showStreakSheet) {
-                StreakView()
-            }
+            .onAppear { viewModel.objectWillChange.send() }
+            .sheet(isPresented: $showStreakSheet) { StreakView() }
         }
     }
     
-    // MARK: - Helpers
-    func getLearnedCount() -> Int {
-        return ProgressService.shared.getLearnedIDs().count
-    }
-}
-
-// MARK: - КОМПОНЕНТ: Daily Goal
-struct DailyGoalCard: View {
-    @State private var todayProgress: Double = 0.65
-    
-    var body: some View {
-        HStack(spacing: 20) {
-            ZStack {
-                Circle()
-                    .stroke(Color.white.opacity(0.2), lineWidth: 8)
-                Circle()
-                    .trim(from: 0, to: todayProgress)
-                    .stroke(Color.white, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                
-                Text("\(Int(todayProgress * 100))%")
-                    .font(.caption)
-                    .bold()
-                    .foregroundColor(.white)
-            }
-            .frame(width: 50, height: 50)
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Дневная цель")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                Text("Продолжай в том же духе!")
-                    .font(.caption)
-                    .foregroundColor(.white.opacity(0.8))
-            }
-            
-            Spacer()
-            
-            Image(systemName: "flame.fill")
-                .font(.title)
-                .foregroundColor(.orange)
+    // ЛОГИКА
+    func completeChallenge(_ challenge: DailyChallenge) {
+        withAnimation(.spring()) { userXP += challenge.reward }
+        withAnimation(.easeInOut(duration: 0.5)) {
+            if let index = challenges.firstIndex(where: { $0.id == challenge.id }) { challenges.remove(at: index) }
         }
-        .padding()
-        .background(
-            LinearGradient(gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.7)]), startPoint: .leading, endPoint: .trailing)
-        )
-        .cornerRadius(20)
-        .shadow(color: .blue.opacity(0.3), radius: 10, x: 0, y: 5)
-    }
-}
-
-// MARK: - КОМПОНЕНТ: Статистика
-struct StatItem: View {
-    let value: String
-    let label: String
-    let icon: String
-    let color: Color
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(color)
-            
-            Text(value)
-                .font(.title2)
-                .bold()
-                .foregroundColor(.primary)
-            
-            Text(label)
-                .font(.caption2)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
+        if challenges.isEmpty {
+            withAnimation { showAllCompletedMessage = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                withAnimation(.easeInOut(duration: 0.8)) { showAllCompletedMessage = false }
+            }
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
-        .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
 }
 
-// MARK: - КОМПОНЕНТ: Карточка Урока
-struct LessonCard: View {
+// MARK: - НОВЫЙ ДИЗАЙН: PracticeCard (Унифицированный стиль)
+struct PracticeCard: View {
     let title: String
     let subtitle: String
     let icon: String
     let color: Color
-    let progress: Double
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundColor(color)
-                    .frame(width: 40, height: 40)
-                    .background(color.opacity(0.1))
-                    .clipShape(Circle())
-                
-                Spacer()
-                
-                if progress > 0 {
-                    Text("\(Int(progress * 100))%")
-                        .font(.caption2)
-                        .bold()
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.green.opacity(0.2))
-                        .foregroundColor(.green)
-                        .cornerRadius(8)
-                }
-            }
+        VStack(alignment: .leading, spacing: 0) {
+            // Иконка строго в стиле LessonCard и Повторения
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(color)
+                .frame(width: 44, height: 44)
+                .background(color.opacity(0.1))
+                .clipShape(Circle())
             
-            Spacer()
+            Spacer(minLength: 16)
             
-            VStack(alignment: .leading, spacing: 4) {
+            // Текстовый блок
+            VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.headline)
+                    .font(.system(.headline, design: .rounded))
+                    .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.75) // Запрет на разрыв слова
                 
                 Text(subtitle)
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                    .font(.system(.subheadline, design: .rounded))
+                    .foregroundColor(.gray) // Стандартный серый для подзаголовков
+                    .lineLimit(1)
             }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 130) // Оптимизированная высота
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4) // Стандартная тень приложения
+    }
+}
+// MARK: - DailyGoalCard
+struct DailyGoalCard: View {
+    @AppStorage("userXP") var userXP: Int = 1250
+    @AppStorage("dailyWordGoal") var dailyGoal: Int = 10
+    
+    @State private var wordsLearnedToday: Int = 8
+    @State private var goalCompleted = false
+    
+    @State private var showSuccessBounce = false
+    @State private var showGlowPulse = false
+    @State private var showXParticles = false
+    
+    var progress: Double { min(Double(wordsLearnedToday) / Double(dailyGoal), 1.0) }
+    
+    var body: some View {
+        HStack(spacing: 20) {
+            ZStack {
+                Circle().stroke(Color.white.opacity(0.2), lineWidth: 8)
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(Color.white, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.spring(response: 0.6, dampingFraction: 0.7), value: progress)
+                
+                Text("\(Int(progress * 100))%")
+                    .font(.caption).bold().foregroundColor(.white)
+                    .contentTransition(.numericText(value: progress * 100))
+            }
+            .frame(width: 50, height: 50)
             
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Color.gray.opacity(0.2))
-                    Capsule().fill(color).frame(width: geo.size.width * progress)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(goalCompleted ? "Цель выполнена!" : "Дневная цель")
+                    .font(.headline).foregroundColor(.white)
+                    .transition(.push(from: .bottom))
+                    .id("title" + (goalCompleted ? "done" : "work"))
+                
+                if goalCompleted {
+                    Text("+50 XP получено").font(.caption).bold().foregroundColor(.yellow)
+                        .transition(.push(from: .top)).id("xpSubtitle")
+                } else {
+                    Text("Выучено: \(wordsLearnedToday) / \(dailyGoal) слов")
+                        .font(.caption).foregroundColor(.white.opacity(0.8))
+                        .transition(.opacity).id("progressSubtitle")
                 }
             }
-            .frame(height: 4)
+            Spacer()
+            ZStack {
+                if showGlowPulse {
+                    Circle()
+                        .fill(RadialGradient(colors: [.yellow.opacity(0.6), .clear], center: .center, startRadius: 0, endRadius: 40))
+                        .scaleEffect(1.5).opacity(0)
+                        .transition(.opacity)
+                }
+                if showXParticles {
+                    ForEach(0..<8) { i in
+                        Circle()
+                            .fill(Color.yellow).frame(width: 5, height: 5)
+                            .offset(x: CGFloat.random(in: -30...30), y: CGFloat.random(in: -40...0))
+                            .opacity(0)
+                            .animation(.easeOut(duration: 0.8).delay(Double(i) * 0.05), value: showXParticles)
+                    }
+                }
+                Image(systemName: goalCompleted ? "trophy.fill" : "target")
+                    .font(.system(size: 34))
+                    .foregroundColor(goalCompleted ? .yellow : .white.opacity(0.8))
+                    .scaleEffect(showSuccessBounce ? 1.3 : 1.0)
+                    .rotationEffect(.degrees(showSuccessBounce && goalCompleted ? 360 : 0))
+                    .transition(.scale.combined(with: .opacity))
+                    .id(goalCompleted ? "trophy" : "target")
+            }
+            .frame(width: 50, height: 50)
         }
         .padding()
-        .frame(height: 160)
-        .frame(maxWidth: .infinity)
-        .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(24)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: goalCompleted ? [Color(hex: "00b09b"), Color(hex: "96c93d")] : [Color.blue, Color(hex: "3a7bd5")]),
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
+        )
+        .cornerRadius(20)
+        .shadow(color: goalCompleted ? .green.opacity(0.3) : .blue.opacity(0.3), radius: 10, x: 0, y: 5)
+        .animation(.easeInOut(duration: 0.5), value: goalCompleted)
+        .onTapGesture { incrementProgressTest() }
+    }
+    
+    func incrementProgressTest() {
+        guard wordsLearnedToday < dailyGoal else { return }
+        wordsLearnedToday += 1
+        if wordsLearnedToday == dailyGoal && !goalCompleted {
+            playSuccessAnimation()
+        }
+    }
+    
+    func playSuccessAnimation() {
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) { goalCompleted = true; showSuccessBounce = true }
+        withAnimation(.easeOut(duration: 0.8)) { showGlowPulse = true }
+        withAnimation(.easeOut.delay(0.1)) { showXParticles = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { showSuccessBounce = false }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+             withAnimation { userXP += 50 }
+        }
+    }
+}
+
+// MARK: - СТРОКА ВЫЗОВА
+struct DailyChallengeRow: View {
+    let challenge: DailyChallenge
+    let onComplete: () -> Void
+    @State private var isCompleted = false
+    @State private var particles: [ExplosionParticle] = []
+    
+    var body: some View {
+        ZStack {
+            if isCompleted {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 16).fill(LinearGradient(colors: [.yellow, .orange], startPoint: .topLeading, endPoint: .bottomTrailing)).shadow(color: .orange.opacity(0.6), radius: 10, x: 0, y: 5)
+                    ForEach(particles) { p in Circle().fill(p.color).frame(width: p.size, height: p.size).offset(x: p.x, y: p.y).opacity(p.opacity) }
+                    HStack(spacing: 8) { Image(systemName: "star.fill").font(.title).foregroundColor(.white); Text("+\(challenge.reward)").font(.largeTitle).bold().foregroundColor(.white) }.scaleEffect(1.1)
+                }.transition(.opacity)
+            } else {
+                DailyChallengeCardContent(challenge: challenge).contentShape(Rectangle()).onTapGesture { animateSuccess() }.transition(.opacity)
+            }
+        }.frame(height: 100)
+    }
+    
+    func animateSuccess() {
+        for _ in 0..<30 { particles.append(ExplosionParticle()) }
+        withAnimation(.easeInOut(duration: 0.3)) { isCompleted = true }
+        withAnimation(.easeOut(duration: 1.0)) { for i in 0..<particles.count { particles[i].x = CGFloat.random(in: -150...150); particles[i].y = CGFloat.random(in: -100...100); particles[i].opacity = 0 } }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { onComplete() }
+    }
+}
+
+struct ExplosionParticle: Identifiable { let id = UUID(); var x: CGFloat = 0; var y: CGFloat = 0; let size = CGFloat.random(in: 4...8); let color = [Color.white, Color.yellow, Color.orange].randomElement()!; var opacity: Double = 1.0 }
+
+struct DailyChallengeCardContent: View {
+    let challenge: DailyChallenge
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 4) { Text(challenge.title).font(.headline).foregroundColor(.primary); Text(challenge.description).font(.caption).foregroundColor(.gray).lineLimit(2) }
+                Spacer()
+                HStack(spacing: 4) { Image(systemName: "medal.fill"); Text("+\(challenge.reward)").bold() }.font(.caption).padding(.horizontal, 10).padding(.vertical, 6).background(Color.yellow.opacity(0.2)).foregroundColor(Color(red: 0.7, green: 0.5, blue: 0.0)).cornerRadius(12)
+            }
+            VStack(spacing: 6) {
+                HStack { Text("\(challenge.currentProgress) / \(challenge.target)").font(.caption2).bold().foregroundColor(.gray); Spacer(); HStack(spacing: 4) { Image(systemName: "clock"); Text(challenge.timeLeft) }.font(.caption2).foregroundColor(.gray) }
+                GeometryReader { geo in ZStack(alignment: .leading) { Capsule().fill(Color.gray.opacity(0.15)).frame(height: 8); Capsule().fill(LinearGradient(colors: [Color.purple, Color.pink], startPoint: .leading, endPoint: .trailing)).frame(width: geo.size.width * CGFloat(challenge.progress), height: 8) } }.frame(height: 8)
+            }
+        }.padding(16).background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(16).shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
+    }
+}
+
+struct LessonCard: View {
+    let title: String; let subtitle: String; let count: String; let icon: String; let color: Color; let progress: Double
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top) {
+                Image(systemName: icon).font(.title2).foregroundColor(color).frame(width: 44, height: 44).background(color.opacity(0.1)).clipShape(Circle()); Spacer()
+                Text(count).font(.caption2).bold().padding(.horizontal, 6).padding(.vertical, 4).background(Color(UIColor.systemBackground).opacity(0.6)).foregroundColor(.gray).cornerRadius(6)
+            }
+            Spacer()
+            VStack(alignment: .leading, spacing: 4) { Text(title).font(.headline).foregroundColor(.primary).lineLimit(1).minimumScaleFactor(0.8); Text(subtitle).font(.caption).foregroundColor(.gray).lineLimit(1) }
+            HStack(spacing: 8) {
+                GeometryReader { geo in ZStack(alignment: .leading) { Capsule().fill(Color.gray.opacity(0.2)); Capsule().fill(color).frame(width: geo.size.width * progress) } }.frame(height: 6)
+                Image(systemName: "play.circle.fill").font(.title2).foregroundColor(color)
+            }
+        }.padding(16).frame(width: 170, height: 185).background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(24).shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
     }
 }
