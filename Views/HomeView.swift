@@ -265,6 +265,7 @@ struct PracticeCard: View {
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4) // Стандартная тень приложения
     }
 }
+
 // MARK: - DailyGoalCard
 struct DailyGoalCard: View {
     @AppStorage("userXP") var userXP: Int = 1250
