@@ -2,6 +2,12 @@ import SwiftUI
 import PhotosUI
 import Charts
 
+// --- 1. МАРШРУТЫ (ENUM) ---
+enum ProfileRoute: Hashable {
+    case personalData
+    case vocabulary
+}
+
 // --- МОДЕЛИ ---
 struct ActivityData: Identifiable {
     let id = UUID()
@@ -60,16 +66,16 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             List {
-                // 1. ХЕДЕР (Apple Account Style - Center)
+                // 1. ХЕДЕР
                 headerSection
                 
                 // 2. МЕНЮ АККАУНТА
                 Section("Аккаунт") {
-                    NavigationLink(destination: PersonalDataView()) {
+                    NavigationLink(value: ProfileRoute.personalData) {
                         Label { Text("Персональные данные") } icon: { Image(systemName: "person.crop.circle").foregroundColor(.blue) }
                     }
                     
-                    NavigationLink(destination: VocabularyView(wordsCount: totalLearnedWords)) {
+                    NavigationLink(value: ProfileRoute.vocabulary) {
                         Label {
                             HStack {
                                 Text("Мой словарь")
@@ -149,7 +155,7 @@ struct ProfileView: View {
                 // 6. ВНЕШНИЙ ВИД
                 Section("Внешний вид") {
                     Toggle("Системная тема", isOn: $useSystemTheme)
-                        .onChange(of: useSystemTheme) { _, _ in applyTheme() }
+                        .onChange(of: useSystemTheme) { _, _ in applyTheme(animated: true) }
                     
                     if !useSystemTheme {
                         Picker("Тема", selection: $isDarkMode) {
@@ -158,8 +164,8 @@ struct ProfileView: View {
                         }
                         .pickerStyle(.segmented)
                         .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
-                        .onChange(of: isDarkMode) { _, _ in applyTheme() }
+                        .padding(.vertical, 6)
+                        .onChange(of: isDarkMode) { _, _ in applyTheme(animated: true) }
                     }
                 }
                 
@@ -173,13 +179,11 @@ struct ProfileView: View {
                     Toggle("Уведомления", isOn: $notificationsEnabled)
                     if notificationsEnabled {
                         DatePicker("Время", selection: $notifTimeDate, displayedComponents: .hourAndMinute)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
                             .onChange(of: notifTimeDate) { _, newValue in notificationTimeInterval = newValue.timeIntervalSince1970 }
                     }
                 }
                 
-                // 8. ЦЕЛИ И СБРОС
+                // 8. ЦЕЛИ
                 Section("Цели и данные") {
                     Picker("Дневная цель", selection: $dailyGoal) {
                         Text("5 слов").tag(5)
@@ -187,9 +191,21 @@ struct ProfileView: View {
                         Text("20 слов").tag(20)
                     }
                     Button(role: .destructive) { showResetAlert = true } label: { Text("Сбросить прогресс") }
-                    Button(role: .destructive) { showDeleteAlert = true } label: { Text("Удалить аккаунт") }
                 }
                 
+                // 9. УДАЛИТЬ АККАУНТ
+                Section {
+                    Button(action: {
+                        showDeleteAlert = true
+                    }) {
+                        Text("Удалить аккаунт")
+                            .font(.body)
+                            .foregroundColor(.red)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                }
+                
+                // 10. ФУТЕР
                 Section {
                     HStack {
                         Spacer()
@@ -203,10 +219,20 @@ struct ProfileView: View {
             .listStyle(.insetGrouped)
             .navigationTitle("Профиль")
             .navigationBarTitleDisplayMode(.inline)
+            // ИСПОЛЬЗУЕМ НОВУЮ НАВИГАЦИЮ
+            .navigationDestination(for: ProfileRoute.self) { route in
+                switch route {
+                case .personalData:
+                    PersonalDataView()
+                case .vocabulary:
+                    VocabularyView(wordsCount: totalLearnedWords)
+                }
+            }
             .onAppear {
                 updateStats()
                 notifTimeDate = Date(timeIntervalSince1970: notificationTimeInterval)
-                applyTheme()
+                // ВАЖНО: При появлении экрана тему применяем БЕЗ анимации
+                applyTheme(animated: false)
             }
             .alert("Удалить аккаунт?", isPresented: $showDeleteAlert) {
                 Button("Отмена", role: .cancel) { }
@@ -262,14 +288,26 @@ struct ProfileView: View {
         .listRowInsets(EdgeInsets())
     }
     
-    // --- ЛОГИКА ---
-    private func applyTheme() {
+    // --- ЛОГИКА ТЕМЫ (ИСПРАВЛЕНА) ---
+    private func applyTheme(animated: Bool) {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return }
+        
         let style: UIUserInterfaceStyle = useSystemTheme ? .unspecified : (isDarkMode ? .dark : .light)
-        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {
-            window.overrideUserInterfaceStyle = style
-        }, completion: nil)
+        
+        // Если стиль уже такой же, не делаем ничего (избегаем лишних перерисовок)
+        if window.overrideUserInterfaceStyle == style { return }
+        
+        if animated {
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                window.overrideUserInterfaceStyle = style
+            }, completion: nil)
+        } else {
+            // Без анимации (для onAppear) - это предотвращает конфликт жестов
+            UIView.performWithoutAnimation {
+                window.overrideUserInterfaceStyle = style
+            }
+        }
     }
     
     func updateStats() { learnedWordsCount = ProgressService.shared.getLearnedIDs().count }
