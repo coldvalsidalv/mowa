@@ -26,7 +26,7 @@ struct ContentView: View {
             LeaderboardView() // <-- НОВЫЙ ЭКРАН
                             .tabItem {
                                 Image(systemName: "trophy.fill")
-                                Text("Ranking")
+                                Text("Рейтинг")
                             }
                             .tag(2)
             
