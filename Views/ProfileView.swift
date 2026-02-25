@@ -66,7 +66,7 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             List {
-                // 1. ХЕДЕР
+                // 1. ХЕДЕР (Исправленный: без отрицательных отступов)
                 headerSection
                 
                 // 2. МЕНЮ АККАУНТА
@@ -219,7 +219,7 @@ struct ProfileView: View {
             .listStyle(.insetGrouped)
             .navigationTitle("Профиль")
             .navigationBarTitleDisplayMode(.inline)
-            // ИСПОЛЬЗУЕМ НОВУЮ НАВИГАЦИЮ
+            // НАВИГАЦИЯ
             .navigationDestination(for: ProfileRoute.self) { route in
                 switch route {
                 case .personalData:
@@ -231,7 +231,6 @@ struct ProfileView: View {
             .onAppear {
                 updateStats()
                 notifTimeDate = Date(timeIntervalSince1970: notificationTimeInterval)
-                // ВАЖНО: При появлении экрана тему применяем БЕЗ анимации
                 applyTheme(animated: false)
             }
             .alert("Удалить аккаунт?", isPresented: $showDeleteAlert) {
@@ -245,57 +244,58 @@ struct ProfileView: View {
         }
     }
     
-    // MARK: - HEADER SECTION
+    // MARK: - HEADER SECTION (Apple Guidelines)
     private var headerSection: some View {
         Section {
-            VStack(spacing: 16) {
+            VStack(spacing: 8) {
                 if let uiImage = UIImage(data: avatarData) {
                     Image(uiImage: uiImage)
                         .resizable().scaledToFill()
-                        .frame(width: 110, height: 110)
+                        .frame(width: 100, height: 100)
                         .clipShape(Circle())
                 } else {
                     Circle().fill(Color.gray.opacity(0.3))
-                        .frame(width: 110, height: 110)
+                        .frame(width: 100, height: 100)
                         .overlay {
                              Image(systemName: "person.fill")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 50)
+                                .frame(width: 45)
                                 .foregroundColor(.gray)
-                                .offset(y: 5)
+                                .offset(y: 4)
                         }
                 }
                 
-                VStack(spacing: 6) {
+                VStack(spacing: 2) {
                     Text(userName)
-                        .font(.largeTitle)
-                        .bold()
+                        .font(.title2)
+                        .fontWeight(.semibold) // Apple использует semibold, не bold
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.center)
                     
                     Text(userEmail)
-                        .font(.body)
-                        .foregroundColor(.gray)
+                        .font(.footnote) // Footnote аккуратнее для подписи
+                        .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.top, 20)
-            .padding(.bottom, 20)
+            // ВАЖНО: Мы убрали отрицательные отступы. Теперь аватарка не будет обрезаться.
+            // Мы просто убираем отступ сверху у контейнера.
+            .padding(.top, 0)
+            .padding(.bottom, 12)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(EdgeInsets()) // Полный сброс отступов ячейки
     }
     
-    // --- ЛОГИКА ТЕМЫ (ИСПРАВЛЕНА) ---
+    // --- ЛОГИКА ТЕМЫ ---
     private func applyTheme(animated: Bool) {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return }
         
         let style: UIUserInterfaceStyle = useSystemTheme ? .unspecified : (isDarkMode ? .dark : .light)
         
-        // Если стиль уже такой же, не делаем ничего (избегаем лишних перерисовок)
         if window.overrideUserInterfaceStyle == style { return }
         
         if animated {
@@ -303,7 +303,6 @@ struct ProfileView: View {
                 window.overrideUserInterfaceStyle = style
             }, completion: nil)
         } else {
-            // Без анимации (для onAppear) - это предотвращает конфликт жестов
             UIView.performWithoutAnimation {
                 window.overrideUserInterfaceStyle = style
             }
