@@ -345,7 +345,7 @@ struct PersonalDataView: View {
                         }
                     }
                     .buttonStyle(.plain)
-                    .onChange(of: selectedItem) { newItem in
+                    .onChange(of: selectedItem) { oldItem, newItem in // Добавили два параметра
                         Task {
                             if let data = try? await newItem?.loadTransferable(type: Data.self) {
                                 withAnimation { avatarData = data }

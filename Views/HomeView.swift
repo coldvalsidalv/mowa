@@ -147,32 +147,37 @@ struct HomeView: View {
                         }
                         .padding(.horizontal)
                         
-                        // 5. БЫСТРАЯ ТРЕНИРОВКА (Обновлено: убрана кнопка "Случайное")
-                                                VStack(alignment: .leading, spacing: 16) {
-                                                    Text("Быстрая тренировка").font(.title3).bold().padding(.horizontal)
-                                                    
-                                                    HStack(spacing: 16) {
-                                                        // Оставляем только Викторину (теперь она может быть шире или одна)
-                                                        NavigationLink(destination: QuizView()) {
-                                                            PracticeCard(
-                                                                title: "Викторина",
-                                                                subtitle: "Проверь знания",
-                                                                icon: "gamecontroller.fill",
-                                                                color: .purple
-                                                            )
-                                                        }
-                                                        
-                                                        // Если нужно заполнить место, можно добавить другую кнопку, например "Сложные слова"
-                                                        // Или просто оставить одну карточку на всю ширину.
-                                                        // Для примера, я закомментировал удаленную кнопку:
-                                                        /*
-                                                        NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false)) {
-                                                            PracticeCard(title: "Случайное", subtitle: "Микс", icon: "shuffle", color: .blue)
-                                                        }
-                                                        */
-                                                    }
-                                                    .padding(.horizontal)
-                                                }
+                        // 5. БЫСТРАЯ ТРЕНИРОВКА
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Быстрая тренировка").font(.title3).bold().padding(.horizontal)
+                            
+                            HStack(spacing: 16) {
+                                // 1. Викторина
+                                NavigationLink(destination: QuizView()) {
+                                    PracticeCard(
+                                        title: "Викторина",
+                                        subtitle: "Проверь знания",
+                                        icon: "gamecontroller.fill",
+                                        color: .purple
+                                    )
+                                }
+                                
+                                // 2. Случайное (Возвращено)
+                                // Логика: Полный микс слов и грамматики без фильтров по знаниям
+                                NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false)) {
+                                    PracticeCard(
+                                        title: "Случайное",
+                                        subtitle: "Общий аудит",
+                                        icon: "shuffle",
+                                        color: .blue
+                                    )
+                                }
+                                .simultaneousGesture(TapGesture().onEnded {
+                                    HapticManager.instance.impact(style: .medium)
+                                })
+                            }
+                            .padding(.horizontal)
+                        }
                         
                         // 6. ТВОИ УРОКИ (Линейный прогресс)
                         VStack(alignment: .leading, spacing: 16) {
