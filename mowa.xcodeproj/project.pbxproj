@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		2B153A092F43E78A00716F79 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B153A082F43E78400716F79 /* ContentView.swift */; };
+		2BB8E2F62F4F78FD0031C864 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB8E2F42F4F78F60031C864 /* NotificationManager.swift */; };
+		2BB8E2F92F4F85CC0031C864 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB8E2F72F4F85CA0031C864 /* HapticManager.swift */; };
 		2BF0247A2EF0BDBE00CAC740 /* mowaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF024792EF0BDBE00CAC740 /* mowaApp.swift */; };
 		2BF0247E2EF0BDBF00CAC740 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BF0247D2EF0BDBF00CAC740 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -31,6 +33,8 @@
 
 /* Begin PBXFileReference section */
 		2B153A082F43E78400716F79 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2BB8E2F42F4F78F60031C864 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		2BB8E2F72F4F85CA0031C864 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		2BF024762EF0BDBE00CAC740 /* mowa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mowa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BF024792EF0BDBE00CAC740 /* mowaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mowaApp.swift; sourceTree = "<group>"; };
 		2BF0247D2EF0BDBF00CAC740 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -115,6 +119,8 @@
 				2BF024792EF0BDBE00CAC740 /* mowaApp.swift */,
 				2B153A082F43E78400716F79 /* ContentView.swift */,
 				2BF0247D2EF0BDBF00CAC740 /* Assets.xcassets */,
+				2BB8E2F42F4F78F60031C864 /* NotificationManager.swift */,
+				2BB8E2F72F4F85CA0031C864 /* HapticManager.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -278,7 +284,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B153A092F43E78A00716F79 /* ContentView.swift in Sources */,
+				2BB8E2F92F4F85CC0031C864 /* HapticManager.swift in Sources */,
 				2BF0247A2EF0BDBE00CAC740 /* mowaApp.swift in Sources */,
+				2BB8E2F62F4F78FD0031C864 /* NotificationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
