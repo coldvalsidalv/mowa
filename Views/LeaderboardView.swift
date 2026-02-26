@@ -1,15 +1,6 @@
 import SwiftUI
 import Combine
 
-// MARK: - HELPERS
-class HapticManager {
-    static let instance = HapticManager()
-    func impact(style: UIImpactFeedbackGenerator.FeedbackStyle) {
-        let generator = UIImpactFeedbackGenerator(style: style)
-        generator.impactOccurred()
-    }
-}
-
 // MARK: - MODELS
 
 enum LeagueType: Int, CaseIterable, Identifiable {

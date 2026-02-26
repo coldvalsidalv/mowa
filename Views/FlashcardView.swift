@@ -127,7 +127,7 @@ struct FlashcardView: View {
                         
                         // КНОПКА "ДАЛЕЕ"
                         Button(action: {
-                            viewModel.handleSwipe(right: true)
+                            viewModel.processAnswer(isCorrect: true)
                         }) {
                             Text("Далее")
                                 .font(.headline)
