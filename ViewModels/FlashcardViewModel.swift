@@ -51,6 +51,7 @@ class FlashcardViewModel: ObservableObject {
             let completed = totalSessionCount - sessionWords.count - 1
             withAnimation {
                 progress = CGFloat(completed) / CGFloat(totalSessionCount)
+                StreakManager.shared.completeLesson()
             }
         }
     }

@@ -2,66 +2,52 @@ import SwiftUI
 
 struct StreakView: View {
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var manager = StreakManager.shared
     
-    // Данные
-    @AppStorage("dayStreak") var dayStreak: Int = 1
-    @AppStorage("streakFreezes") var streakFreezes: Int = 2
-    
-    // ЛОГИКА СОСТОЯНИЯ
-    @State private var hasPracticedToday: Bool = false
-    
-    // Анимация
     @State private var isPulsing = false
-    @State private var particles: [Particle] = []
-    @State private var timer: Timer?
+    var onStartLesson: (() -> Void)? = nil
     
-    let days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-    
-    // --- ИСПРАВЛЕНИЕ ЦВЕТОВ ---
     var backgroundColors: [Color] {
-        if hasPracticedToday {
-            // ОГОНЬ: Темно-фиолетовый -> Черный
-            return [Color(hex: "0F0c29"), Color(hex: "302b63"), Color(hex: "24243e")]
+        if manager.hasPracticedToday {
+            return [
+                Color(red: 15/255, green: 12/255, blue: 41/255),
+                Color(red: 48/255, green: 43/255, blue: 99/255),
+                Color(red: 36/255, green: 36/255, blue: 62/255)
+            ]
         } else {
-            // ЛЕД: Насыщенный голубой -> Светло-голубой (чтобы белые снежинки были видны)
-            return [Color(hex: "2980B9"), Color(hex: "6DD5FA"), Color(hex: "bce6ff")]
+            return [
+                Color(red: 41/255, green: 128/255, blue: 185/255),
+                Color(red: 109/255, green: 213/255, blue: 250/255),
+                Color(red: 188/255, green: 230/255, blue: 255/255)
+            ]
         }
-    }
-    
-    var startPoint: UnitPoint {
-        .top
-    }
-    
-    var endPoint: UnitPoint {
-        .bottom
     }
     
     var body: some View {
         ZStack {
-            // 1. ДИНАМИЧЕСКИЙ ФОН
             LinearGradient(
                 colors: backgroundColors,
-                startPoint: startPoint,
-                endPoint: endPoint
+                startPoint: .top,
+                endPoint: .bottom
             )
             .ignoresSafeArea()
-            .animation(.easeInOut(duration: 1.0), value: hasPracticedToday)
+            .animation(.easeInOut(duration: 1.0), value: manager.hasPracticedToday)
             
-            // Фоновое свечение
+            DeterministicParticleCanvas(isFire: manager.hasPracticedToday)
+                .ignoresSafeArea()
+            
             Circle()
-                .fill(hasPracticedToday ? Color.orange.opacity(0.2) : Color.white.opacity(0.2))
+                .fill(manager.hasPracticedToday ? Color.orange.opacity(0.2) : Color.white.opacity(0.2))
                 .frame(width: 300, height: 300)
                 .blur(radius: 60)
-                .offset(x: hasPracticedToday ? -100 : 100, y: -200)
+                .offset(x: manager.hasPracticedToday ? -100 : 100, y: -200)
             
             VStack(spacing: 0) {
-                // --- ВЕРХНЯЯ ПАНЕЛЬ ---
                 HStack {
-                    // Индикатор "Заморозок"
                     HStack(spacing: 6) {
                         Image(systemName: "snowflake")
-                            .foregroundColor(hasPracticedToday ? .cyan : .white)
-                        Text("\(streakFreezes)")
+                            .foregroundColor(manager.hasPracticedToday ? .cyan : .white)
+                        Text("\(manager.streakFreezes)")
                             .bold()
                             .foregroundColor(.white)
                     }
@@ -82,22 +68,11 @@ struct StreakView: View {
                 
                 Spacer()
                 
-                // --- ЦЕНТРАЛЬНОЕ ЯДРО ---
                 ZStack {
-                    // ЧАСТИЦЫ
-                    ForEach(particles) { particle in
-                        Circle()
-                            .fill(hasPracticedToday ? Color.orange : Color.white)
-                            .frame(width: particle.size, height: particle.size)
-                            .offset(x: particle.x, y: particle.y)
-                            .opacity(particle.opacity)
-                    }
-                    
-                    // Свечение ядра
                     Circle()
                         .fill(
                             RadialGradient(
-                                colors: hasPracticedToday ? [.orange, .clear] : [.white, .clear],
+                                colors: manager.hasPracticedToday ? [.orange, .clear] : [.white, .clear],
                                 center: .center, startRadius: 0, endRadius: 120
                             )
                         )
@@ -105,84 +80,66 @@ struct StreakView: View {
                         .opacity(isPulsing ? 0.6 : 0.2)
                         .scaleEffect(isPulsing ? 1.1 : 1.0)
                     
-                    // ИКОНКА
-                    Image(systemName: hasPracticedToday ? "flame.fill" : "snowflake")
+                    Image(systemName: manager.hasPracticedToday ? "flame.fill" : "snowflake")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 140, height: 140)
                         .foregroundStyle(
-                            hasPracticedToday
+                            manager.hasPracticedToday
                             ? LinearGradient(colors: [.yellow, .orange, .red], startPoint: .top, endPoint: .bottom)
                             : LinearGradient(colors: [.white, .white.opacity(0.8)], startPoint: .top, endPoint: .bottom)
                         )
-                        .shadow(
-                            color: hasPracticedToday ? .orange : .white.opacity(0.5),
-                            radius: 30, x: 0, y: 0
-                        )
+                        .shadow(color: manager.hasPracticedToday ? .orange : .white.opacity(0.5), radius: 30, x: 0, y: 0)
                         .scaleEffect(isPulsing ? 1.05 : 0.95)
                         .transition(.scale.combined(with: .opacity))
-                        .id(hasPracticedToday)
+                        .id(manager.hasPracticedToday)
                 }
                 .frame(height: 320)
                 
-                // ТЕКСТЫ
                 VStack(spacing: 8) {
-                    Text("\(dayStreak)")
+                    Text("\(manager.dayStreak)")
                         .font(.system(size: 90, weight: .black, design: .rounded))
-                        // ТЕКСТ ТЕПЕРЬ ВСЕГДА БЕЛЫЙ ДЛЯ КОНТРАСТА
                         .foregroundColor(.white)
-                        .shadow(color: hasPracticedToday ? .orange.opacity(0.5) : .blue.opacity(0.5), radius: 15)
+                        .shadow(color: manager.hasPracticedToday ? .orange.opacity(0.5) : .blue.opacity(0.5), radius: 15)
                     
-                    Text(hasPracticedToday ? "ДНЕЙ В ОГНЕ" : "СТРИК ЗАМЕРЗАЕТ")
+                    Text(manager.hasPracticedToday ? "ДНЕЙ В ОГНЕ" : "СТРИК ЗАМЕРЗАЕТ")
                         .font(.title3)
                         .fontWeight(.heavy)
-                        .foregroundColor(.white) // Белый текст читается лучше на синем
+                        .foregroundColor(.white)
                         .kerning(1.5)
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                     
-                    Text(hasPracticedToday ? "Ты неудержим! 🔥" : "Пройди урок, чтобы растопить лед!")
+                    Text(manager.hasPracticedToday ? "Ты неудержим! 🔥" : "Пройди урок, чтобы растопить лед!")
                         .font(.body)
                         .foregroundColor(.white.opacity(0.9))
                         .padding(.top, 4)
                 }
                 .padding(.bottom, 40)
                 
-                // --- НИЖНЯЯ ПАНЕЛЬ ---
                 VStack(spacing: 20) {
-                    // Переключатель (ДЛЯ ТЕСТА)
-                    Toggle("Симуляция: Урок пройден?", isOn: $hasPracticedToday)
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
-                        .background(Color.white.opacity(0.2))
-                        .cornerRadius(12)
-                        .padding(.horizontal)
-                        .foregroundColor(.white)
-                        .onChange(of: hasPracticedToday) { _, _ in
-                            restartAnimation()
-                        }
-                    
-                    // Кнопка
                     Button(action: {
                         dismiss()
+                        if !manager.hasPracticedToday {
+                            // Небольшая задержка, чтобы UI не дергался при закрытии модального окна
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                onStartLesson?()
+                            }
+                        }
                     }) {
-                        Text(hasPracticedToday ? "Отлично!" : "Растопить стрик")
+                        Text(manager.hasPracticedToday ? "Отлично!" : "Начать урок")
                             .font(.headline)
                             .bold()
-                            .foregroundColor(hasPracticedToday ? .white : .white)
+                            .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
                             .background(
-                                hasPracticedToday
+                                manager.hasPracticedToday
                                 ? LinearGradient(colors: [.orange, .red], startPoint: .leading, endPoint: .trailing)
-                                // ЛЕД: Кнопка теперь темно-синяя для контраста
-                                : LinearGradient(colors: [Color(hex: "005BEA"), Color(hex: "00C6FB")], startPoint: .leading, endPoint: .trailing)
+                                : LinearGradient(colors: [Color(red: 0, green: 91/255, blue: 234/255), Color(red: 0, green: 198/255, blue: 251/255)], startPoint: .leading, endPoint: .trailing)
                             )
                             .cornerRadius(20)
-                            .shadow(color: hasPracticedToday ? .orange.opacity(0.4) : .black.opacity(0.2), radius: 10, x: 0, y: 5)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                            )
+                            .shadow(color: manager.hasPracticedToday ? .orange.opacity(0.4) : .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.3), lineWidth: 1))
                     }
                     .padding(.horizontal, 24)
                 }
@@ -190,99 +147,50 @@ struct StreakView: View {
             }
         }
         .onAppear {
-            startAnimation()
-        }
-        .onDisappear {
-            timer?.invalidate()
-        }
-    }
-    
-    // --- ЛОГИКА АНИМАЦИИ ---
-    func restartAnimation() {
-        particles.removeAll()
-        timer?.invalidate()
-        startAnimation()
-    }
-    
-    func startAnimation() {
-        withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-            isPulsing = true
-        }
-        
-        timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
-            let randomX = CGFloat.random(in: -60...60)
-            let randomSize = CGFloat.random(in: 3...7)
-            
-            if hasPracticedToday {
-                // Огонь
-                let spark = Particle(x: randomX, y: 40, size: randomSize, opacity: 1, speed: CGFloat.random(in: 2...5))
-                particles.append(spark)
-            } else {
-                // Снег
-                let snow = Particle(x: CGFloat.random(in: -120...120), y: -180, size: randomSize, opacity: 0.9, speed: CGFloat.random(in: 2...4))
-                particles.append(snow)
+            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                isPulsing = true
             }
-            
-            updateParticles()
         }
     }
+}
+
+// Рендеринг частиц (Оптимизировано для GPU)
+struct DeterministicParticleCanvas: View {
+    let isFire: Bool
+    let particleCount = 40
     
-    func updateParticles() {
-        for i in 0..<particles.count {
-            if hasPracticedToday {
-                withAnimation(.linear(duration: 0.1)) {
-                    particles[i].y -= particles[i].speed * 2
-                    particles[i].opacity -= 0.03
-                    particles[i].x += CGFloat.random(in: -1...1)
-                }
-            } else {
-                withAnimation(.linear(duration: 0.1)) {
-                    particles[i].y += particles[i].speed * 1.5
-                    particles[i].x += sin(particles[i].y / 40) * 1.5
+    var body: some View {
+        TimelineView(.animation) { timeline in
+            Canvas { context, size in
+                let now = timeline.date.timeIntervalSinceReferenceDate
+                
+                for i in 0..<particleCount {
+                    let seed = Double(i) * 13.7
+                    let randomX = sin(seed)
+                    let speed = 40.0 + abs(cos(seed)) * 80.0
                     
-                    if particles[i].y > 150 {
-                        particles[i].opacity -= 0.03
+                    let timeOffset = now * speed + seed * 100
+                    let cycle = timeOffset.truncatingRemainder(dividingBy: size.height)
+                    
+                    if isFire {
+                        let y = size.height - cycle
+                        let x = (size.width / 2) + randomX * 80.0 + sin(now * 3 + Double(i)) * 20.0
+                        let pSize = 3.0 + abs(sin(seed)) * 5.0
+                        let opacity = max(0, y / size.height)
+                        
+                        context.opacity = opacity
+                        context.fill(Path(ellipseIn: CGRect(x: x, y: y, width: pSize, height: pSize)), with: .color(.orange))
+                    } else {
+                        let y = cycle
+                        let x = (size.width / 2) + randomX * 150.0 + cos(now * 1.5 + Double(i)) * 30.0
+                        let pSize = 2.0 + abs(cos(seed)) * 4.0
+                        let opacity = max(0, 1.0 - (y / size.height))
+                        
+                        context.opacity = opacity
+                        context.fill(Path(ellipseIn: CGRect(x: x, y: y, width: pSize, height: pSize)), with: .color(.white))
                     }
                 }
             }
         }
-        particles.removeAll { $0.opacity <= 0 }
-    }
-}
-
-// Модели
-struct Particle: Identifiable {
-    let id = UUID()
-    var x: CGFloat
-    var y: CGFloat
-    var size: CGFloat
-    var opacity: Double
-    var speed: CGFloat
-}
-
-// Расширение для HEX цветов
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (1, 1, 1, 0)
-        }
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue:  Double(b) / 255,
-            opacity: Double(a) / 255
-        )
     }
 }

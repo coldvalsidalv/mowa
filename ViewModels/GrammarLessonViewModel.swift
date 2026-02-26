@@ -66,16 +66,18 @@ class GrammarLessonViewModel: ObservableObject {
     }
     
     func finishLesson() {
-        let key = "completedGrammarLessons"
-        var completed = UserDefaults.standard.stringArray(forKey: key) ?? []
+        var completed = UserDefaults.standard.stringArray(forKey: StorageKeys.completedGrammarLessons) ?? []
         
         if !completed.contains(lesson.id) {
             completed.append(lesson.id)
-            UserDefaults.standard.set(completed, forKey: key)
+            UserDefaults.standard.set(completed, forKey: StorageKeys.completedGrammarLessons)
             
-            // Начисление XP за первичное прохождение
-            let currentXP = UserDefaults.standard.integer(forKey: "userXP")
-            UserDefaults.standard.set(currentXP + 50, forKey: "userXP")
+            // Начисление XP за первичное прохождение с использованием StorageKeys
+            let currentXP = UserDefaults.standard.integer(forKey: StorageKeys.userXP)
+            UserDefaults.standard.set(currentXP + 50, forKey: StorageKeys.userXP)
+            
+            // Обновление стрика
+            StreakManager.shared.completeLesson()
         }
     }
 }

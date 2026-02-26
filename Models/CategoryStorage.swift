@@ -1,6 +1,5 @@
 import Foundation
 
-/// Хелпер для сохранения массива строк категорий в AppStorage/UserDefaults
 struct CategoryStorage: RawRepresentable, Codable {
     var items: [String]
     
