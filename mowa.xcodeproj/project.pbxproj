@@ -10,6 +10,9 @@
 		2B153A092F43E78A00716F79 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B153A082F43E78400716F79 /* ContentView.swift */; };
 		2BB8E2F62F4F78FD0031C864 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB8E2F42F4F78F60031C864 /* NotificationManager.swift */; };
 		2BB8E2F92F4F85CC0031C864 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB8E2F72F4F85CA0031C864 /* HapticManager.swift */; };
+		2BBB2A062F50B4F300483981 /* StreakManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBB2A022F50B4F300483981 /* StreakManager.swift */; };
+		2BBB2A072F50B4F300483981 /* StorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBB2A042F50B4F300483981 /* StorageKeys.swift */; };
+		2BBB2A082F50B4F300483981 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBB2A002F50B4F300483981 /* Color+Hex.swift */; };
 		2BF0247A2EF0BDBE00CAC740 /* mowaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF024792EF0BDBE00CAC740 /* mowaApp.swift */; };
 		2BF0247E2EF0BDBF00CAC740 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BF0247D2EF0BDBF00CAC740 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -35,6 +38,9 @@
 		2B153A082F43E78400716F79 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2BB8E2F42F4F78F60031C864 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		2BB8E2F72F4F85CA0031C864 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		2BBB2A002F50B4F300483981 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		2BBB2A022F50B4F300483981 /* StreakManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakManager.swift; sourceTree = "<group>"; };
+		2BBB2A042F50B4F300483981 /* StorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageKeys.swift; sourceTree = "<group>"; };
 		2BF024762EF0BDBE00CAC740 /* mowa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mowa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BF024792EF0BDBE00CAC740 /* mowaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mowaApp.swift; sourceTree = "<group>"; };
 		2BF0247D2EF0BDBF00CAC740 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -105,6 +111,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2BBB2A012F50B4F300483981 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2BBB2A002F50B4F300483981 /* Color+Hex.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		2BBB2A032F50B4F300483981 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				2BBB2A022F50B4F300483981 /* StreakManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		2BBB2A052F50B4F300483981 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				2BBB2A042F50B4F300483981 /* StorageKeys.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		2BF0246D2EF0BDBE00CAC740 = {
 			isa = PBXGroup;
 			children = (
@@ -121,6 +151,9 @@
 				2BF0247D2EF0BDBF00CAC740 /* Assets.xcassets */,
 				2BB8E2F42F4F78F60031C864 /* NotificationManager.swift */,
 				2BB8E2F72F4F85CA0031C864 /* HapticManager.swift */,
+				2BBB2A012F50B4F300483981 /* Extensions */,
+				2BBB2A032F50B4F300483981 /* Managers */,
+				2BBB2A052F50B4F300483981 /* Utils */,
 			);
 			sourceTree = "<group>";
 		};
@@ -286,6 +319,9 @@
 				2B153A092F43E78A00716F79 /* ContentView.swift in Sources */,
 				2BB8E2F92F4F85CC0031C864 /* HapticManager.swift in Sources */,
 				2BF0247A2EF0BDBE00CAC740 /* mowaApp.swift in Sources */,
+				2BBB2A062F50B4F300483981 /* StreakManager.swift in Sources */,
+				2BBB2A072F50B4F300483981 /* StorageKeys.swift in Sources */,
+				2BBB2A082F50B4F300483981 /* Color+Hex.swift in Sources */,
 				2BB8E2F62F4F78FD0031C864 /* NotificationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
