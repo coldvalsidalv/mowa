@@ -8,6 +8,8 @@ struct LeaderboardUser: Identifiable {
     let xp: Int
     let avatarColor: Color
     let isCurrentUser: Bool
+    var avatarURL: String? = nil
+    var localImage: UIImage? = nil // Захват локального UIImage
     
     var streak: Int = Int.random(in: 1...50)
     var totalWords: Int = Int.random(in: 500...3000)
@@ -16,12 +18,18 @@ struct LeaderboardUser: Identifiable {
 
 struct LeaderboardView: View {
     @AppStorage(StorageKeys.userXP) private var userXP: Int = 0
+    @AppStorage("userName") private var userName: String = "Uladzislau"
+    
+    @ObservedObject private var avatarManager = AvatarManager.shared
     
     @State private var podiumsVisible = false
     @State private var timeRemaining: String = "--h --m"
     @State private var selectedUser: LeaderboardUser? = nil
     @State private var showLeagueMap = false
-    @State private var isCurrentUserVisible = false
+    
+    @State private var isPodiumVisible = false
+    @State private var isListRowVisible = false
+    
     @State private var users: [LeaderboardUser] = []
     
     let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -34,6 +42,11 @@ struct LeaderboardView: View {
         users.first(where: { $0.isCurrentUser })
     }
     
+    var isMeVisible: Bool {
+        guard let me = currentUser else { return false }
+        return me.rank <= 3 ? isPodiumVisible : isListRowVisible
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -41,8 +54,7 @@ struct LeaderboardView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: 0) {
-                        
+                    LazyVStack(spacing: 0) {
                         // 1. HEADER
                         Button {
                             showLeagueMap = true
@@ -72,40 +84,41 @@ struct LeaderboardView: View {
                         }
                         .padding(.horizontal)
                         .padding(.vertical, 40)
+                        .onAppear { withAnimation { isPodiumVisible = true } }
+                        .onDisappear { withAnimation { isPodiumVisible = false } }
                         
-                        // 3. LIST
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("Top 30")
-                                    .font(.headline)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                            }
-                            .padding(.horizontal)
-                            
-                            LazyVStack(spacing: 16) {
-                                ForEach(users.dropFirst(3)) { user in
-                                    LeaderboardRow(user: user)
-                                        .onTapGesture { openUserProfile(user) }
-                                        .onAppear {
-                                            if user.isCurrentUser { withAnimation { isCurrentUserVisible = true } }
-                                        }
-                                        .onDisappear {
-                                            if user.isCurrentUser { withAnimation { isCurrentUserVisible = false } }
-                                        }
+                        // 3. LIST HEADER
+                        HStack {
+                            Text("Top 30")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 12)
+                        
+                        // 4. LIST ITEMS
+                        ForEach(users.dropFirst(3)) { user in
+                            LeaderboardRow(user: user)
+                                .padding(.horizontal)
+                                .padding(.bottom, 16)
+                                .onTapGesture { openUserProfile(user) }
+                                .onAppear {
+                                    if user.isCurrentUser { withAnimation { isListRowVisible = true } }
                                 }
-                            }
-                            .padding(.horizontal)
-                            .padding(.bottom, 20)
+                                .onDisappear {
+                                    if user.isCurrentUser { withAnimation { isListRowVisible = false } }
+                                }
                         }
                     }
+                    .padding(.bottom, 20)
                 }
                 .scrollBounceBehavior(.always, axes: .vertical)
             }
             .navigationTitle("Ranking")
-            // 4. STICKY ROW
+            // 5. STICKY ROW
             .safeAreaInset(edge: .bottom) {
-                if let me = currentUser, !isCurrentUserVisible {
+                if let me = currentUser, !isMeVisible {
                     StickyUserRow(user: me, currentLeague: currentLeague)
                         .onTapGesture { openUserProfile(me) }
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -126,19 +139,21 @@ struct LeaderboardView: View {
                     podiumsVisible = true
                 }
             }
+            // Регенерируем список при изменении аватара или имени
+            .onChange(of: avatarManager.avatar) { _, _ in generateUsers() }
+            .onChange(of: userName) { _, _ in generateUsers() }
             .onReceive(timer) { _ in updateTimeRemaining() }
         }
     }
     
     private func generateUsers() {
         var list = [
-            LeaderboardUser(rank: 1, name: "Anna K.", xp: currentLeague.rawValue * 1000 + 1450, avatarColor: .purple, isCurrentUser: false),
-            LeaderboardUser(rank: 2, name: "Marek W.", xp: currentLeague.rawValue * 1000 + 1100, avatarColor: .blue, isCurrentUser: false),
-            LeaderboardUser(rank: 3, name: "Kasia L.", xp: currentLeague.rawValue * 1000 + 950, avatarColor: .pink, isCurrentUser: false),
+            LeaderboardUser(rank: 1, name: "Anna K.", xp: currentLeague.rawValue * 1000 + 1450, avatarColor: .purple, isCurrentUser: false, avatarURL: "https://i.pravatar.cc/150?u=anna"),
+            LeaderboardUser(rank: 2, name: "Marek W.", xp: currentLeague.rawValue * 1000 + 1100, avatarColor: .blue, isCurrentUser: false, avatarURL: "https://i.pravatar.cc/150?u=marek"),
+            LeaderboardUser(rank: 3, name: "Kasia L.", xp: currentLeague.rawValue * 1000 + 950, avatarColor: .pink, isCurrentUser: false, avatarURL: "https://i.pravatar.cc/150?u=kasia"),
         ]
         
-        // Вставляем текущего пользователя с реальным XP
-        let me = LeaderboardUser(rank: 0, name: "Uladzislau", xp: userXP, avatarColor: .green, isCurrentUser: true)
+        let me = LeaderboardUser(rank: 0, name: userName, xp: userXP, avatarColor: .green, isCurrentUser: true, localImage: avatarManager.avatar)
         list.append(me)
         
         for i in 4...30 {
@@ -147,12 +162,12 @@ struct LeaderboardView: View {
                 name: "User \(i)",
                 xp: max(0, (currentLeague.rawValue * 1000 + 1000) - (i * 40)),
                 avatarColor: [.orange, .red, .gray, .cyan, .mint, .indigo, .brown].randomElement()!,
-                isCurrentUser: false
+                isCurrentUser: false,
+                avatarURL: "https://i.pravatar.cc/150?u=\(i)"
             )
             list.append(user)
         }
         
-        // Сортируем по XP и переназначаем ранги
         list.sort(by: { $0.xp > $1.xp })
         for (index, _) in list.enumerated() {
             list[index] = LeaderboardUser(
@@ -161,6 +176,8 @@ struct LeaderboardView: View {
                 xp: list[index].xp,
                 avatarColor: list[index].avatarColor,
                 isCurrentUser: list[index].isCurrentUser,
+                avatarURL: list[index].avatarURL,
+                localImage: list[index].localImage,
                 streak: list[index].streak,
                 totalWords: list[index].totalWords,
                 leagueWords: list[index].leagueWords
@@ -187,6 +204,53 @@ struct LeaderboardView: View {
         
         if let day = diff.day, let hour = diff.hour, let minute = diff.minute {
             timeRemaining = day > 0 ? "\(day)d \(hour)h" : "\(hour)h \(minute)m"
+        }
+    }
+}
+
+// MARK: - COMPONENT: AVATAR VIEW
+struct AvatarView: View {
+    let urlString: String?
+    let localImage: UIImage?
+    let name: String
+    let color: Color
+    let size: CGFloat
+    
+    var body: some View {
+        Group {
+            if let uiImage = localImage {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+            } else if let urlString = urlString, let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        fallbackView
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        fallbackView
+                    @unknown default:
+                        fallbackView
+                    }
+                }
+            } else {
+                fallbackView
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
+    }
+    
+    private var fallbackView: some View {
+        ZStack {
+            Color(color.opacity(0.2))
+            Text(String(name.prefix(1)))
+                .font(.system(size: size * 0.45, weight: .bold))
+                .foregroundColor(color)
         }
     }
 }
@@ -253,14 +317,7 @@ struct StickyUserRow: View {
                     .foregroundColor(statusColor)
                     .frame(width: 30)
                 
-                Circle()
-                    .fill(user.avatarColor.opacity(0.2))
-                    .frame(width: 44, height: 44)
-                    .overlay(
-                        Text(String(user.name.prefix(1)))
-                            .font(.headline)
-                            .foregroundColor(user.avatarColor)
-                    )
+                AvatarView(urlString: user.avatarURL, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 44)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 4) {
@@ -321,15 +378,7 @@ struct LeaderboardRow: View {
                 .foregroundColor(statusColor == .clear ? .gray : statusColor)
                 .frame(width: 25)
             
-            Circle()
-                .fill(user.avatarColor.opacity(0.2))
-                .frame(width: 48, height: 48)
-                .overlay(
-                    Text(String(user.name.prefix(1)))
-                        .font(.title3)
-                        .bold()
-                        .foregroundColor(user.avatarColor)
-                )
+            AvatarView(urlString: user.avatarURL, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 48)
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(user.name)
@@ -379,13 +428,7 @@ struct RivalProfileView: View {
             
             VStack(spacing: 8) {
                 ZStack {
-                    Circle()
-                        .fill(user.avatarColor.opacity(0.2))
-                        .frame(width: 90, height: 90)
-                    
-                    Text(String(user.name.prefix(1)))
-                        .font(.system(size: 36, weight: .bold))
-                        .foregroundColor(user.avatarColor)
+                    AvatarView(urlString: user.avatarURL, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 90)
                     
                     VStack {
                         Spacer()
@@ -530,8 +573,8 @@ struct PodiumView: View {
     var body: some View {
         VStack {
             ZStack {
-                Circle().fill(user.avatarColor.opacity(0.2)).frame(width: 55, height: 55)
-                Text(String(user.name.prefix(1))).font(.title3).bold().foregroundColor(user.avatarColor)
+                AvatarView(urlString: user.avatarURL, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 55)
+                
                 if user.rank <= 3 {
                     VStack { Spacer(); HStack { Spacer(); Circle().fill(color).frame(width: 22, height: 22).overlay(Text("\(user.rank)").font(.caption2).bold().foregroundColor(.white)).offset(x: 4, y: 4) } }.frame(width: 55, height: 55)
                 }

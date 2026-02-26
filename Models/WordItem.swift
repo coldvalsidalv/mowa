@@ -11,13 +11,11 @@ struct WordItem: Identifiable, Codable, Hashable {
     let partOfSpeech: String
     let examplesList: [String]
 
-    // --- SRS (Добавлено как опционально, чтобы старый JSON читался) ---
-    // Если в JSON этих полей нет, они будут nil (считаем за 0)
+    // --- SRS ---
     var box: Int?
     var nextReview: Int?
     var lastReview: Int?
     
-    // Хелперы для безопасности, чтобы в коде не писать везде ?? 0
     var safeBox: Int {
         get { box ?? 0 }
         set { box = newValue }

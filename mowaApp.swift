@@ -1,44 +1,40 @@
 import SwiftUI
 import UserNotifications
 
-// 1. AppDelegate для уведомлений
-class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        UNUserNotificationCenter.current().delegate = self
-        NotificationManager.shared.requestAuthorization()
-        return true
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .sound])
-    }
-}
-
 @main
 struct MowaApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @Environment(\.scenePhase) var scenePhase
     
     init() {
-        ContentManager.shared.checkForUpdates()
+        // Применение темы должно быть быстрым и синхронным, чтобы избежать моргания
+        let defaults = UserDefaults.standard
+        let useSystemTheme = defaults.bool(forKey: StorageKeys.useSystemTheme)
+        let isDarkMode = defaults.object(forKey: StorageKeys.isDarkMode) as? Bool ?? false
+        
+        ThemeApplier.applyTheme(useSystemTheme: useSystemTheme, isDarkMode: isDarkMode, animated: false)
+        
+        // Инициализация синглтона
+        _ = NotificationManager.shared
     }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
+                // Асинхронный вызов обновлений не блокирует запуск приложения
+                .task {
+                    ContentManager.shared.checkForUpdates()
+                }
         }
-        // ИСПРАВЛЕНО: Новый синтаксис для iOS 17+ (добавлены oldPhase и newPhase)
         .onChange(of: scenePhase) { oldPhase, newPhase in
             switch newPhase {
             case .background:
-                print("App went to background")
-                NotificationManager.shared.scheduleStreakProtection()
-                NotificationManager.shared.scheduleVocabularyReview()
-                NotificationManager.shared.scheduleGrammarReview()
+                let nm = NotificationManager.shared
+                nm.scheduleStreakProtection()
+                nm.scheduleVocabularyReview()
+                nm.scheduleGrammarReview()
                 
             case .active:
-                print("App is active")
-                UNUserNotificationCenter.current().setBadgeCount(0)
+                UNUserNotificationCenter.current().setBadgeCount(0, withCompletionHandler: nil)
                 NotificationManager.shared.cancelNotification(type: .streak)
                 
             default:

@@ -1,66 +1,61 @@
 import SwiftUI
 import Combine
-import UIKit // Необходим для Haptic Feedback (UINotificationFeedbackGenerator)
 
-class GrammarLessonViewModel: ObservableObject {
-    @Published var lesson: GrammarLesson
-    @Published var currentStepIndex: Int = 0
+final class GrammarLessonViewModel: ObservableObject {
+    let lesson: GrammarLesson
     
-    @Published var selectedAnswer: String? = nil
-    @Published var isAnswerCorrect: Bool = false
-    @Published var showQuizFeedback: Bool = false
+    @Published var currentStepIndex = 0
+    @Published var selectedAnswer: String?
+    @Published var isAnswerCorrect = false
+    @Published var showQuizFeedback = false
     
-    var progress: Double {
-        guard !lesson.steps.isEmpty else { return 0 }
-        return Double(currentStepIndex) / Double(lesson.steps.count)
-    }
-    
-    var currentStep: GrammarStep {
-        guard lesson.steps.indices.contains(currentStepIndex) else {
-            // Безопасный фоллбэк, чтобы избежать краша (Array out of bounds)
-            return GrammarStep(type: .theory, title: "", content: "", question: nil, answers: nil, correctAnswer: nil)
-        }
-        return lesson.steps[currentStepIndex]
-    }
-    
-    var isLastStep: Bool {
-        currentStepIndex >= lesson.steps.count - 1
-    }
-    
-    var canProceed: Bool {
-        guard lesson.steps.indices.contains(currentStepIndex) else { return false }
-        let step = lesson.steps[currentStepIndex]
-        switch step.type {
-        case .theory: return true
-        case .quiz: return isAnswerCorrect
-        }
-    }
+    // Новые свойства для финального теста
+    @Published var showResults = false
+    @Published var correctAnswersCount = 0
+    private var hasAttemptedCurrentQuestion = false
     
     init(lesson: GrammarLesson) {
         self.lesson = lesson
     }
     
+    var currentStep: GrammarStep { lesson.steps[currentStepIndex] }
+    var isLastStep: Bool { currentStepIndex == lesson.steps.count - 1 }
+    var totalQuizSteps: Int { lesson.steps.filter { $0.type == .quiz }.count }
+    
+    var canProceed: Bool {
+        if currentStep.type == .theory { return true }
+        return showQuizFeedback && isAnswerCorrect
+    }
+    
+    var progress: Double {
+        guard !lesson.steps.isEmpty else { return 0 }
+        return Double(currentStepIndex + 1) / Double(lesson.steps.count)
+    }
+    
     func checkAnswer(_ answer: String) {
         selectedAnswer = answer
+        // Предполагается, что в GrammarStep есть свойство correctAnswer.
+        // Если у вас оно называется иначе, замените на актуальное.
+        isAnswerCorrect = (answer == currentStep.correctAnswer)
         showQuizFeedback = true
         
-        let generator = UINotificationFeedbackGenerator()
-        if answer == currentStep.correctAnswer {
-            isAnswerCorrect = true
-            generator.notificationOccurred(.success)
-        } else {
-            isAnswerCorrect = false
-            generator.notificationOccurred(.error)
+        // Засчитываем балл только если пользователь ответил верно с первой попытки
+        if isAnswerCorrect && !hasAttemptedCurrentQuestion {
+            correctAnswersCount += 1
         }
+        hasAttemptedCurrentQuestion = true
     }
     
     func nextStep() {
-        if currentStepIndex < lesson.steps.count - 1 {
+        if isLastStep {
+            withAnimation { showResults = true }
+        } else {
             withAnimation(.easeInOut) {
                 currentStepIndex += 1
                 selectedAnswer = nil
                 isAnswerCorrect = false
                 showQuizFeedback = false
+                hasAttemptedCurrentQuestion = false
             }
         }
     }
@@ -72,11 +67,11 @@ class GrammarLessonViewModel: ObservableObject {
             completed.append(lesson.id)
             UserDefaults.standard.set(completed, forKey: StorageKeys.completedGrammarLessons)
             
-            // Начисление XP за первичное прохождение с использованием StorageKeys
             let currentXP = UserDefaults.standard.integer(forKey: StorageKeys.userXP)
-            UserDefaults.standard.set(currentXP + 50, forKey: StorageKeys.userXP)
+            // Базовые 50 XP + по 5 XP за каждый правильный ответ в тесте
+            let earnedXP = 50 + (correctAnswersCount * 5)
+            UserDefaults.standard.set(currentXP + earnedXP, forKey: StorageKeys.userXP)
             
-            // Обновление стрика
             StreakManager.shared.completeLesson()
         }
     }

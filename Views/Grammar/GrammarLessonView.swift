@@ -9,6 +9,20 @@ struct GrammarLessonView: View {
     }
     
     var body: some View {
+        ZStack {
+            Color(UIColor.systemGroupedBackground).ignoresSafeArea()
+            
+            if viewModel.showResults {
+                resultsView
+            } else {
+                lessonContentView
+            }
+        }
+        .navigationBarHidden(true)
+    }
+    
+    // MARK: - Основной контент урока
+    private var lessonContentView: some View {
         VStack(spacing: 0) {
             // 1. ХЕДЕР
             HStack(spacing: 12) {
@@ -22,7 +36,6 @@ struct GrammarLessonView: View {
                     ZStack(alignment: .leading) {
                         Capsule().fill(Color.gray.opacity(0.2))
                         Capsule().fill(Color.orange)
-                            // Явное приведение типов (Double -> CGFloat) устраняет ошибку компиляции
                             .frame(width: geo.size.width * CGFloat(viewModel.progress))
                             .animation(.spring(), value: viewModel.progress)
                     }
@@ -33,7 +46,6 @@ struct GrammarLessonView: View {
             
             // 2. КОНТЕНТ (Слайды)
             TabView(selection: $viewModel.currentStepIndex) {
-                // Использование enumerated() избавляет от ошибки ViewBuilder внутри ForEach
                 ForEach(Array(viewModel.lesson.steps.enumerated()), id: \.offset) { index, step in
                     VStack {
                         if step.type == .theory {
@@ -53,7 +65,6 @@ struct GrammarLessonView: View {
                         }
                     }
                     .tag(index)
-                    // Блокируем свайп, заставляя пользователя нажимать кнопки
                     .contentShape(Rectangle())
                     .gesture(DragGesture())
                 }
@@ -78,12 +89,7 @@ struct GrammarLessonView: View {
                 }
                 
                 Button(action: {
-                    if viewModel.isLastStep && viewModel.canProceed {
-                        viewModel.finishLesson()
-                        dismiss()
-                    } else {
-                        viewModel.nextStep()
-                    }
+                    viewModel.nextStep()
                 }) {
                     Text(viewModel.isLastStep ? "Завершить" : "Далее")
                         .font(.headline)
@@ -98,8 +104,54 @@ struct GrammarLessonView: View {
             }
             .padding()
         }
-        .background(Color(UIColor.systemGroupedBackground))
-        .navigationBarHidden(true)
+    }
+    
+    // MARK: - Экран результатов теста
+    private var resultsView: some View {
+        VStack(spacing: 30) {
+            Spacer()
+            
+            ZStack {
+                Circle().fill(Color.orange.opacity(0.1)).frame(width: 150, height: 150)
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 80))
+                    .foregroundColor(.orange)
+            }
+            
+            VStack(spacing: 12) {
+                Text("Урок завершен!")
+                    .font(.largeTitle.bold())
+                
+                if viewModel.totalQuizSteps > 0 {
+                    Text("Результат теста: \(viewModel.correctAnswersCount) из \(viewModel.totalQuizSteps)")
+                        .font(.headline)
+                        .foregroundColor(.gray)
+                }
+                
+                Text("+ \(50 + (viewModel.correctAnswersCount * 5)) XP")
+                    .font(.title2.bold())
+                    .foregroundColor(.yellow)
+                    .padding(.top, 10)
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                viewModel.finishLesson()
+                dismiss()
+            }) {
+                Text("Отлично")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(Color.blue)
+                    .cornerRadius(16)
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 20)
+        }
+        .transition(.opacity.combined(with: .scale))
     }
 }
 

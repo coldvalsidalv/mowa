@@ -19,6 +19,7 @@ class FlashcardViewModel: ObservableObject {
     }
     
     func loadWords() {
+        // Убедитесь, что DataLoader.shared.loadWords() возвращает [WordItem]
         let allWords = DataLoader.shared.loadWords()
         
         if isReviewMode {
@@ -51,13 +52,10 @@ class FlashcardViewModel: ObservableObject {
             let completed = totalSessionCount - sessionWords.count - 1
             withAnimation {
                 progress = CGFloat(completed) / CGFloat(totalSessionCount)
-                StreakManager.shared.completeLesson()
             }
         }
     }
     
-    // Универсальный метод (заменяет и handleSwipe, и handleAnswer)
-    // Во FlashcardView замените handleSwipe(right: true/false) на processAnswer(isCorrect: true/false)
     func processAnswer(isCorrect: Bool) {
         guard var word = currentWord else { return }
         let now = Int(Date().timeIntervalSince1970)
@@ -71,7 +69,11 @@ class FlashcardViewModel: ObservableObject {
             word.safeBox = currentBox
             word.safeLastReview = now
             word.safeNextReview = calculateNextReview(box: currentBox, from: now)
+            
+            // Засчитываем прогресс в стрик только при правильном ответе
+            StreakManager.shared.completeLesson()
         } else {
+            // При ошибке возвращаем на 1 уровень и сбрасываем дату повторения
             word.safeBox = 1
             word.safeNextReview = 0
             
@@ -88,6 +90,7 @@ class FlashcardViewModel: ObservableObject {
         var allWords = DataLoader.shared.loadWords()
         if let index = allWords.firstIndex(where: { $0.id == updatedWord.id }) {
             allWords[index] = updatedWord
+            // Используем ContentManager для сохранения (проверьте наличие этого метода)
             ContentManager.shared.saveWords(allWords)
         }
     }
