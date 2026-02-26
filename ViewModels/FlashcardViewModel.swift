@@ -1,102 +1,55 @@
 import SwiftUI
+import SwiftData
 import Combine
 
+@MainActor
 final class FlashcardViewModel: ObservableObject {
-    @Published var currentWord: WordItem?
+    @Published var currentWord: VocabItem?
     @Published var isFinished = false
     @Published var progress: CGFloat = 0.0
     
-    private var sessionWords: [WordItem] = []
-    private var totalSessionCount: Int = 0
+    private let engine: LearningEngine
+    private var sessionStartTime: Date
     
-    // Единый кеш слов для минимизации обращений к диску
-    private var allWordsCache: [WordItem] = []
-    
-    private let categories: [String]
-    private let isReviewMode: Bool
-    
-    init(categories: [String], isReviewMode: Bool) {
-        self.categories = categories
-        self.isReviewMode = isReviewMode
-        // Используем существующий DataLoader
-        self.allWordsCache = DataLoader.shared.loadWords()
-        loadWords()
+    init(categories: [String], isReviewMode: Bool, context: ModelContext) {
+        // Инициализируем бизнес-логику с доступом к БД
+        self.engine = LearningEngine(context: context)
+        self.sessionStartTime = Date()
+        
+        // Запускаем сборку сессии
+        // Если категорий несколько, берем первую для демо, либо модифицируем LearningEngine для массива
+        self.engine.buildSession(category: categories.first, newCardsLimit: 15)
+        self.bindEngineState()
     }
     
-    func loadWords() {
-        if isReviewMode {
-            let currentTime = Int(Date().timeIntervalSince1970)
-            sessionWords = allWordsCache.filter { word in
-                return word.safeNextReview != 0 && word.safeNextReview <= currentTime
-            }
+    private func bindEngineState() {
+        // Синхронизация состояния движка с UI
+        if let first = engine.sessionQueue.first {
+            self.currentWord = first
+            self.sessionStartTime = Date()
         } else {
-            sessionWords = allWordsCache.filter { word in
-                return categories.contains(word.category) || categories.isEmpty
-            }
-            sessionWords.shuffle()
-        }
-        
-        totalSessionCount = sessionWords.count
-        nextWord()
-    }
-    
-    func nextWord() {
-        guard !sessionWords.isEmpty else {
-            currentWord = nil
-            isFinished = true
-            progress = 1.0
-            return
-        }
-        
-        currentWord = sessionWords.removeFirst()
-        
-        if totalSessionCount > 0 {
-            let completedCount = totalSessionCount - sessionWords.count - 1
-            withAnimation(.easeInOut) {
-                progress = CGFloat(completedCount) / CGFloat(totalSessionCount)
-            }
+            self.isFinished = true
         }
     }
     
-    func processAnswer(isCorrect: Bool) {
-        guard var word = currentWord else { return }
-        let now = Int(Date().timeIntervalSince1970)
+    func submitRating(_ rating: FSRSRating) {
+        guard let word = currentWord else { return }
         
-        if isCorrect {
-            let currentBox = min(word.safeBox + 1, 5)
-            word.safeBox = currentBox
-            word.safeLastReview = now
-            word.safeNextReview = calculateNextReview(box: currentBox, from: now)
-            
-            // Обновляем стрик только при успехе
-            StreakManager.shared.completeLesson()
+        // Расчет времени, затраченного на ответ (в миллисекундах)
+        let timeSpentMs = Int(Date().timeIntervalSince(sessionStartTime) * 1000)
+        
+        // Передаем данные в математическое ядро
+        engine.processAnswer(item: word, rating: rating, timeSpentMs: timeSpentMs)
+        
+        // Обновляем UI
+        self.progress = engine.sessionProgress
+        
+        if let next = engine.sessionQueue.first {
+            self.currentWord = next
+            self.sessionStartTime = Date()
         } else {
-            // При ошибке сбрасываем в первую коробку
-            word.safeBox = 1
-            word.safeNextReview = 0
-            
-            // Возвращаем в конец очереди текущей сессии
-            sessionWords.append(word)
-            totalSessionCount += 1
+            self.currentWord = nil
+            self.isFinished = true
         }
-        
-        updateCacheAndSave(word)
-        nextWord()
-    }
-    
-    private func updateCacheAndSave(_ updatedWord: WordItem) {
-        // Обновляем в памяти
-        if let index = allWordsCache.firstIndex(where: { $0.id == updatedWord.id }) {
-            allWordsCache[index] = updatedWord
-            // Сохраняем весь массив через существующий ContentManager
-            ContentManager.shared.saveWords(allWordsCache)
-        }
-    }
-    
-    private func calculateNextReview(box: Int, from now: Int) -> Int {
-        let day = 86400
-        let intervals = [0, 1, 3, 7, 14, 30]
-        let daysToAdd = intervals[min(box, intervals.count - 1)]
-        return now + (daysToAdd * day)
     }
 }

@@ -1,111 +1,98 @@
 import SwiftUI
+import SwiftData
 import Combine
 
-class QuizViewModel: ObservableObject {
-    // Текущий вопрос (слово)
-    @Published var currentWord: WordItem?
-    
-    // Варианты ответов (переводы)
-    @Published var options: [String] = []
-    
-    // Счет и номер вопроса
-    @Published var score: Int = 0
-    @Published var questionNumber: Int = 1
-    
-    // Состояния интерфейса
+/// Модель вопроса викторины. Использует актуальную сущность VocabItem.
+struct QuizQuestion {
+    let word: VocabItem
+    let options: [String]
+}
+
+@MainActor
+final class QuizViewModel: ObservableObject {
+    @Published var questions: [QuizQuestion] = []
+    @Published var currentIndex: Int = 0
+    @Published var selectedAnswer: String?
     @Published var showFeedback: Bool = false
     @Published var isCorrect: Bool = false
-    @Published var feedbackMessage: String = ""
-    @Published var isGameOver: Bool = false
+    @Published var score: Int = 0
+    @Published var isFinished: Bool = false
     
-    // Все слова
-    private var allWords: [WordItem] = []
+    var totalQuestions: Int { questions.count }
     
-    // Максимальное количество вопросов в раунде
-    let maxQuestions = 10
-    
-    init() {
-        loadData()
-        startGame()
+    var currentQuestion: QuizQuestion? {
+        guard currentIndex < questions.count else { return nil }
+        return questions[currentIndex]
     }
     
-    func loadData() {
-        self.allWords = DataLoader.shared.loadWords()
+    var progress: Double {
+        guard !questions.isEmpty else { return 0 }
+        return Double(currentIndex) / Double(questions.count)
     }
     
-    func startGame() {
-        score = 0
-        questionNumber = 1
-        isGameOver = false
-        generateQuestion()
+    var isLastQuestion: Bool {
+        currentIndex == questions.count - 1
     }
     
-    func generateQuestion() {
-        // Берем случайное слово
-        guard let randomWord = allWords.randomElement() else { return }
-        currentWord = randomWord
+    /// Инициализация сессии: выборка слов из SwiftData и генерация дистракторов.
+    /// Требует передачи контекста для доступа к локальной БД.
+    func startSession(context: ModelContext) {
+        let descriptor = FetchDescriptor<VocabItem>()
+        let allWords = (try? context.fetch(descriptor)) ?? []
         
-        // Генерируем варианты ответов
-        var answers: [String] = [randomWord.translation] // Правильный ответ
+        guard allWords.count >= 4 else {
+            print("❌ Недостаточно слов в базе для запуска викторины (минимум 4)")
+            return
+        }
         
-        // Добавляем 3 неправильных (дистракторы)
-        let distractors = allWords
-            .filter { $0.id != randomWord.id } // Исключаем правильное слово
-            .shuffled()
-            .prefix(3)
-            .map { $0.translation }
+        let shuffled = allWords.shuffled().prefix(10)
+        self.questions = shuffled.map { word in
+            var options = [word.translation]
+            
+            // Выбираем 3 случайных неправильных ответа
+            let distractors = allWords.filter { $0.id != word.id }
+                .shuffled()
+                .prefix(3)
+                .map { $0.translation }
+            options.append(contentsOf: distractors)
+            
+            return QuizQuestion(word: word, options: options.shuffled())
+        }
         
-        answers.append(contentsOf: distractors)
-        
-        // Перемешиваем варианты
-        options = answers.shuffled()
-        
-        // Сбрасываем состояние фидбека
-        showFeedback = false
+        self.score = 0
+        self.currentIndex = 0
+        self.isFinished = false
+        self.showFeedback = false
+        self.selectedAnswer = nil
     }
     
-    func checkAnswer(_ selectedAnswer: String) {
-        guard let word = currentWord else { return }
-        
+    func submitAnswer(_ answer: String) {
+        guard let current = currentQuestion else { return }
+        selectedAnswer = answer
+        isCorrect = (answer == current.word.translation)
+        if isCorrect { score += 1 }
         showFeedback = true
-        
-        if selectedAnswer == word.translation {
-            // ПРАВИЛЬНО
-            score += 10 // +10 XP за правильный ответ
-            isCorrect = true
-            feedbackMessage = "Отлично!"
-            
-            // Можно помечать слово как выученное, если ответил верно (опционально)
-            // ProgressService.shared.markAsLearned(word.id)
-            
+    }
+    
+    func nextQuestion() {
+        if isLastQuestion {
+            finishSession()
         } else {
-            // НЕПРАВИЛЬНО
-            isCorrect = false
-            feedbackMessage = "Правильный ответ: \(word.translation)"
+            withAnimation {
+                currentIndex += 1
+                selectedAnswer = nil
+                showFeedback = false
+            }
         }
+    }
+    
+    private func finishSession() {
+        isFinished = true
         
-        // Задержка перед следующим вопросом
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.nextQuestion()
-        }
-    }
-    
-    private func nextQuestion() {
-        if questionNumber >= maxQuestions {
-            finishGame()
-        } else {
-            questionNumber += 1
-            generateQuestion()
-        }
-    }
-    
-    private func finishGame() {
-        isGameOver = true
-        // Тут можно сохранить общий XP пользователя
-    }
-    
-    // Вспомогательный метод для сброса
-    func restart() {
-        startGame()
+        let defaults = UserDefaults.standard
+        let currentXP = defaults.integer(forKey: StorageKeys.userXP)
+        defaults.set(currentXP + (score * 5), forKey: StorageKeys.userXP)
+        
+        StreakManager.shared.completeLesson()
     }
 }

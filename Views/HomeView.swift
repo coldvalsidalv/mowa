@@ -1,7 +1,13 @@
 import SwiftUI
+import SwiftData
 import Combine
 
 struct HomeView: View {
+    @Environment(\.modelContext) private var modelContext
+    
+    // Реактивная привязка к базе данных. UI будет обновляться автоматически при изменении VocabItem.
+    @Query private var allWords: [VocabItem]
+    
     @StateObject private var viewModel = HomeViewModel()
     
     @AppStorage(StorageKeys.dayStreak) private var dayStreak: Int = 1
@@ -10,7 +16,6 @@ struct HomeView: View {
     @State private var showStreakSheet = false
     @State private var showRecommendedLesson = false
     @State private var categoryToOpen: String = ""
-    @State private var allWords: [WordItem] = []
     
     let gridRows = [
         GridItem(.fixed(160), spacing: 16),
@@ -52,11 +57,14 @@ struct HomeView: View {
             }
             .navigationDestination(isPresented: $showRecommendedLesson) {
                 if !categoryToOpen.isEmpty {
-                    FlashcardView(categories: [categoryToOpen], isReviewMode: false)
+                    // Инъекция контекста обязательна
+                    FlashcardView(categories: [categoryToOpen], isReviewMode: false, context: modelContext)
                 }
             }
             .onAppear {
-                loadData()
+                // Инициализация базы данных при первом входе
+                DatabaseSeeder.shared.seedIfNeeded(context: modelContext)
+                viewModel.refreshStats(context: modelContext)
             }
         }
     }
@@ -136,6 +144,7 @@ struct HomeView: View {
     }
     
     private var reviewLinkView: some View {
+        // Если ReviewSelectionView переписан под SwiftData, ему тоже нужен context
         NavigationLink(destination: ReviewSelectionView()) {
             HStack {
                 ZStack {
@@ -163,7 +172,7 @@ struct HomeView: View {
                 NavigationLink(destination: QuizView()) {
                     PracticeCard(title: "Викторина", subtitle: "Тест", icon: "gamecontroller.fill", color: .purple)
                 }
-                NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false)) {
+                NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false, context: modelContext)) {
                     PracticeCard(title: "Случайное", subtitle: "Микс", icon: "shuffle", color: .blue)
                 }
             }
@@ -193,12 +202,13 @@ struct HomeView: View {
                             let theme = getTheme(for: category)
                             let categoryWords = allWords.filter { $0.category == category }
                             let total = categoryWords.count
-                            let learned = categoryWords.filter { $0.safeBox > 0 }.count
+                            // Расчет прогресса на основе состояния FSRS, а не удаленного safeBox
+                            let learned = categoryWords.filter { $0.fsrsData.state != .new }.count
                             let progress = total > 0 ? Double(learned) / Double(total) : 0.0
                             let countText = total > 0 ? "\(learned)/\(total)" : "Слова"
-                            let isCompleted = progress >= 1.0
+                            let isCompleted = total > 0 && progress >= 1.0
                             
-                            NavigationLink(destination: FlashcardView(categories: [category], isReviewMode: false)) {
+                            NavigationLink(destination: FlashcardView(categories: [category], isReviewMode: false, context: modelContext)) {
                                 LessonCard(
                                     title: category,
                                     subtitle: isCompleted ? "Завершено" : "Продолжить",
@@ -219,15 +229,6 @@ struct HomeView: View {
     
     // MARK: - Утилиты UI и Логика
     
-    private func loadData() {
-        DispatchQueue.global(qos: .userInitiated).async {
-            let words = DataLoader.shared.loadWords()
-            DispatchQueue.main.async {
-                self.allWords = words
-            }
-        }
-    }
-    
     private func getTheme(for category: String) -> (icon: String, color: Color) {
         let hash = category.hashValue
         let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
@@ -243,17 +244,15 @@ struct HomeView: View {
             let categoryWords = allWords.filter { $0.category == category }
             guard !categoryWords.isEmpty else { continue }
             
-            let learned = categoryWords.filter { $0.safeBox > 0 }.count
+            let learned = categoryWords.filter { $0.fsrsData.state != .new }.count
             let progress = Double(learned) / Double(categoryWords.count)
             
-            // Ищем тему с максимальным прогрессом, которая еще НЕ завершена на 100%
             if progress < 1.0 && progress > highestProgress {
                 highestProgress = progress
                 bestCategory = category
             }
         }
         
-        // Если все завершено или прогресс нулевой, отдаем первую попавшуюся
         return bestCategory ?? storage.items.first
     }
 }

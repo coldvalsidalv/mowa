@@ -1,37 +1,61 @@
 import SwiftUI
+import SwiftData
 
 struct ReviewSelectionView: View {
-    // --- ДАННЫЕ (Заглушки) ---
-    // Попробуй поставить 0, чтобы увидеть "Золотую карточку"
-    @State var weakWordsCount = 12
-    @State var mediumWordsCount = 45
-    @State var strongWordsCount = 128
+    @Environment(\.modelContext) private var context
     
-    let weakGrammarCount = 3
-    let mediumGrammarCount = 8
-    let strongGrammarCount = 24
+    // Реактивная выборка всех карточек, которые уже находятся в процессе изучения (reps > 0)
+    @Query(filter: #Predicate<VocabItem> { $0.fsrsData.reps > 0 })
+    private var studiedWords: [VocabItem]
     
-    // Общее здоровье памяти
-    let memoryHealth: Double = 0.82
+    // Динамический расчет карточек, ожидающих повторения прямо сейчас
+    private var dueWords: [VocabItem] {
+        let now = Date()
+        return studiedWords.filter { $0.fsrsData.due <= now }
+    }
+    
+    // Слабые: карточки на этапе переобучения или с высокой сложностью FSRS
+    private var weakWordsCount: Int {
+        dueWords.filter { $0.fsrsData.state == .relearning || $0.fsrsData.difficulty > 7.0 }.count
+    }
+    
+    // Средние: стандартные карточки со стабильностью менее 2 недель
+    private var mediumWordsCount: Int {
+        dueWords.filter { $0.fsrsData.state == .review && $0.fsrsData.difficulty <= 7.0 && $0.fsrsData.stability < 14.0 }.count
+    }
+    
+    // Сильные: стабильно закрепленные в памяти (интервал > 14 дней)
+    private var strongWordsCount: Int {
+        dueWords.filter { $0.fsrsData.state == .review && $0.fsrsData.stability >= 14.0 }.count
+    }
+    
+    // Индекс здоровья памяти: соотношение карточек с нормальной стабильностью ко всем изученным
+    private var memoryHealth: Double {
+        guard !studiedWords.isEmpty else { return 1.0 }
+        let healthyCount = studiedWords.filter { $0.fsrsData.state == .review && $0.fsrsData.stability > 3.0 }.count
+        return Double(healthyCount) / Double(studiedWords.count)
+    }
+    
+    // Грамматика пока остается заглушкой до внедрения FSRS-моделей для грамматических правил
+    let weakGrammarCount = 0
+    let mediumGrammarCount = 0
+    let strongGrammarCount = 0
     
     var body: some View {
         ZStack(alignment: .bottom) {
             ScrollView {
                 VStack(spacing: 24) {
                     
-                    // 1. ХЕДЕР ЗДОРОВЬЯ ПАМЯТИ
-                    // padding(.horizontal) добавлен здесь, чтобы ширина совпадала с карточками ниже
                     MemoryHealthHeader(health: memoryHealth)
                         .padding(.horizontal)
                         .padding(.top, 20)
                     
-                    // 2. СЕКЦИЯ: СЛОВАРЬ
                     VStack(alignment: .leading, spacing: 16) {
                         SectionTitle(icon: "text.book.closed.fill", title: "Словарь", color: .blue)
                         
                         VStack(spacing: 12) {
-                            // Слабые слова
-                            NavigationLink(destination: FlashcardView(categories: ["Weak"], isReviewMode: true)) {
+                            // Обязательная передача контекста для инстанцирования ViewModel
+                            NavigationLink(destination: FlashcardView(categories: ["Weak"], isReviewMode: true, context: context)) {
                                 ReviewCategoryCard(
                                     title: "Слабые слова",
                                     subtitle: "Частые ошибки",
@@ -40,12 +64,8 @@ struct ReviewSelectionView: View {
                                     color: .red
                                 )
                             }
-                            .simultaneousGesture(TapGesture().onEnded {
-                                HapticManager.instance.impact(style: .light)
-                            })
                             
-                            // Средние слова
-                            NavigationLink(destination: FlashcardView(categories: ["Medium"], isReviewMode: true)) {
+                            NavigationLink(destination: FlashcardView(categories: ["Medium"], isReviewMode: true, context: context)) {
                                 ReviewCategoryCard(
                                     title: "Средние слова",
                                     subtitle: "Нужна практика",
@@ -54,12 +74,8 @@ struct ReviewSelectionView: View {
                                     color: .orange
                                 )
                             }
-                            .simultaneousGesture(TapGesture().onEnded {
-                                HapticManager.instance.impact(style: .light)
-                            })
                             
-                            // Сильные слова
-                            NavigationLink(destination: FlashcardView(categories: ["Strong"], isReviewMode: true)) {
+                            NavigationLink(destination: FlashcardView(categories: ["Strong"], isReviewMode: true, context: context)) {
                                 ReviewCategoryCard(
                                     title: "Сильные слова",
                                     subtitle: "Надежно в памяти",
@@ -68,19 +84,14 @@ struct ReviewSelectionView: View {
                                     color: .green
                                 )
                             }
-                            .simultaneousGesture(TapGesture().onEnded {
-                                HapticManager.instance.impact(style: .light)
-                            })
                         }
                         .padding(.horizontal)
                     }
                     
-                    // 3. СЕКЦИЯ: ГРАММАТИКА
                     VStack(alignment: .leading, spacing: 16) {
                         SectionTitle(icon: "function", title: "Грамматика", color: .purple)
                         
                         VStack(spacing: 12) {
-                            // Слабая грамматика
                             NavigationLink(destination: Text("Grammar Weak")) {
                                 ReviewCategoryCard(
                                     title: "Сложные правила",
@@ -90,11 +101,7 @@ struct ReviewSelectionView: View {
                                     color: .red
                                 )
                             }
-                            .simultaneousGesture(TapGesture().onEnded {
-                                HapticManager.instance.impact(style: .light)
-                            })
                             
-                            // Средняя грамматика
                             NavigationLink(destination: Text("Grammar Medium")) {
                                 ReviewCategoryCard(
                                     title: "В процессе",
@@ -104,11 +111,7 @@ struct ReviewSelectionView: View {
                                     color: .orange
                                 )
                             }
-                            .simultaneousGesture(TapGesture().onEnded {
-                                HapticManager.instance.impact(style: .light)
-                            })
                             
-                            // Сильная грамматика
                             NavigationLink(destination: Text("Grammar Strong")) {
                                 ReviewCategoryCard(
                                     title: "Усвоенные темы",
@@ -118,25 +121,17 @@ struct ReviewSelectionView: View {
                                     color: .green
                                 )
                             }
-                            .simultaneousGesture(TapGesture().onEnded {
-                                HapticManager.instance.impact(style: .light)
-                            })
                         }
                         .padding(.horizontal)
                     }
                     
-                    // Отступ снизу для FAB
                     Spacer(minLength: 100)
                 }
             }
             .background(Color(UIColor.systemGroupedBackground))
             
-            // 4. ПЛАВАЮЩАЯ КНОПКА (SMART MIX)
-            SmartReviewFAB()
+            SmartReviewFAB(context: context)
                 .padding(.bottom, 20)
-                .simultaneousGesture(TapGesture().onEnded {
-                    HapticManager.instance.impact(style: .medium)
-                })
         }
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -146,7 +141,6 @@ struct ReviewSelectionView: View {
 struct MemoryHealthHeader: View {
     let health: Double
     
-    // Логика цвета "батарейки"
     var healthColor: Color {
         if health > 0.8 { return .green }
         if health > 0.4 { return .orange }
@@ -155,7 +149,6 @@ struct MemoryHealthHeader: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Текстовый заголовок (Выровнен влево)
             VStack(alignment: .leading, spacing: 6) {
                 Text("Что повторим?")
                     .font(.system(size: 34, weight: .bold, design: .rounded))
@@ -169,9 +162,7 @@ struct MemoryHealthHeader: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            // Карточка статистики
             HStack(spacing: 16) {
-                // 1. ИКОНКА С ПОДЛОЖКОЙ (Размер 52x52, как у карточек ниже)
                 ZStack {
                     Circle()
                         .fill(healthColor.opacity(0.15))
@@ -182,7 +173,6 @@ struct MemoryHealthHeader: View {
                         .foregroundColor(healthColor)
                 }
                 
-                // 2. Прогресс бар и проценты
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("Здоровье памяти")
@@ -198,7 +188,6 @@ struct MemoryHealthHeader: View {
                             .foregroundColor(healthColor)
                     }
                     
-                    // Линия прогресса
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule()
@@ -229,7 +218,6 @@ struct ReviewCategoryCard: View {
     let icon: String
     let color: Color
     
-    // Логика победы (0 ошибок)
     var isCleared: Bool {
         return count == 0 && (color == .red || color == .orange)
     }
@@ -238,7 +226,6 @@ struct ReviewCategoryCard: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            // ИКОНКА С ПОДЛОЖКОЙ (Размер 52x52)
             ZStack {
                 Circle()
                     .fill(activeColor.opacity(0.15))
@@ -250,7 +237,6 @@ struct ReviewCategoryCard: View {
                     .scaleEffect(isCleared ? 1.1 : 1.0)
             }
             
-            // ТЕКСТ
             VStack(alignment: .leading, spacing: 3) {
                 Text(isCleared ? "Отличная работа!" : title)
                     .font(.headline)
@@ -266,7 +252,6 @@ struct ReviewCategoryCard: View {
             
             Spacer()
             
-            // СЧЕТЧИК
             HStack(spacing: 8) {
                 if isCleared {
                     Image(systemName: "checkmark")
@@ -310,15 +295,12 @@ struct SectionTitle: View {
     
     var body: some View {
         HStack(spacing: 8) {
-            // Центрируем иконку относительно карточек ниже (половина от 52pt = 26pt центр)
-            // Иконка в карточке: 52 ширина.
-            // Здесь просто ставим отступ, чтобы визуально совпадало
             ZStack {
                 Image(systemName: icon)
                     .foregroundColor(color)
                     .font(.title3)
             }
-            .frame(width: 52, height: 20, alignment: .center) // Ширина совпадает с иконкой карточки
+            .frame(width: 52, height: 20, alignment: .center)
             
             Text(title)
                 .font(.title3)
@@ -332,8 +314,10 @@ struct SectionTitle: View {
 
 // MARK: - FAB (КНОПКА УМНЫЙ МИКС)
 struct SmartReviewFAB: View {
+    let context: ModelContext
+    
     var body: some View {
-        NavigationLink(destination: FlashcardView(categories: [], isReviewMode: true)) {
+        NavigationLink(destination: FlashcardView(categories: [], isReviewMode: true, context: context)) {
             HStack(spacing: 12) {
                 Image(systemName: "play.fill")
                     .font(.title3)
@@ -354,11 +338,5 @@ struct SmartReviewFAB: View {
                     .stroke(Color.white.opacity(0.3), lineWidth: 1)
             )
         }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        ReviewSelectionView()
     }
 }
