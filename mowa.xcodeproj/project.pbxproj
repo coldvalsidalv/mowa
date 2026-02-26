@@ -43,17 +43,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2BBB2A7C2F50B59000483981 /* Extensions */ = {
+		2BBB2ABE2F50B64200483981 /* Extensions */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		2BBB2A7F2F50B59300483981 /* Managers */ = {
+		2BBB2AC02F50B64200483981 /* Managers */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Managers;
 			sourceTree = "<group>";
 		};
-		2BBB2A822F50B59600483981 /* Utils */ = {
+		2BBB2AC22F50B64200483981 /* Utils */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Utils;
 			sourceTree = "<group>";
@@ -136,9 +136,9 @@
 				2BF0247D2EF0BDBF00CAC740 /* Assets.xcassets */,
 				2BB8E2F42F4F78F60031C864 /* NotificationManager.swift */,
 				2BB8E2F72F4F85CA0031C864 /* HapticManager.swift */,
-				2BBB2A7C2F50B59000483981 /* Extensions */,
-				2BBB2A7F2F50B59300483981 /* Managers */,
-				2BBB2A822F50B59600483981 /* Utils */,
+				2BBB2ABE2F50B64200483981 /* Extensions */,
+				2BBB2AC02F50B64200483981 /* Managers */,
+				2BBB2AC22F50B64200483981 /* Utils */,
 			);
 			sourceTree = "<group>";
 		};
@@ -168,9 +168,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				2BBB2A7C2F50B59000483981 /* Extensions */,
-				2BBB2A7F2F50B59300483981 /* Managers */,
-				2BBB2A822F50B59600483981 /* Utils */,
+				2BBB2ABE2F50B64200483981 /* Extensions */,
+				2BBB2AC02F50B64200483981 /* Managers */,
+				2BBB2AC22F50B64200483981 /* Utils */,
 				2BF024A02EF0BE1F00CAC740 /* Models */,
 				2BF024A22EF0BE3100CAC740 /* ViewModels */,
 				2BF024A32EF0BE3B00CAC740 /* Views */,
