@@ -1,6 +1,8 @@
 import SwiftUI
+import SwiftData
 
 struct LessonsView: View {
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = LessonsViewModel()
     @State private var selectedTab = 0
     
@@ -55,7 +57,7 @@ struct LessonsView: View {
                     }
                 }
             }
-            .onAppear { viewModel.loadData() }
+            .onAppear { viewModel.loadData(context: modelContext) }
         }
     }
     
@@ -104,7 +106,7 @@ struct LessonsView: View {
                             }
                         }
                 } else {
-                    NavigationLink(destination: FlashcardView(categories: [stat.id], isReviewMode: false)) {
+                    NavigationLink(destination: FlashcardView(categories: [stat.id], isReviewMode: false, context: modelContext)) {
                         CategoryCardView(stat: stat, isSelected: false, isEditMode: false)
                     }
                     .buttonStyle(PlainButtonStyle())

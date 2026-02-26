@@ -1,16 +1,22 @@
 import SwiftUI
+import SwiftData
 
 struct FlashcardView: View {
     let categories: [String]
     let isReviewMode: Bool
     
-    @StateObject var viewModel: FlashcardViewModel
+    @StateObject private var viewModel: FlashcardViewModel
     @Environment(\.dismiss) var dismiss
     
-    init(categories: [String], isReviewMode: Bool) {
+    // Внедрение ModelContext из MowaApp
+    init(categories: [String], isReviewMode: Bool, context: ModelContext) {
         self.categories = categories
         self.isReviewMode = isReviewMode
-        _viewModel = StateObject(wrappedValue: FlashcardViewModel(categories: categories, isReviewMode: isReviewMode))
+        _viewModel = StateObject(wrappedValue: FlashcardViewModel(
+            categories: categories,
+            isReviewMode: isReviewMode,
+            context: context
+        ))
     }
     
     var body: some View {
@@ -39,6 +45,7 @@ struct FlashcardView: View {
                     Capsule().fill(Color.gray.opacity(0.2))
                     Capsule().fill(Color.orange)
                         .frame(width: geo.size.width * viewModel.progress)
+                        .animation(.easeInOut, value: viewModel.progress)
                 }
             }
             .frame(height: 6)
@@ -53,7 +60,7 @@ struct FlashcardView: View {
         .padding(.vertical, 12)
     }
     
-    private func cardContent(for word: WordItem) -> some View {
+    private func cardContent(for word: VocabItem) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 6) {
@@ -104,35 +111,35 @@ struct FlashcardView: View {
             
             Spacer()
             
-            HStack(spacing: 16) {
-                Button(action: { viewModel.processAnswer(isCorrect: false) }) {
-                    Text("Не знаю")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(28)
-                }
-                
-                Button(action: { viewModel.processAnswer(isCorrect: true) }) {
-                    Text("Знаю")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(Color.orange)
-                        .cornerRadius(28)
-                }
+            // FSRS БЛОК КНОПОК
+            HStack(spacing: 10) {
+                ratingButton(title: "Снова", color: .red, rating: .again)
+                ratingButton(title: "Трудно", color: .orange, rating: .hard)
+                ratingButton(title: "Хорошо", color: .green, rating: .good)
+                ratingButton(title: "Легко", color: .blue, rating: .easy)
             }
             .padding(.bottom, 20)
         }
         .padding(.horizontal, 24)
     }
+    
+    private func ratingButton(title: String, color: Color, rating: FSRSRating) -> some View {
+        Button(action: { viewModel.submitRating(rating) }) {
+            VStack(spacing: 4) {
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundColor(color)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 60)
+            .background(color.opacity(0.15))
+            .cornerRadius(16)
+        }
+    }
 }
 
-// MARK: - Вспомогательные компоненты в одном файле для избежания ошибок Scope
-
+// MARK: - Вспомогательные компоненты
 struct FinishView: View {
     let dismiss: DismissAction
     var body: some View {
@@ -146,24 +153,19 @@ struct FinishView: View {
                 Text("Отличная работа!")
                     .font(.title)
                     .bold()
-                Text("Все карточки на сегодня пройдены.")
+                Text("Сессия завершена. Интервалы обновлены.")
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
             }
-            
             Spacer()
-            
             Button(action: { dismiss() }) {
                 Text("Завершить")
                     .font(.headline)
                     .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 58)
-                    .background(Color.orange)
-                    .cornerRadius(29)
+                    .frame(maxWidth: .infinity).frame(height: 58)
+                    .background(Color.orange).cornerRadius(29)
             }
-            .padding(.horizontal, 30)
-            .padding(.bottom, 30)
+            .padding(.horizontal, 30).padding(.bottom, 30)
         }
     }
 }

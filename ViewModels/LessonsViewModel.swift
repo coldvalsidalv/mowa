@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import Combine
 
 struct CategoryStat: Identifiable {
@@ -24,6 +25,7 @@ struct GrammarGroupUI: Identifiable {
     var progress: Double { totalLessons > 0 ? Double(completedLessons) / Double(totalLessons) : 0 }
 }
 
+@MainActor
 final class LessonsViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var isEditMode = false
@@ -47,61 +49,62 @@ final class LessonsViewModel: ObservableObject {
         }
     }
     
-    func loadData() {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let words = DataLoader.shared.loadWords()
-            let rawLessons = DataLoader.shared.loadGrammar()
-            let completedIDs = Set(UserDefaults.standard.stringArray(forKey: StorageKeys.completedGrammarLessons) ?? [])
-            
-            // Расчет статистики категорий
-            let uniqueCategories = Array(Set(words.map { $0.category })).sorted()
-            let stats: [CategoryStat] = uniqueCategories.map { category in
-                let categoryWords = words.filter { $0.category == category }
-                let learned = categoryWords.filter { $0.safeBox > 0 }.count
-                let theme = Self.getTheme(for: category)
-                return CategoryStat(id: category, totalWords: categoryWords.count, learnedWords: learned, icon: theme.icon, color: theme.color)
-            }
-            
-            // Расчет статистики грамматики
-            let levels = ["A0", "A1", "A2", "B1", "B2"]
-            var groups: [GrammarGroupUI] = levels.map { level in
-                let levelLessons = rawLessons.filter { $0.level == level }
-                let completedCount = levelLessons.filter { completedIDs.contains($0.id) }.count
-                return GrammarGroupUI(
-                    id: level,
-                    title: "Уровень \(level)",
-                    subtitle: Self.getDescription(for: level),
-                    iconText: level,
-                    iconSymbol: nil,
-                    color: Self.getColor(for: level),
-                    isExam: false,
-                    totalLessons: levelLessons.count,
-                    completedLessons: completedCount
-                )
-            }
-            
-            // Добавление экзамена B1
-            let examLessons = rawLessons.filter { $0.level == "B1_Exam" }
-            let examCompleted = examLessons.filter { completedIDs.contains($0.id) }.count
-            groups.append(GrammarGroupUI(
-                id: "B1_Exam",
-                title: "Экзамен B1",
-                subtitle: "Подготовка к сертификации",
-                iconText: nil,
-                iconSymbol: "graduationcap.fill",
-                color: .red,
-                isExam: true,
-                totalLessons: examLessons.count,
-                completedLessons: examCompleted
-            ))
-            
-            DispatchQueue.main.async {
-                self?.categories = stats
-                self?.allGrammarLessons = rawLessons
-                self?.completedGrammarLessonIDs = completedIDs
-                self?.grammarGroups = groups.filter { $0.totalLessons > 0 }
-            }
+    /// Загрузка данных теперь требует ModelContext для прямого доступа к базе
+    func loadData(context: ModelContext) {
+        // 1. Выборка слов из SwiftData
+        let descriptor = FetchDescriptor<VocabItem>()
+        let words = (try? context.fetch(descriptor)) ?? []
+        
+        // 2. Чтение грамматики из статического JSON через обновленный DataManager
+        let rawLessons = DataManager.shared.loadGrammar()
+        let completedIDs = Set(UserDefaults.standard.stringArray(forKey: StorageKeys.completedGrammarLessons) ?? [])
+        
+        // 3. Синхронный расчет статистики категорий
+        let uniqueCategories = Array(Set(words.map { $0.category })).sorted()
+        self.categories = uniqueCategories.map { category in
+            let categoryWords = words.filter { $0.category == category }
+            // В FSRS слово считается начатым/выученным, если его состояние отлично от .new
+            let learned = categoryWords.filter { $0.fsrsData.state != .new }.count
+            let theme = Self.getTheme(for: category)
+            return CategoryStat(id: category, totalWords: categoryWords.count, learnedWords: learned, icon: theme.icon, color: theme.color)
         }
+        
+        // 4. Расчет статистики грамматики
+        let levels = ["A0", "A1", "A2", "B1", "B2"]
+        var groups: [GrammarGroupUI] = levels.map { level in
+            let levelLessons = rawLessons.filter { $0.level == level }
+            let completedCount = levelLessons.filter { completedIDs.contains($0.id) }.count
+            return GrammarGroupUI(
+                id: level,
+                title: "Уровень \(level)",
+                subtitle: Self.getDescription(for: level),
+                iconText: level,
+                iconSymbol: nil,
+                color: Self.getColor(for: level),
+                isExam: false,
+                totalLessons: levelLessons.count,
+                completedLessons: completedCount
+            )
+        }
+        
+        // Добавление экзамена B1
+        let examLessons = rawLessons.filter { $0.level == "B1_Exam" }
+        let examCompleted = examLessons.filter { completedIDs.contains($0.id) }.count
+        groups.append(GrammarGroupUI(
+            id: "B1_Exam",
+            title: "Экзамен B1",
+            subtitle: "Подготовка к сертификации",
+            iconText: nil,
+            iconSymbol: "graduationcap.fill",
+            color: .red,
+            isExam: true,
+            totalLessons: examLessons.count,
+            completedLessons: examCompleted
+        ))
+        
+        self.allGrammarLessons = rawLessons
+        self.completedGrammarLessonIDs = completedIDs
+        self.grammarGroups = groups.filter { $0.totalLessons > 0 }
     }
     
     func toggleCategorySelection(_ category: String) {
@@ -116,7 +119,8 @@ final class LessonsViewModel: ObservableObject {
         allGrammarLessons.filter { $0.level == groupID }
     }
     
-    // Вспомогательные статические методы
+    // MARK: - Вспомогательные статические методы
+    
     private static func getTheme(for category: String) -> (icon: String, color: Color) {
         let hash = category.hashValue
         let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]

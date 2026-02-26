@@ -1,48 +1,25 @@
 import SwiftUI
+import SwiftData
 import Combine
 
-// В перспективе: вынести в Models/DailyChallenge.swift
-enum ChallengeType {
-    case words, quiz, grammar
-}
-
-// В перспективе: вынести в Models/DailyChallenge.swift
-struct DailyChallenge: Identifiable, Equatable {
-    let id = UUID()
-    let title: String
-    let description: String
-    let target: Int
-    var currentProgress: Int
-    let reward: Int
-    let timeLeft: String
-    let type: ChallengeType
-    
-    var progress: Double { min(Double(currentProgress) / Double(target), 1.0) }
-    var isCompleted: Bool { currentProgress >= target }
-}
-
+@MainActor
 final class HomeViewModel: ObservableObject {
-    @Published var userXP: Int {
-        didSet { UserDefaults.standard.set(userXP, forKey: StorageKeys.userXP) }
-    }
-    
-    @Published var wordsLearnedToday: Int = 8
+    @Published var userXP: Int = 0
+    @Published var wordsLearnedToday: Int = 0
     @Published var dailyWordGoal: Int = 10
-    
-    @Published var challenges: [DailyChallenge] = [
-        DailyChallenge(title: "Утро лингвиста", description: "Выучи 5 новых слов", target: 5, currentProgress: 3, reward: 50, timeLeft: "2ч 15мин", type: .words),
-        DailyChallenge(title: "Грамматика", description: "Пройди 1 урок грамматики", target: 1, currentProgress: 0, reward: 75, timeLeft: "5ч 00мин", type: .grammar),
-        DailyChallenge(title: "Идеальная серия", description: "Пройди викторину без ошибок", target: 1, currentProgress: 0, reward: 100, timeLeft: "12ч 45мин", type: .quiz)
-    ]
-    
+    @Published var challenges: [DailyChallenge] = []
     @Published var showAllCompletedMessage = false
+    
+    private var lastUpdateDate: String = ""
+    private let calendar = Calendar.current
     
     var currentLeague: UserLeague {
         UserLeague.determineLeague(for: userXP)
     }
     
     var dailyGoalProgress: Double {
-        min(Double(wordsLearnedToday) / Double(dailyWordGoal), 1.0)
+        guard dailyWordGoal > 0 else { return 0 }
+        return min(Double(wordsLearnedToday) / Double(dailyWordGoal), 1.0)
     }
     
     var isDailyGoalCompleted: Bool {
@@ -51,13 +28,52 @@ final class HomeViewModel: ObservableObject {
     
     init() {
         self.userXP = UserDefaults.standard.integer(forKey: StorageKeys.userXP)
+        loadDailyState()
+    }
+    
+    /// Основной метод синхронизации UI с реальной базой данных.
+    /// Вызывается из .onAppear в HomeView.
+    func refreshStats(context: ModelContext) {
+        checkAndResetDailyStateIfNeeded()
+        
+        let startOfDay = calendar.startOfDay(for: Date())
+        
+        // Запрос всех логов за сегодня
+        let descriptor = FetchDescriptor<ReviewLog>(
+            predicate: #Predicate { $0.reviewDate >= startOfDay }
+        )
+        
+        do {
+            let todaysLogs = try context.fetch(descriptor)
+            // Считаем уникальные карточки, которые были изучены сегодня
+            let uniqueCards = Set(todaysLogs.map { $0.cardId })
+            self.wordsLearnedToday = uniqueCards.count
+            
+            // Синхронизируем прогресс вызова типа .words
+            updateChallengeProgress(type: .words, progress: uniqueCards.count)
+            
+        } catch {
+            print("Ошибка при выборке дневной статистики из SwiftData: \(error)")
+        }
+    }
+    
+    private func updateChallengeProgress(type: ChallengeType, progress: Int) {
+        guard let index = challenges.firstIndex(where: { $0.type == type }) else { return }
+        
+        var challenge = challenges[index]
+        if challenge.currentProgress != progress {
+            challenge.currentProgress = progress
+            challenges[index] = challenge
+            saveChallengesState()
+        }
     }
     
     func completeChallenge(_ challenge: DailyChallenge) {
-        userXP += challenge.reward
+        addXP(challenge.reward)
         
         if let index = challenges.firstIndex(where: { $0.id == challenge.id }) {
             challenges.remove(at: index)
+            saveChallengesState()
         }
         
         if challenges.isEmpty {
@@ -69,12 +85,65 @@ final class HomeViewModel: ObservableObject {
         }
     }
     
-    func debugIncrementDailyGoal() {
-        guard wordsLearnedToday < dailyWordGoal else { return }
-        wordsLearnedToday += 1
+    private func addXP(_ amount: Int) {
+        userXP += amount
+        UserDefaults.standard.set(userXP, forKey: StorageKeys.userXP)
+    }
+    
+    // MARK: - Управление ежедневным состоянием
+    
+    private func loadDailyState() {
+        let todayString = getTodayDateString()
+        self.lastUpdateDate = UserDefaults.standard.string(forKey: "lastChallengeDate") ?? ""
         
-        if isDailyGoalCompleted {
-            userXP += 50
+        if lastUpdateDate != todayString {
+            generateNewDailyChallenges()
+        } else {
+            // Загрузка сохраненного прогресса
+            if let data = UserDefaults.standard.data(forKey: "currentChallenges"),
+               let saved = try? JSONDecoder().decode([DailyChallenge].self, from: data) {
+                self.challenges = saved
+            } else {
+                generateNewDailyChallenges()
+            }
         }
+    }
+    
+    private func checkAndResetDailyStateIfNeeded() {
+        let todayString = getTodayDateString()
+        if lastUpdateDate != todayString {
+            generateNewDailyChallenges()
+        }
+    }
+    
+    private func generateNewDailyChallenges() {
+        self.challenges = [
+            DailyChallenge(title: "Утро лингвиста", description: "Изучи 10 слов", target: 10, reward: 50, type: .words),
+            DailyChallenge(title: "Грамматика", description: "Пройди 1 урок грамматики", target: 1, reward: 75, type: .grammar),
+            DailyChallenge(title: "Идеальная серия", description: "Пройди викторину без ошибок", target: 1, reward: 100, type: .quiz)
+        ]
+        
+        self.lastUpdateDate = getTodayDateString()
+        UserDefaults.standard.set(self.lastUpdateDate, forKey: "lastChallengeDate")
+        saveChallengesState()
+    }
+    
+    private func saveChallengesState() {
+        if let data = try? JSONEncoder().encode(challenges) {
+            UserDefaults.standard.set(data, forKey: "currentChallenges")
+        }
+    }
+    
+    private func getTodayDateString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: Date())
+    }
+    
+    // Вспомогательный метод для UI (Оставить только для тестирования/кнопки, если она необходима)
+    // В production прогресс должен расти ТОЛЬКО через refreshStats(context:) при возврате с экрана карточек
+    func debugIncrementDailyGoal() {
+        // Заглушка, чтобы не ломать верстку в HomeView.
+        // В реальном приложении кнопка прогресс-бара не должна увеличивать прогресс по тапу.
     }
 }
