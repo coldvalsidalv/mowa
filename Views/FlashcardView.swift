@@ -1,131 +1,29 @@
 import SwiftUI
-import AVFoundation
-import Combine
 
 struct FlashcardView: View {
     let categories: [String]
     let isReviewMode: Bool
     
     @StateObject var viewModel: FlashcardViewModel
-    
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
     
     init(categories: [String], isReviewMode: Bool) {
         self.categories = categories
         self.isReviewMode = isReviewMode
-        _viewModel = StateObject(wrappedValue: FlashcardViewModel(
-            categories: categories,
-            isReviewMode: isReviewMode
-        ))
+        _viewModel = StateObject(wrappedValue: FlashcardViewModel(categories: categories, isReviewMode: isReviewMode))
     }
     
     var body: some View {
         ZStack {
-            Color(UIColor.systemBackground)
-                .ignoresSafeArea()
+            Color(UIColor.systemBackground).ignoresSafeArea()
             
             VStack(spacing: 0) {
-                HStack {
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(Color.gray.opacity(0.3))
-                            Capsule().fill(Color.orange)
-                                .frame(width: geo.size.width * viewModel.progress)
-                                .animation(.spring(), value: viewModel.progress)
-                        }
-                    }
-                    .frame(height: 4)
-                    
-                    Spacer()
-                    
-                    Button(action: { dismiss() }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(.primary.opacity(0.6))
-                    }
-                    .padding(.leading, 10)
-                }
-                .padding(.horizontal)
-                .padding(.top, 10)
-                .padding(.bottom, 40)
+                topBar
                 
                 if viewModel.isFinished {
                     FinishView(dismiss: dismiss)
                 } else if let word = viewModel.currentWord {
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack(alignment: .top) {
-                            Text(word.polish)
-                                .font(.system(size: 40, weight: .bold))
-                                .foregroundColor(.primary)
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                SpeechService.shared.speak(word.polish, language: "pl-PL")
-                            }) {
-                                Image(systemName: "speaker.wave.2.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.secondary)
-                                    .padding(8)
-                                    .background(Color.gray.opacity(0.15))
-                                    .clipShape(Circle())
-                            }
-                        }
-                        
-                        Text(word.translation.uppercased())
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(.secondary)
-                        
-                        if !word.partOfSpeech.isEmpty {
-                            Text(word.partOfSpeech)
-                                .font(.system(size: 16))
-                                .foregroundColor(.secondary.opacity(0.8))
-                                .italic()
-                        }
-                        
-                        Spacer().frame(height: 30)
-                        
-                        if !word.examplesList.isEmpty || !word.example.isEmpty {
-                            VStack(alignment: .leading, spacing: 16) {
-                                Text("Примеры использования")
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.secondary)
-                                
-                                VStack(alignment: .leading, spacing: 12) {
-                                    if !word.examplesList.isEmpty {
-                                        ForEach(word.examplesList, id: \.self) { example in
-                                            ExampleRow(text: example)
-                                        }
-                                    } else {
-                                        ExampleRow(text: word.example)
-                                    }
-                                }
-                            }
-                            .padding(20)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color(UIColor.secondarySystemBackground))
-                            .cornerRadius(20)
-                        }
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            viewModel.processAnswer(isCorrect: true)
-                        }) {
-                            Text("Далее")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 56)
-                                .background(Color.orange)
-                                .cornerRadius(28)
-                        }
-                        .padding(.bottom, 20)
-                    }
-                    .padding(.horizontal, 24)
-                    
+                    cardContent(for: word)
                 } else {
                     ProgressView().tint(.orange)
                 }
@@ -133,36 +31,139 @@ struct FlashcardView: View {
         }
         .navigationBarHidden(true)
     }
-}
-
-// MARK: - Вспомогательные View
-
-struct ExampleRow: View {
-    let text: String
-    var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Circle().fill(Color.orange).frame(width: 6, height: 6).padding(.top, 6)
-            Text(text).font(.system(size: 16)).foregroundColor(.primary)
-                .fixedSize(horizontal: false, vertical: true)
+    
+    private var topBar: some View {
+        HStack(spacing: 15) {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.gray.opacity(0.2))
+                    Capsule().fill(Color.orange)
+                        .frame(width: geo.size.width * viewModel.progress)
+                }
+            }
+            .frame(height: 6)
+            
+            Button(action: { dismiss() }) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.secondary)
+            }
         }
+        .padding(.horizontal)
+        .padding(.vertical, 12)
+    }
+    
+    private func cardContent(for word: WordItem) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(word.polish)
+                        .font(.system(size: 38, weight: .bold))
+                    
+                    if !word.partOfSpeech.isEmpty {
+                        Text(word.partOfSpeech)
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.orange.opacity(0.1))
+                            .foregroundColor(.orange)
+                            .cornerRadius(6)
+                    }
+                }
+                
+                Spacer()
+                
+                Button(action: { SpeechService.shared.speak(word.polish, language: "pl-PL") }) {
+                    Image(systemName: "speaker.wave.2.fill")
+                        .font(.title2)
+                        .padding(14)
+                        .background(Color.gray.opacity(0.1))
+                        .clipShape(Circle())
+                }
+            }
+            
+            Text(word.translation.uppercased())
+                .font(.subheadline)
+                .fontWeight(.bold)
+                .foregroundColor(.secondary)
+            
+            Spacer().frame(height: 20)
+            
+            if !word.example.isEmpty {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("PRZYKŁAD").font(.caption2).bold().foregroundColor(.secondary)
+                    Text(word.example)
+                        .font(.body)
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color(UIColor.secondarySystemBackground))
+                        .cornerRadius(15)
+                }
+            }
+            
+            Spacer()
+            
+            HStack(spacing: 16) {
+                Button(action: { viewModel.processAnswer(isCorrect: false) }) {
+                    Text("Не знаю")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(28)
+                }
+                
+                Button(action: { viewModel.processAnswer(isCorrect: true) }) {
+                    Text("Знаю")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color.orange)
+                        .cornerRadius(28)
+                }
+            }
+            .padding(.bottom, 20)
+        }
+        .padding(.horizontal, 24)
     }
 }
+
+// MARK: - Вспомогательные компоненты в одном файле для избежания ошибок Scope
 
 struct FinishView: View {
     let dismiss: DismissAction
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 25) {
             Spacer()
-            Image(systemName: "trophy.fill").font(.system(size: 80)).foregroundColor(.yellow)
-            Text("Отлично!").font(.largeTitle).bold().foregroundColor(.primary)
-            Text("Ты прошел все слова на сегодня.").foregroundColor(.secondary)
-            Spacer()
-            Button(action: { dismiss() }) {
-                Text("Завершить").font(.headline).foregroundColor(.white)
-                    .frame(maxWidth: .infinity).frame(height: 56)
-                    .background(Color.orange).cornerRadius(28)
+            Image(systemName: "star.circle.fill")
+                .font(.system(size: 100))
+                .foregroundColor(.orange)
+            
+            VStack(spacing: 10) {
+                Text("Отличная работа!")
+                    .font(.title)
+                    .bold()
+                Text("Все карточки на сегодня пройдены.")
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
             }
-            .padding(.horizontal, 24).padding(.bottom, 20)
+            
+            Spacer()
+            
+            Button(action: { dismiss() }) {
+                Text("Завершить")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 58)
+                    .background(Color.orange)
+                    .cornerRadius(29)
+            }
+            .padding(.horizontal, 30)
+            .padding(.bottom, 30)
         }
     }
 }

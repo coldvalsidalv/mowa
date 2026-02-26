@@ -6,6 +6,7 @@ final class SpeechService: NSObject, ObservableObject {
     static let shared = SpeechService()
     
     private let synthesizer = AVSpeechSynthesizer()
+    private var cancellables = Set<AnyCancellable>()
     
     @Published var isSpeaking = false
     
@@ -13,43 +14,52 @@ final class SpeechService: NSObject, ObservableObject {
         super.init()
         synthesizer.delegate = self
         configureAudioSession()
+        observeInterruptions()
     }
     
     private func configureAudioSession() {
         let audioSession = AVAudioSession.sharedInstance()
         do {
-            // Категория .playback позволяет звуку проигрываться в бесшумном режиме.
-            // .duckOthers приглушает фоновую музыку (Spotify/Podcasts) во время озвучки.
-            try audioSession.setCategory(.playback, mode: .default, options: [.duckOthers, .mixWithOthers])
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            try audioSession.setCategory(.playback, mode: .default, options: [.duckOthers])
+            try audioSession.setActive(true)
         } catch {
-            // Ошибка здесь обычно означает конфликт с другим аудио-приложением
-            print("SpeechService: Failed to set audio session: \(error)")
+            print("SpeechService: Failed to configure session: \(error)")
         }
     }
     
+    private func observeInterruptions() {
+        // Обработка входящих звонков и прерываний системы
+        NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)
+            .sink { [weak self] notification in
+                guard let userInfo = notification.userInfo,
+                      let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                      let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+                
+                if type == .began {
+                    self?.stop()
+                } else if type == .ended {
+                    if let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt {
+                        let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+                        if options.contains(.shouldResume) {
+                            try? AVAudioSession.sharedInstance().setActive(true)
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     func speak(_ text: String, language: String = "pl-PL") {
-        let cleanedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !cleanedText.isEmpty else { return }
+        let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleaned.isEmpty else { return }
         
-        let utterance = AVSpeechUtterance(string: cleanedText)
-        
-        // Принудительно ищем польский голос
-        if let polishVoice = AVSpeechSynthesisVoice(language: language) {
-            utterance.voice = polishVoice
-        } else {
-            // Если pl-PL не найден, используем дефолтный для текущего региона
-            utterance.voice = AVSpeechSynthesisVoice(language: AVSpeechSynthesisVoice.currentLanguageCode())
-        }
-        
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
-        utterance.pitchMultiplier = 1.0
-        utterance.volume = 1.0
+        let utterance = AVSpeechUtterance(string: cleaned)
+        utterance.voice = AVSpeechSynthesisVoice(language: language) ?? AVSpeechSynthesisVoice(language: "pl-PL")
+        utterance.rate = 0.5
         
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
-        
         synthesizer.speak(utterance)
     }
     
@@ -62,12 +72,7 @@ extension SpeechService: AVSpeechSynthesizerDelegate {
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
         DispatchQueue.main.async { self.isSpeaking = true }
     }
-    
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        DispatchQueue.main.async { self.isSpeaking = false }
-    }
-    
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
         DispatchQueue.main.async { self.isSpeaking = false }
     }
 }
