@@ -23,6 +23,9 @@ struct LessonsView: View {
 =======
     @StateObject private var viewModel = LessonsViewModel()
     @State private var selectedTab = 0 // 0 = Слова, 1 = Грамматика
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     
     let gridColumns = [
@@ -47,9 +50,14 @@ struct LessonsView: View {
                         VStack(spacing: 24) {
                             if selectedTab == 0 {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                                 if categories.isEmpty {
                                     if allWords.isEmpty { loadingView }
                                     else { Text("Нет категорий").foregroundColor(.gray) }
+=======
+                                if viewModel.categories.isEmpty {
+                                    loadingView
+>>>>>>> Stashed changes
 =======
                                 if viewModel.categories.isEmpty {
                                     loadingView
@@ -73,7 +81,11 @@ struct LessonsView: View {
                         Button(action: {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                                 isEditMode.toggle()
+=======
+                                viewModel.isEditMode.toggle()
+>>>>>>> Stashed changes
 =======
                                 viewModel.isEditMode.toggle()
 >>>>>>> Stashed changes
@@ -244,6 +256,9 @@ struct LessonsView: View {
                     .buttonStyle(PlainButtonStyle())
                 }
             }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         }
     }
@@ -276,7 +291,11 @@ struct LessonsView: View {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // --- СУБВЬЮ КАРТОЧКИ КАТЕГОРИИ (ОПТИМИЗИРОВАННАЯ ПЛИТКА) ---
+=======
+// MARK: - Карточка Категории Слов
+>>>>>>> Stashed changes
 =======
 // MARK: - Карточка Категории Слов
 >>>>>>> Stashed changes
@@ -304,9 +323,12 @@ struct CategoryCardView: View {
             HStack(alignment: .top) {
                 ZStack {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     Circle().fill(theme.color.opacity(0.15)).frame(width: 46, height: 46)
                     Image(systemName: theme.icon).font(.title3).foregroundColor(theme.color)
 =======
+=======
+>>>>>>> Stashed changes
                     Circle().fill(stat.color.opacity(0.15)).frame(width: 46, height: 46)
                     Image(systemName: stat.icon).font(.title3).foregroundColor(stat.color)
 >>>>>>> Stashed changes
@@ -324,6 +346,7 @@ struct CategoryCardView: View {
             
             VStack(alignment: .leading, spacing: 8) {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 Text(category).font(.headline).foregroundColor(.primary).lineLimit(1).minimumScaleFactor(0.8)
                 
                 VStack(spacing: 6) {
@@ -333,6 +356,23 @@ struct CategoryCardView: View {
                         Text("\(Int(progress * 100))%").font(.caption).bold().foregroundColor(theme.color)
                     }
                     ProgressView(value: progress).tint(theme.color).scaleEffect(x: 1, y: 0.8, anchor: .center)
+=======
+                Text(stat.name)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                
+                VStack(spacing: 6) {
+                    HStack {
+                        Text("\(stat.learnedWords)/\(stat.totalWords) слов").font(.caption).foregroundColor(.gray)
+                        Spacer()
+                        Text("\(Int(stat.progress * 100))%").font(.caption).bold().foregroundColor(stat.color)
+                    }
+                    ProgressView(value: stat.progress)
+                        .tint(stat.color)
+                        .scaleEffect(x: 1, y: 0.8, anchor: .center)
+>>>>>>> Stashed changes
 =======
                 Text(stat.name)
                     .font(.headline)
@@ -366,6 +406,7 @@ struct CategoryCardView: View {
     }
 }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 // --- КАРТОЧКА УРОВНЯ ГРАММАТИКИ ---
 struct GrammarLevelCardView: View {
@@ -429,6 +470,42 @@ struct GrammarLevelCardView: View {
 
 // MARK: - Карточка Экзамена B1
 struct ExamLevelCardView: View {
+=======
+// MARK: - Карточка Уровня Грамматики
+struct GrammarLevelCardView: View {
+>>>>>>> Stashed changes
+    let group: GrammarGroupUI
+    let lessonCount: Int
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle().fill(group.color.opacity(0.15)).frame(width: 52, height: 52)
+                if let symbol = group.iconSymbol {
+                    Image(systemName: symbol).font(.headline).foregroundColor(group.color)
+                }
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text(group.title).font(.headline).foregroundColor(.primary)
+                Text(group.subtitle).font(.subheadline).foregroundColor(.gray)
+            }
+            Spacer()
+            Text("\(lessonCount) уроков")
+                .font(.caption).bold()
+                .padding(.horizontal, 10).padding(.vertical, 6)
+                .background(Color(UIColor.systemGray5))
+                .foregroundColor(.secondary)
+                .cornerRadius(10)
+        }
+        .padding(16)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
+    }
+}
+
+// MARK: - Карточка Экзамена B1
+struct ExamLevelCardView: View {
     let group: GrammarGroupUI
     let lessonCount: Int
     
@@ -450,8 +527,13 @@ struct ExamLevelCardView: View {
                 .font(.caption).bold()
                 .padding(.horizontal, 10).padding(.vertical, 6)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 .background(Color(UIColor.systemGray5))
                 .foregroundColor(.secondary)
+=======
+                .background(group.color.opacity(0.1))
+                .foregroundColor(group.color)
+>>>>>>> Stashed changes
 =======
                 .background(group.color.opacity(0.1))
                 .foregroundColor(group.color)
@@ -461,6 +543,7 @@ struct ExamLevelCardView: View {
         .padding(16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
     }
@@ -505,6 +588,14 @@ struct ExamLevelCardView: View {
 
 // MARK: - Список Уроков Уровня
 >>>>>>> Stashed changes
+=======
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(group.color.opacity(0.3), lineWidth: 1))
+        .shadow(color: group.color.opacity(0.05), radius: 5, x: 0, y: 2)
+    }
+}
+
+// MARK: - Список Уроков Уровня
+>>>>>>> Stashed changes
 struct GrammarLevelListView: View {
     let title: String
     let lessons: [GrammarLesson]
@@ -536,7 +627,11 @@ struct GrammarLevelListView: View {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // --- СТРОКА КОНКРЕТНОГО УРОКА ГРАММАТИКИ ---
+=======
+// MARK: - Строка Урока Грамматики
+>>>>>>> Stashed changes
 =======
 // MARK: - Строка Урока Грамматики
 >>>>>>> Stashed changes
