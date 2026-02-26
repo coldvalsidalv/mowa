@@ -4,17 +4,35 @@ struct StreakView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var manager = StreakManager.shared
     
+<<<<<<< Updated upstream
     @State private var isPulsing = false
     var onStartLesson: (() -> Void)? = nil
     
     var backgroundColors: [Color] {
         if manager.hasPracticedToday {
+=======
+    // Данные
+    @AppStorage("dayStreak") var dayStreak: Int = 1
+    @AppStorage("streakFreezes") var streakFreezes: Int = 2
+    @AppStorage("hasPracticedToday") var hasPracticedToday: Bool = false // Должно обновляться бизнес-логикой
+    
+    // Анимация
+    @State private var isPulsing = false
+    
+    var backgroundColors: [Color] {
+        if hasPracticedToday {
+            // ОГОНЬ: 0F0c29 -> 302b63 -> 24243e
+>>>>>>> Stashed changes
             return [
                 Color(red: 15/255, green: 12/255, blue: 41/255),
                 Color(red: 48/255, green: 43/255, blue: 99/255),
                 Color(red: 36/255, green: 36/255, blue: 62/255)
             ]
         } else {
+<<<<<<< Updated upstream
+=======
+            // ЛЕД: 2980B9 -> 6DD5FA -> bce6ff
+>>>>>>> Stashed changes
             return [
                 Color(red: 41/255, green: 128/255, blue: 185/255),
                 Color(red: 109/255, green: 213/255, blue: 250/255),
@@ -36,6 +54,13 @@ struct StreakView: View {
             DeterministicParticleCanvas(isFire: manager.hasPracticedToday)
                 .ignoresSafeArea()
             
+<<<<<<< Updated upstream
+=======
+            // GPU-ускоренные частицы (без Timer и State)
+            DeterministicParticleCanvas(isFire: hasPracticedToday)
+                .ignoresSafeArea()
+            
+>>>>>>> Stashed changes
             Circle()
                 .fill(manager.hasPracticedToday ? Color.orange.opacity(0.2) : Color.white.opacity(0.2))
                 .frame(width: 300, height: 300)
@@ -80,7 +105,11 @@ struct StreakView: View {
                         .opacity(isPulsing ? 0.6 : 0.2)
                         .scaleEffect(isPulsing ? 1.1 : 1.0)
                     
+<<<<<<< Updated upstream
                     Image(systemName: manager.hasPracticedToday ? "flame.fill" : "snowflake")
+=======
+                    Image(systemName: hasPracticedToday ? "flame.fill" : "snowflake")
+>>>>>>> Stashed changes
                         .resizable()
                         .scaledToFit()
                         .frame(width: 140, height: 140)
@@ -89,13 +118,21 @@ struct StreakView: View {
                             ? LinearGradient(colors: [.yellow, .orange, .red], startPoint: .top, endPoint: .bottom)
                             : LinearGradient(colors: [.white, .white.opacity(0.8)], startPoint: .top, endPoint: .bottom)
                         )
+<<<<<<< Updated upstream
                         .shadow(color: manager.hasPracticedToday ? .orange : .white.opacity(0.5), radius: 30, x: 0, y: 0)
+=======
+                        .shadow(color: hasPracticedToday ? .orange : .white.opacity(0.5), radius: 30, x: 0, y: 0)
+>>>>>>> Stashed changes
                         .scaleEffect(isPulsing ? 1.05 : 0.95)
                         .transition(.scale.combined(with: .opacity))
                         .id(manager.hasPracticedToday)
                 }
                 .frame(height: 320)
                 
+<<<<<<< Updated upstream
+=======
+                // --- ТЕКСТЫ ---
+>>>>>>> Stashed changes
                 VStack(spacing: 8) {
                     Text("\(manager.dayStreak)")
                         .font(.system(size: 90, weight: .black, design: .rounded))
@@ -138,7 +175,11 @@ struct StreakView: View {
                                 : LinearGradient(colors: [Color(red: 0, green: 91/255, blue: 234/255), Color(red: 0, green: 198/255, blue: 251/255)], startPoint: .leading, endPoint: .trailing)
                             )
                             .cornerRadius(20)
+<<<<<<< Updated upstream
                             .shadow(color: manager.hasPracticedToday ? .orange.opacity(0.4) : .black.opacity(0.2), radius: 10, x: 0, y: 5)
+=======
+                            .shadow(color: hasPracticedToday ? .orange.opacity(0.4) : .black.opacity(0.2), radius: 10, x: 0, y: 5)
+>>>>>>> Stashed changes
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.3), lineWidth: 1))
                     }
                     .padding(.horizontal, 24)
@@ -154,7 +195,11 @@ struct StreakView: View {
     }
 }
 
+<<<<<<< Updated upstream
 // Рендеринг частиц (Оптимизировано для GPU)
+=======
+// Вынесенный слой для GPU-рендеринга без стейтов
+>>>>>>> Stashed changes
 struct DeterministicParticleCanvas: View {
     let isFire: Bool
     let particleCount = 40
@@ -165,6 +210,10 @@ struct DeterministicParticleCanvas: View {
                 let now = timeline.date.timeIntervalSinceReferenceDate
                 
                 for i in 0..<particleCount {
+<<<<<<< Updated upstream
+=======
+                    // Псевдослучайные, но детерминированные значения для каждой частицы
+>>>>>>> Stashed changes
                     let seed = Double(i) * 13.7
                     let randomX = sin(seed)
                     let speed = 40.0 + abs(cos(seed)) * 80.0
@@ -173,6 +222,10 @@ struct DeterministicParticleCanvas: View {
                     let cycle = timeOffset.truncatingRemainder(dividingBy: size.height)
                     
                     if isFire {
+<<<<<<< Updated upstream
+=======
+                        // Огонь: снизу вверх
+>>>>>>> Stashed changes
                         let y = size.height - cycle
                         let x = (size.width / 2) + randomX * 80.0 + sin(now * 3 + Double(i)) * 20.0
                         let pSize = 3.0 + abs(sin(seed)) * 5.0
@@ -181,6 +234,10 @@ struct DeterministicParticleCanvas: View {
                         context.opacity = opacity
                         context.fill(Path(ellipseIn: CGRect(x: x, y: y, width: pSize, height: pSize)), with: .color(.orange))
                     } else {
+<<<<<<< Updated upstream
+=======
+                        // Снег: сверху вниз
+>>>>>>> Stashed changes
                         let y = cycle
                         let x = (size.width / 2) + randomX * 150.0 + cos(now * 1.5 + Double(i)) * 30.0
                         let pSize = 2.0 + abs(cos(seed)) * 4.0
