@@ -43,21 +43,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2BB8E3D22F5087830031C864 /* Utils */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Utils;
-			sourceTree = "<group>";
-		};
-		2BB8E3D62F5087B10031C864 /* Extensions */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Extensions;
-			sourceTree = "<group>";
-		};
-		2BB8E3DA2F5087D60031C864 /* Managers */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Managers;
-			sourceTree = "<group>";
-		};
 		2BF024862EF0BDC000CAC740 /* mowaTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = mowaTests;
@@ -123,9 +108,6 @@
 		2BF0246D2EF0BDBE00CAC740 = {
 			isa = PBXGroup;
 			children = (
-				2BB8E3DA2F5087D60031C864 /* Managers */,
-				2BB8E3D62F5087B10031C864 /* Extensions */,
-				2BB8E3D22F5087830031C864 /* Utils */,
 				2BF024C62EF0D2CA00CAC740 /* Services */,
 				2BF024A42EF0BE4900CAC740 /* Resources */,
 				2BF024A32EF0BE3B00CAC740 /* Views */,
@@ -168,9 +150,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				2BB8E3D22F5087830031C864 /* Utils */,
-				2BB8E3D62F5087B10031C864 /* Extensions */,
-				2BB8E3DA2F5087D60031C864 /* Managers */,
 				2BF024A02EF0BE1F00CAC740 /* Models */,
 				2BF024A22EF0BE3100CAC740 /* ViewModels */,
 				2BF024A32EF0BE3B00CAC740 /* Views */,

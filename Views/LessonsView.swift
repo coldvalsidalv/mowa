@@ -2,6 +2,7 @@ import SwiftUI
 
 // --- ОСНОВНОЙ ЭКРАН ---
 struct LessonsView: View {
+<<<<<<< Updated upstream
     @State private var selectedTab = 0 // 0 = Слова, 1 = Грамматика
     @State private var searchText = ""
     @State private var isEditMode = false
@@ -19,6 +20,10 @@ struct LessonsView: View {
             return categories.filter { $0.localizedCaseInsensitiveContains(searchText) }
         }
     }
+=======
+    @StateObject private var viewModel = LessonsViewModel()
+    @State private var selectedTab = 0 // 0 = Слова, 1 = Грамматика
+>>>>>>> Stashed changes
     
     let gridColumns = [
         GridItem(.flexible(), spacing: 16),
@@ -41,9 +46,14 @@ struct LessonsView: View {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 24) {
                             if selectedTab == 0 {
+<<<<<<< Updated upstream
                                 if categories.isEmpty {
                                     if allWords.isEmpty { loadingView }
                                     else { Text("Нет категорий").foregroundColor(.gray) }
+=======
+                                if viewModel.categories.isEmpty {
+                                    loadingView
+>>>>>>> Stashed changes
                                 } else {
                                     wordsGridView
                                 }
@@ -62,7 +72,11 @@ struct LessonsView: View {
                     if selectedTab == 0 {
                         Button(action: {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+<<<<<<< Updated upstream
                                 isEditMode.toggle()
+=======
+                                viewModel.isEditMode.toggle()
+>>>>>>> Stashed changes
                             }
                         }) {
                             Image(systemName: isEditMode ? "checkmark" : "pencil")
@@ -72,6 +86,7 @@ struct LessonsView: View {
                     }
                 }
             }
+<<<<<<< Updated upstream
             .onAppear { loadData() }
         }
     }
@@ -173,11 +188,98 @@ struct LessonsView: View {
             storage.items.removeAll { $0 == category }
         } else {
             storage.items.append(category)
+=======
+            .onAppear { viewModel.loadData() }
         }
+    }
+    
+    // MARK: - UI Компоненты
+    
+    private var pickerView: some View {
+        Picker("Тип", selection: $selectedTab) {
+            Text("Слова").tag(0)
+            Text("Грамматика").tag(1)
+        }
+        .pickerStyle(SegmentedPickerStyle())
+        .padding(.horizontal)
+        .padding(.top, 10)
+        .onChange(of: selectedTab) { oldTab, newTab in
+            if newTab == 1 { viewModel.isEditMode = false }
+        }
+    }
+    
+    private var searchBar: some View {
+        HStack {
+            Image(systemName: "magnifyingglass").foregroundColor(Color(UIColor.systemGray))
+            TextField("Поиск...", text: $viewModel.searchText)
+            if !viewModel.searchText.isEmpty {
+                Button(action: { viewModel.searchText = "" }) {
+                    Image(systemName: "xmark.circle.fill").foregroundColor(Color(UIColor.systemGray2))
+                }
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(Color(UIColor.systemGray5))
+        .cornerRadius(10)
+        .padding(.horizontal)
+    }
+    
+    private var wordsGridView: some View {
+        LazyVGrid(columns: gridColumns, spacing: 16) {
+            ForEach(viewModel.filteredCategories) { stat in
+                let isSelected = viewModel.selectedCategories.contains(stat.id)
+                
+                if viewModel.isEditMode {
+                    CategoryCardView(stat: stat, isSelected: isSelected, isEditMode: true)
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                viewModel.toggleCategorySelection(stat.id)
+                            }
+                        }
+                } else {
+                    NavigationLink(destination: FlashcardView(categories: [stat.id], isReviewMode: false)) {
+                        CategoryCardView(stat: stat, isSelected: false, isEditMode: false)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+>>>>>>> Stashed changes
+        }
+    }
+    
+    private var grammarLevelsView: some View {
+        LazyVStack(spacing: 16) {
+            ForEach(viewModel.grammarGroups) { group in
+                let groupLessons = viewModel.lessons(for: group.id)
+                
+                NavigationLink(destination: GrammarLevelListView(title: group.title, lessons: groupLessons)) {
+                    if group.isExam {
+                        ExamLevelCardView(group: group, lessonCount: groupLessons.count)
+                    } else {
+                        GrammarLevelCardView(group: group, lessonCount: groupLessons.count)
+                    }
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+        .padding(.top, 8)
+    }
+    
+    private var loadingView: some View {
+        VStack {
+            ProgressView().scaleEffect(1.5).padding()
+            Text("Загрузка контента...").foregroundColor(.gray)
+        }
+        .frame(maxWidth: .infinity, minHeight: 200)
     }
 }
 
+<<<<<<< Updated upstream
 // --- СУБВЬЮ КАРТОЧКИ КАТЕГОРИИ (ОПТИМИЗИРОВАННАЯ ПЛИТКА) ---
+=======
+// MARK: - Карточка Категории Слов
+>>>>>>> Stashed changes
 struct CategoryCardView: View {
     let category: String
     let totalWords: Int
@@ -201,8 +303,13 @@ struct CategoryCardView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 ZStack {
+<<<<<<< Updated upstream
                     Circle().fill(theme.color.opacity(0.15)).frame(width: 46, height: 46)
                     Image(systemName: theme.icon).font(.title3).foregroundColor(theme.color)
+=======
+                    Circle().fill(stat.color.opacity(0.15)).frame(width: 46, height: 46)
+                    Image(systemName: stat.icon).font(.title3).foregroundColor(stat.color)
+>>>>>>> Stashed changes
                 }
                 Spacer()
                 if isEditMode {
@@ -216,6 +323,7 @@ struct CategoryCardView: View {
             Spacer(minLength: 16)
             
             VStack(alignment: .leading, spacing: 8) {
+<<<<<<< Updated upstream
                 Text(category).font(.headline).foregroundColor(.primary).lineLimit(1).minimumScaleFactor(0.8)
                 
                 VStack(spacing: 6) {
@@ -225,6 +333,23 @@ struct CategoryCardView: View {
                         Text("\(Int(progress * 100))%").font(.caption).bold().foregroundColor(theme.color)
                     }
                     ProgressView(value: progress).tint(theme.color).scaleEffect(x: 1, y: 0.8, anchor: .center)
+=======
+                Text(stat.name)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                
+                VStack(spacing: 6) {
+                    HStack {
+                        Text("\(stat.learnedWords)/\(stat.totalWords) слов").font(.caption).foregroundColor(.gray)
+                        Spacer()
+                        Text("\(Int(stat.progress * 100))%").font(.caption).bold().foregroundColor(stat.color)
+                    }
+                    ProgressView(value: stat.progress)
+                        .tint(stat.color)
+                        .scaleEffect(x: 1, y: 0.8, anchor: .center)
+>>>>>>> Stashed changes
                 }
             }
         }
@@ -233,14 +358,23 @@ struct CategoryCardView: View {
         .frame(height: 140)
         .background(isSelected && isEditMode ? Color.blue.opacity(0.05) : Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(20)
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(isSelected && isEditMode ? Color.blue.opacity(0.5) : Color.clear, lineWidth: 2))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(isSelected && isEditMode ? Color.blue.opacity(0.5) : Color.clear, lineWidth: 2)
+        )
         .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
     }
 }
 
+<<<<<<< Updated upstream
 // --- КАРТОЧКА УРОВНЯ ГРАММАТИКИ ---
 struct GrammarLevelCardView: View {
     let level: String
+=======
+// MARK: - Карточка Уровня Грамматики
+struct GrammarLevelCardView: View {
+    let group: GrammarGroupUI
+>>>>>>> Stashed changes
     let lessonCount: Int
     
     var levelColor: Color {
@@ -271,8 +405,12 @@ struct GrammarLevelCardView: View {
                 Text(level).font(.headline).bold().foregroundColor(levelColor)
             }
             VStack(alignment: .leading, spacing: 4) {
+<<<<<<< Updated upstream
                 Text("Уровень \(level)").font(.headline).foregroundColor(.primary)
                 Text(levelDescription).font(.subheadline).foregroundColor(.gray)
+=======
+                Text(group.title).font(.headline).foregroundColor(.primary)
+                Text(group.subtitle).font(.subheadline).foregroundColor(.gray)
             }
             Spacer()
             Text("\(lessonCount) уроков")
@@ -285,6 +423,45 @@ struct GrammarLevelCardView: View {
         .padding(16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
+    }
+}
+
+// MARK: - Карточка Экзамена B1
+struct ExamLevelCardView: View {
+    let group: GrammarGroupUI
+    let lessonCount: Int
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle().fill(group.color.opacity(0.15)).frame(width: 52, height: 52)
+                if let symbol = group.iconSymbol {
+                    Image(systemName: symbol).font(.headline).foregroundColor(group.color)
+                }
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text(group.title).font(.headline).foregroundColor(.primary)
+                Text(group.subtitle).font(.subheadline).foregroundColor(.gray).lineLimit(1)
+>>>>>>> Stashed changes
+            }
+            Spacer()
+            Text("\(lessonCount) уроков")
+                .font(.caption).bold()
+                .padding(.horizontal, 10).padding(.vertical, 6)
+<<<<<<< Updated upstream
+                .background(Color(UIColor.systemGray5))
+                .foregroundColor(.secondary)
+=======
+                .background(group.color.opacity(0.1))
+                .foregroundColor(group.color)
+>>>>>>> Stashed changes
+                .cornerRadius(10)
+        }
+        .padding(16)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+<<<<<<< Updated upstream
         .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
     }
 }
@@ -320,6 +497,14 @@ struct ExamLevelCardView: View {
 }
 
 // --- ЭКРАН СПИСКА УРОКОВ ДЛЯ ВЫБРАННОГО УРОВНЯ ---
+=======
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(group.color.opacity(0.3), lineWidth: 1))
+        .shadow(color: group.color.opacity(0.05), radius: 5, x: 0, y: 2)
+    }
+}
+
+// MARK: - Список Уроков Уровня
+>>>>>>> Stashed changes
 struct GrammarLevelListView: View {
     let title: String
     let lessons: [GrammarLesson]
@@ -350,7 +535,11 @@ struct GrammarLevelListView: View {
     }
 }
 
+<<<<<<< Updated upstream
 // --- СТРОКА КОНКРЕТНОГО УРОКА ГРАММАТИКИ ---
+=======
+// MARK: - Строка Урока Грамматики
+>>>>>>> Stashed changes
 struct GrammarRowView: View {
     let lesson: GrammarLesson
     
