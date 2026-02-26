@@ -1,328 +1,278 @@
 import SwiftUI
 
 struct LessonsView: View {
-    // --- STATE ---
-    @State private var selectedTab = 0 // 0 = Слова, 1 = Грамматика
-    @State private var searchText = ""
+    @StateObject private var viewModel = LessonsViewModel()
+    @State private var selectedTab = 0
     
-    // Данные
-    @State private var categories: [String] = []
-    @State private var grammarLessons: [GrammarLesson] = []
-    
-    // Настройка сетки
-    let columns = [
+    let gridColumns = [
         GridItem(.flexible(), spacing: 16),
         GridItem(.flexible(), spacing: 16)
     ]
     
-    var filteredCategories: [String] {
-        if searchText.isEmpty {
-            return categories
-        } else {
-            return categories.filter { $0.localizedCaseInsensitiveContains(searchText) }
-        }
-    }
-    
-    // --- BODY ---
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                // Фон
-                Color(UIColor.systemGroupedBackground)
-                    .ignoresSafeArea()
+                Color(UIColor.systemGroupedBackground).ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // 1. Хедер и Поиск
-                    VStack(spacing: 16) {
-                        pickerView
-                        searchBar
+                    Picker("Тип", selection: $selectedTab) {
+                        Text("Слова").tag(0)
+                        Text("Грамматика").tag(1)
                     }
-                    .padding(.bottom, 10)
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
                     .background(Color(UIColor.systemGroupedBackground))
+                    .onChange(of: selectedTab) { _, newTab in
+                        if newTab == 1 { viewModel.isEditMode = false }
+                        viewModel.loadCompletedGrammar()
+                    }
                     
-                    // 2. Основной контент (Скролл)
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 24) {
-                            
-                            // (Баннер убран)
-                            
                             if selectedTab == 0 {
-                                // СЕТКА СЛОВ
-                                if categories.isEmpty {
-                                    loadingView
-                                } else {
-                                    wordsGridView
-                                }
+                                wordsSection
                             } else {
-                                // СПИСОК ГРАММАТИКИ
-                                if grammarLessons.isEmpty {
-                                    loadingView
-                                } else {
-                                    grammarListView
-                                }
+                                grammarSection
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom, 100) // Отступ под таббар
+                        .padding(.bottom, 100)
                     }
                 }
             }
             .navigationTitle("Библиотека")
-            .onAppear {
-                loadData()
-            }
-        }
-    }
-    
-    // --- КОМПОНЕНТЫ UI ---
-    
-    // 1. Переключатель
-    var pickerView: some View {
-        Picker("Тип", selection: $selectedTab) {
-            Text("Слова").tag(0)
-            Text("Грамматика").tag(1)
-        }
-        .pickerStyle(SegmentedPickerStyle())
-        .padding(.horizontal)
-        .padding(.top, 10)
-    }
-    
-    // 2. Поиск
-    var searchBar: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
-            TextField("Поиск тем...", text: $searchText)
-        }
-        .padding(10)
-        .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(10)
-        .padding(.horizontal)
-    }
-    
-    // 3. Сетка Слов
-    var wordsGridView: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Категории")
-                .font(.title2)
-                .bold()
-            
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(filteredCategories, id: \.self) { category in
-                    NavigationLink(destination: FlashcardView(categories: [category], isReviewMode: false)) {
-                        CategoryCardView(category: category)
+            .searchable(text: $viewModel.searchText, prompt: selectedTab == 0 ? "Поиск тем..." : "Поиск правил...")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    if selectedTab == 0 && !viewModel.categories.isEmpty {
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { viewModel.isEditMode.toggle() }
+                        }) {
+                            Image(systemName: viewModel.isEditMode ? "checkmark" : "pencil")
+                                .font(.body.bold())
+                                .foregroundColor(.blue)
+                        }
                     }
                 }
             }
-        }
-    }
-    
-    // 4. Список Грамматики
-    var grammarListView: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Правила")
-                .font(.title2)
-                .bold()
-            
-            ForEach(grammarLessons) { lesson in
-                NavigationLink(destination: GrammarDetailView(lesson: lesson)) {
-                    GrammarRowView(lesson: lesson)
+            .onAppear { viewModel.loadData() }
+            .navigationDestination(for: String.self) { route in
+                // Маршрутизация на основе значений (Value-based navigation)
+                if route.hasPrefix("lesson_") {
+                    let id = String(route.dropFirst(7))
+                    if let lesson = viewModel.grammarLessons.first(where: { $0.id == id }) {
+                        GrammarLessonView(lesson: lesson)
+                    }
+                } else if route.hasPrefix("group_") {
+                    let id = String(route.dropFirst(6))
+                    if let group = viewModel.grammarGroups.first(where: { $0.id == id }) {
+                        GrammarLevelListView(group: group, lessons: viewModel.lessons(for: group.id))
+                    }
+                } else if route.hasPrefix("category_") {
+                    let name = String(route.dropFirst(9))
+                    FlashcardView(categories: [name], isReviewMode: false)
                 }
             }
         }
     }
     
-    // 5. Загрузка
-    var loadingView: some View {
-        VStack {
-            ProgressView()
-                .scaleEffect(1.5)
-                .padding()
-            Text("Загрузка контента...")
-                .foregroundColor(.gray)
+    // MARK: - Sections
+    
+    @ViewBuilder
+    private var wordsSection: some View {
+        if viewModel.categories.isEmpty {
+            ProgressView().scaleEffect(1.5).padding(.top, 50)
+        } else if viewModel.filteredCategories.isEmpty {
+            Text("Ничего не найдено").foregroundColor(.gray).padding(.top, 50)
+        } else {
+            LazyVGrid(columns: gridColumns, spacing: 16) {
+                ForEach(viewModel.filteredCategories) { stat in
+                    if viewModel.isEditMode {
+                        CategoryCardView(stat: stat, isSelected: viewModel.selectedCategories.contains(stat.id), isEditMode: true)
+                            .onTapGesture {
+                                withAnimation(.easeInOut(duration: 0.2)) { viewModel.toggleCategorySelection(stat.id) }
+                            }
+                    } else {
+                        NavigationLink(value: "category_\(stat.id)") {
+                            CategoryCardView(stat: stat, isSelected: false, isEditMode: false)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+            }
+            .padding(.top, 8)
         }
-        .frame(maxWidth: .infinity, minHeight: 200)
     }
     
-    // --- ЛОГИКА ---
-    func loadData() {
-        // Загрузка слов
-        let words = DataLoader.shared.loadWords()
-        let unique = Set(words.map { $0.category })
-        self.categories = Array(unique).sorted()
-        
-        // Загрузка грамматики
-        self.grammarLessons = DataLoader.shared.loadGrammar()
+    @ViewBuilder
+    private var grammarSection: some View {
+        if viewModel.grammarLessons.isEmpty {
+            ProgressView().scaleEffect(1.5).padding(.top, 50)
+        } else if !viewModel.searchText.isEmpty {
+            let searchResults = viewModel.searchResultsGrammar
+            if searchResults.isEmpty {
+                Text("Ничего не найдено").foregroundColor(.gray).padding(.top, 50)
+            } else {
+                LazyVStack(spacing: 16) {
+                    ForEach(searchResults) { lesson in
+                        let isCompleted = viewModel.completedGrammarLessons.contains(lesson.id)
+                        NavigationLink(value: "lesson_\(lesson.id)") {
+                            GrammarRowView(lesson: lesson, isCompleted: isCompleted)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.top, 8)
+            }
+        } else {
+            LazyVStack(spacing: 16) {
+                ForEach(viewModel.grammarGroups) { group in
+                    NavigationLink(value: "group_\(group.id)") {
+                        LevelCardView(group: group, lessonCount: viewModel.lessons(for: group.id).count)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            .padding(.top, 8)
+        }
     }
 }
 
-// --- SUBVIEWS (Внешний вид карточек) ---
+// MARK: - Components
 
 struct CategoryCardView: View {
-    let category: String
-    
-    // Генерация цвета и иконки на основе названия
-    var theme: (icon: String, color: Color) {
-        let hash = category.hashValue
-        let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
-        let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
-        
-        let color = colors[abs(hash) % colors.count]
-        let icon = icons[abs(hash) % icons.count]
-        return (icon, color)
-    }
+    let stat: CategoryStat
+    let isSelected: Bool
+    let isEditMode: Bool
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: theme.icon)
-                    .font(.title2)
-                    .foregroundColor(theme.color)
-                    .padding(10)
-                    .background(theme.color.opacity(0.1))
-                    .clipShape(Circle())
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .top) {
+                ZStack {
+                    Circle().fill(stat.color.opacity(0.15)).frame(width: 44, height: 44)
+                    Image(systemName: stat.icon).font(.title3).foregroundColor(stat.color)
+                }
                 Spacer()
+                if isEditMode {
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.title2).foregroundColor(isSelected ? .blue : Color(UIColor.tertiaryLabel))
+                }
             }
-            
-            Text(category)
-                .font(.headline)
-                .foregroundColor(.primary)
-                .lineLimit(2)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-            
-            HStack {
-                Text("Учить")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                Spacer()
-                Image(systemName: "arrow.right")
-                    .font(.caption)
-                    .foregroundColor(theme.color)
+            VStack(alignment: .leading, spacing: 8) {
+                Text(stat.name).font(.system(.headline, design: .rounded)).foregroundColor(.primary).lineLimit(1).minimumScaleFactor(0.8)
+                HStack {
+                    Text("\(stat.learnedWords)/\(stat.totalWords) слов").font(.caption).foregroundColor(.secondary)
+                    Spacer()
+                    Text("\(Int(stat.progress * 100))%").font(.caption).bold().foregroundColor(stat.color)
+                }
+                
+                // Кастомный прогресс-бар без искажений scaleEffect
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(Color.gray.opacity(0.2))
+                        Capsule().fill(stat.color)
+                            .frame(width: max(0, geo.size.width * CGFloat(stat.progress)))
+                    }
+                }
+                .frame(height: 6)
             }
         }
-        .padding()
-        .frame(height: 140)
-        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .padding(16)
+        .background(isSelected && isEditMode ? Color.blue.opacity(0.05) : Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(isSelected && isEditMode ? Color.blue.opacity(0.5) : Color.clear, lineWidth: 2))
+        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
     }
 }
 
 struct GrammarRowView: View {
     let lesson: GrammarLesson
+    let isCompleted: Bool
     
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
-            // Уровень (A1, A2) в кружочке
             ZStack {
-                Circle()
-                    .fill(Color.blue.opacity(0.1))
-                    .frame(width: 40, height: 40)
-                Text(lesson.level)
-                    .font(.caption)
-                    .bold()
-                    .foregroundColor(.blue)
+                Circle().fill(isCompleted ? Color.green.opacity(0.15) : Color.blue.opacity(0.1)).frame(width: 44, height: 44)
+                Image(systemName: isCompleted ? "checkmark" : "book.closed.fill").foregroundColor(isCompleted ? .green : .blue)
             }
-            
             VStack(alignment: .leading, spacing: 4) {
-                Text(lesson.title)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                
-                Text(lesson.description)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .lineLimit(2)
+                Text(lesson.title).font(.headline).foregroundColor(.primary)
+                Text(lesson.description).font(.subheadline).foregroundColor(.gray).lineLimit(2)
             }
-            
             Spacer()
-            
-            Image(systemName: "chevron.right")
-                .foregroundColor(.gray.opacity(0.5))
+            Image(systemName: "chevron.right").foregroundColor(.gray.opacity(0.4))
         }
-        .padding()
+        .padding(16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.03), radius: 2, x: 0, y: 1)
+        .shadow(color: Color.black.opacity(0.03), radius: 4, y: 2)
     }
 }
 
-// MARK: - Детальный просмотр грамматики
-struct GrammarDetailView: View {
-    let lesson: GrammarLesson
+// Унифицированная карточка уровня
+struct LevelCardView: View {
+    let group: GrammarGroupUI
+    let lessonCount: Int
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle().fill(group.color.opacity(0.15)).frame(width: 52, height: 52)
+                if let text = group.iconText {
+                    Text(text).font(.headline).bold().foregroundColor(group.color)
+                } else if let symbol = group.iconSymbol {
+                    Image(systemName: symbol).font(.headline).foregroundColor(group.color)
+                }
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text(group.title).font(.headline).foregroundColor(.primary)
+                Text(group.subtitle).font(.subheadline).foregroundColor(.gray).lineLimit(1)
+            }
+            Spacer()
+            Text("\(lessonCount) уроков")
+                .font(.caption).bold()
+                .padding(.horizontal, 10).padding(.vertical, 6)
+                .background(group.isExam ? group.color.opacity(0.1) : Color(UIColor.systemGray5))
+                .foregroundColor(group.isExam ? group.color : .secondary)
+                .cornerRadius(10)
+        }
+        .padding(16)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(group.isExam ? group.color.opacity(0.3) : Color.clear, lineWidth: 1))
+        .shadow(color: group.isExam ? group.color.opacity(0.05) : Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
+    }
+}
+
+// Отвязанный список уроков
+struct GrammarLevelListView: View {
+    let group: GrammarGroupUI
+    let lessons: [GrammarLesson]
+    @State private var completedIDs: Set<String> = []
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                // Заголовок урока
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(lesson.title)
-                        .font(.largeTitle)
-                        .bold()
-                    Text(lesson.description)
-                        .font(.body)
-                        .foregroundColor(.gray)
-                }
-                .padding(.bottom, 10)
-                
-                Divider()
-                
-                // --- ВЫВОД ШАГОВ (Steps) ---
-                ForEach(lesson.steps) { step in
-                    VStack(alignment: .leading, spacing: 12) {
-                        
-                        if step.type == .theory {
-                            // ТЕОРИЯ
-                            HStack {
-                                Image(systemName: "book.fill")
-                                    .foregroundColor(.blue)
-                                Text(step.title)
-                                    .font(.title3)
-                                    .bold()
-                            }
-                            
-                            Text(step.content)
-                                .font(.body)
-                                .lineSpacing(6)
-                                .padding()
-                                .background(Color.blue.opacity(0.05))
-                                .cornerRadius(12)
-                            
-                        } else if step.type == .quiz {
-                            // КВИЗ
-                            HStack {
-                                Image(systemName: "questionmark.circle.fill")
-                                    .foregroundColor(.orange)
-                                Text("Проверка знаний")
-                                    .font(.headline)
-                            }
-                            
-                            VStack(alignment: .leading) {
-                                Text(step.question ?? "Вопрос")
-                                    .font(.headline)
-                                    .padding(.bottom, 4)
-                                
-                                if let answers = step.answers {
-                                    ForEach(answers, id: \.self) { answer in
-                                        HStack {
-                                            Circle().stroke(Color.gray, lineWidth: 2).frame(width: 12)
-                                            Text(answer)
-                                        }
-                                        .padding(.vertical, 2)
-                                    }
-                                }
-                            }
-                            .padding()
-                            .background(Color.orange.opacity(0.1))
-                            .cornerRadius(12)
-                        }
+            LazyVStack(spacing: 16) {
+                ForEach(lessons) { lesson in
+                    let isCompleted = completedIDs.contains(lesson.id)
+                    NavigationLink(value: "lesson_\(lesson.id)") {
+                        GrammarRowView(lesson: lesson, isCompleted: isCompleted)
                     }
-                    .padding(.bottom, 16)
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
             .padding()
         }
+        .navigationTitle(group.title)
         .navigationBarTitleDisplayMode(.inline)
+        .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+        .onAppear { loadCompleted() }
+    }
+    
+    private func loadCompleted() {
+        if let data = UserDefaults.standard.array(forKey: "completedGrammarLessons") as? [String] {
+            completedIDs = Set(data)
+        }
     }
 }

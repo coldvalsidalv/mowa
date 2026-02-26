@@ -22,15 +22,11 @@ class FlashcardViewModel: ObservableObject {
         let allWords = DataLoader.shared.loadWords()
         
         if isReviewMode {
-            // Режим повторения
             let currentTime = Int(Date().timeIntervalSince1970)
-            
-            // Используем safeNextReview (безопасную обертку)
             sessionWords = allWords.filter { word in
                 return word.safeNextReview != 0 && word.safeNextReview <= currentTime
             }
         } else {
-            // Режим изучения
             sessionWords = allWords.filter { word in
                 return categories.contains(word.category)
             }
@@ -59,14 +55,15 @@ class FlashcardViewModel: ObservableObject {
         }
     }
     
-    func handleSwipe(right: Bool) {
+    // Универсальный метод (заменяет и handleSwipe, и handleAnswer)
+    // Во FlashcardView замените handleSwipe(right: true/false) на processAnswer(isCorrect: true/false)
+    func processAnswer(isCorrect: Bool) {
         guard var word = currentWord else { return }
         let now = Int(Date().timeIntervalSince1970)
         
-        // Используем safeBox для логики
         var currentBox = word.safeBox
         
-        if right {
+        if isCorrect {
             currentBox += 1
             if currentBox > 5 { currentBox = 5 }
             
@@ -77,6 +74,7 @@ class FlashcardViewModel: ObservableObject {
             word.safeBox = 1
             word.safeNextReview = 0
             
+            // Возвращаем слово в конец очереди, чтобы повторить его в этой же сессии
             sessionWords.append(word)
             totalSessionCount += 1
         }
@@ -87,7 +85,6 @@ class FlashcardViewModel: ObservableObject {
     
     private func saveWordUpdate(_ updatedWord: WordItem) {
         var allWords = DataLoader.shared.loadWords()
-        // Теперь id - это Int, сравнение работает корректно
         if let index = allWords.firstIndex(where: { $0.id == updatedWord.id }) {
             allWords[index] = updatedWord
             ContentManager.shared.saveWords(allWords)

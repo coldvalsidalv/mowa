@@ -1,25 +1,113 @@
-{
-  "id": "lesson_1",
-  "order": 1,
-  "title": "Глагол Być (Быть)",
-  "level": "A0",
-  "description": "Самый важный глагол польского языка.",
-  "steps": [
-    {
-      "type": "theory",
-      "title": "Основа",
-      "content": "В польском языке, как и в английском, нельзя просто сказать 'Я студент'. Нужно сказать 'Я ЕСТЬ студент'. Глагол 'быть' - это **Być**."
-    },
-    {
-      "type": "theory",
-      "title": "Спряжение (Ед. число)",
-      "content": "Запомни формы:\n\nJa **jestem** (Я есть)\nTy **jesteś** (Ты есть)\nOn/Ona/Ono **jest** (Он/Она/Оно есть)"
-    },
-    {
-      "type": "quiz",
-      "question": "Cześć! Ja ____ Uladzislau.",
-      "answers": ["jest", "jesteś", "jestem"],
-      "correctAnswer": "jestem"
-    }
-  ]
-}
+[
+  {
+    "id": "gram_a0_alphabet",
+    "title": "Alfabet i wymowa",
+    "description": "Польский алфавит и специфические звуки (cz, sz, szcz).",
+    "level": "A0",
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Двузнаки",
+        "content": "В польском языке есть сочетания букв, которые читаются как один звук: cz [ч], sz [ш], rz [ж/ш].",
+        "question": null,
+        "answers": null,
+        "correctAnswer": null
+      }
+    ]
+  },
+  {
+    "id": "gram_a1_miec",
+    "title": "Czasownik 'mieć'",
+    "description": "Спряжение глагола 'иметь' и использование с винительным падежом.",
+    "level": "A1",
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Спряжение",
+        "content": "Ja mam, Ty masz, On/Ona/Ono ma, My mamy, Wy macie, Oni/One mają.",
+        "question": null,
+        "answers": null,
+        "correctAnswer": null
+      },
+      {
+        "id": "step_2",
+        "type": "quiz",
+        "title": "Проверка",
+        "content": "",
+        "question": "Как сказать 'У них есть'?",
+        "answers": ["Oni ma", "Oni mają", "Oni mamy"],
+        "correctAnswer": "Oni mają"
+      }
+    ]
+  },
+  {
+    "id": "gram_a2_biernik",
+    "title": "Biernik (Винительный падеж)",
+    "description": "Кого? Что? Основы употребления падежа с существительными.",
+    "level": "A2",
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Женский род",
+        "content": "Существительные женского рода на -a в Bierniku меняют окончание на -ę: kawa -> kawę.",
+        "question": null,
+        "answers": null,
+        "correctAnswer": null
+      }
+    ]
+  },
+  {
+    "id": "gram_b1_przypuszczajacy",
+    "title": "Tryb przypuszczający",
+    "description": "Сослагательное наклонение: формы 'я бы сделал' (zrobiłbym).",
+    "level": "B1",
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Частица 'by'",
+        "content": "Частица 'by' пишется слитно с глаголом в личных формах: chciałbym, пошли бы — poszlibyśmy.",
+        "question": null,
+        "answers": null,
+        "correctAnswer": null
+      }
+    ]
+  },
+  {
+    "id": "gram_b2_bierna",
+    "title": "Strona bierna",
+    "description": "Страдательный залог в официальной и технической речи.",
+    "level": "B2",
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Образование",
+        "content": "Образуется при помощи глаголов 'być' или 'zostać' и причастия на -ny/-ty.",
+        "question": null,
+        "answers": null,
+        "correctAnswer": null
+      }
+    ]
+  },
+  {
+    "id": "gram_b1_exam_essay",
+    "title": "List prywatny",
+    "description": "Правила написания неформального письма на экзамене B1.",
+    "level": "B1_Exam",
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Структура письма",
+        "content": "1. Miejscowość i data. 2. Nagłówek (Cześć!). 3. Wstęp. 4. Rozwinięcie. 5. Zakońчение. 6. Podpis.",
+        "question": null,
+        "answers": null,
+        "correctAnswer": null
+      }
+    ]
+  }
+]

@@ -20,27 +20,29 @@ struct DailyChallenge: Identifiable, Equatable {
 }
 
 struct HomeView: View {
-    @StateObject var viewModel = StudySessionViewModel()
     
-    // Хранилище данных
     @AppStorage("dayStreak") var dayStreak: Int = 1
     @AppStorage("userXP") var userXP: Int = 1250
     
-    // Состояние UI
+    @AppStorage("homeCategories") private var storage: CategoryStorage = CategoryStorage()
+    
+    var selectedCategoriesForHome: [String] {
+        return storage.items
+    }
+    
     @State private var showStreakSheet = false
     @State private var showAllCompletedMessage = false
     
-    // Данные вызовов
     @State private var challenges: [DailyChallenge] = [
         DailyChallenge(title: "Утро лингвиста", description: "Выучи 5 новых слов", target: 5, currentProgress: 3, reward: 50, timeLeft: "2ч 15мин", type: .words),
         DailyChallenge(title: "Грамматика", description: "Пройди 1 урок грамматики", target: 1, currentProgress: 0, reward: 75, timeLeft: "5ч 00мин", type: .grammar),
         DailyChallenge(title: "Идеальная серия", description: "Пройди викторину без ошибок", target: 1, currentProgress: 0, reward: 100, timeLeft: "12ч 45мин", type: .quiz)
     ]
     
-    // Настройка сетки для карусели уроков
+    // Сетка для тем: строго заданные ряды для предсказуемой отрисовки
     let gridRows = [
-        GridItem(.fixed(185), spacing: 16),
-        GridItem(.fixed(185), spacing: 16)
+        GridItem(.fixed(160), spacing: 16),
+        GridItem(.fixed(160), spacing: 16)
     ]
     
     var body: some View {
@@ -50,182 +52,179 @@ struct HomeView: View {
                 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 24) {
-                        
-                        // 1. ХЕДЕР
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Cześć, Uladzislau!").font(.title2).bold()
-                                Text("Готов учить польский?").font(.subheadline).foregroundColor(.gray)
-                            }
-                            Spacer()
-                            
-                            HStack(spacing: 12) {
-                                // БЕЙДЖ ЛИГИ (с переходом на RankingView)
-                                NavigationLink(destination: LeaderboardView()) {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "shield.fill")
-                                            .foregroundColor(Color(hex: "CD7F32")) // Бронзовый цвет
-                                        Text("Бронза")
-                                            .bold()
-                                            .foregroundColor(.primary)
-                                    }
-                                    .padding(.horizontal, 10).padding(.vertical, 8)
-                                    .background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(12)
-                                }
-                                
-                                // СТРИК
-                                Button(action: { showStreakSheet = true }) {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "flame.fill").foregroundColor(.orange)
-                                        Text("\(dayStreak)").bold().foregroundColor(.primary)
-                                    }
-                                    .padding(.horizontal, 10).padding(.vertical, 8)
-                                    .background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(12)
-                                }
-                            }
-                        }
-                        .padding(.horizontal).padding(.top, 10)
-                        
-                        // 2. ДНЕВНАЯ ЦЕЛЬ
+                        headerView
                         DailyGoalCard().padding(.horizontal)
-                        
-                        // 3. ЕЖЕДНЕВНЫЕ ВЫЗОВЫ
-                        if !challenges.isEmpty || showAllCompletedMessage {
-                            VStack(alignment: .leading, spacing: 16) {
-                                if !challenges.isEmpty {
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "target").foregroundColor(.purple).font(.title3)
-                                        Text("Ежедневные вызовы").font(.title3).bold()
-                                    }
-                                    .padding(.horizontal)
-                                    .transition(.opacity)
-                                    
-                                    VStack(spacing: 16) {
-                                        ForEach(challenges) { challenge in
-                                            DailyChallengeRow(challenge: challenge) {
-                                                completeChallenge(challenge)
-                                            }
-                                        }
-                                    }
-                                    .padding(.horizontal)
-                                    
-                                } else {
-                                    VStack(spacing: 12) {
-                                        Image(systemName: "trophy.fill")
-                                            .font(.system(size: 40))
-                                            .foregroundColor(.yellow)
-                                            .padding(.top, 10)
-                                            .symbolEffect(.bounce, value: showAllCompletedMessage)
-                                        Text("Все вызовы выполнены!").font(.headline).foregroundColor(.primary)
-                                        Text("Отличная работа, так держать!").font(.caption).foregroundColor(.gray)
-                                    }
-                                    .frame(maxWidth: .infinity).padding(.vertical, 20)
-                                    .background(Color(UIColor.secondarySystemGroupedBackground).opacity(0.5))
-                                    .cornerRadius(16).padding(.horizontal)
-                                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                                }
-                            }
-                            .transition(.scale(scale: 0.01, anchor: .top).combined(with: .opacity))
-                        }
-                        
-                        // 4. ПОВТОРЕНИЕ
-                        NavigationLink(destination: ReviewSelectionView()) {
-                            HStack {
-                                ZStack {
-                                    Circle().fill(Color.blue.opacity(0.1)).frame(width: 50, height: 50)
-                                    Image(systemName: "arrow.clockwise").font(.title2).foregroundColor(.blue)
-                                }
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Повторение").font(.headline).foregroundColor(.primary)
-                                    Text("Закрепить материал").font(.caption).foregroundColor(.gray)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right").foregroundColor(.gray.opacity(0.4))
-                            }
-                            .padding().background(Color(UIColor.secondarySystemGroupedBackground))
-                            .cornerRadius(20).shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                        }
-                        .padding(.horizontal)
-                        
-                        // 5. БЫСТРАЯ ТРЕНИРОВКА
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Быстрая тренировка").font(.title3).bold().padding(.horizontal)
-                            
-                            HStack(spacing: 16) {
-                                // 1. Викторина
-                                NavigationLink(destination: QuizView()) {
-                                    PracticeCard(
-                                        title: "Викторина",
-                                        subtitle: "Проверь знания",
-                                        icon: "gamecontroller.fill",
-                                        color: .purple
-                                    )
-                                }
-                                
-                                // 2. Случайное (Возвращено)
-                                // Логика: Полный микс слов и грамматики без фильтров по знаниям
-                                NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false)) {
-                                    PracticeCard(
-                                        title: "Случайное",
-                                        subtitle: "Общий аудит",
-                                        icon: "shuffle",
-                                        color: .blue
-                                    )
-                                }
-                                .simultaneousGesture(TapGesture().onEnded {
-                                    HapticManager.instance.impact(style: .medium)
-                                })
-                            }
-                            .padding(.horizontal)
-                        }
-                        
-                        // 6. ТВОИ УРОКИ (Линейный прогресс)
-                        VStack(alignment: .leading, spacing: 16) {
-                            HStack {
-                                Text("Темы").font(.title3).bold()
-                                Spacer()
-                                NavigationLink(destination: LessonsView()) { Text("Все").font(.subheadline).foregroundColor(.blue) }
-                            }
-                            .padding(.horizontal)
-                            
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                LazyHGrid(rows: gridRows, spacing: 16) {
-                                    NavigationLink(destination: FlashcardView(categories: ["Бюрократия"], isReviewMode: false)) {
-                                        LessonCard(title: "Бюрократия", subtitle: "Продолжить", count: "25 слов", icon: "doc.text.fill", color: .orange, progress: 0.4)
-                                    }
-                                    NavigationLink(destination: FlashcardView(categories: ["Магазин"], isReviewMode: false)) {
-                                        LessonCard(title: "Магазин", subtitle: "Новая тема", count: "18 слов", icon: "cart.fill", color: .green, progress: 0.0)
-                                    }
-                                    NavigationLink(destination: FlashcardView(categories: ["Путешествия"], isReviewMode: false)) {
-                                        LessonCard(title: "Путешествия", subtitle: "Пора в путь", count: "30 слов", icon: "airplane", color: .cyan, progress: 0.1)
-                                    }
-                                    NavigationLink(destination: FlashcardView(categories: ["Семья"], isReviewMode: false)) {
-                                        LessonCard(title: "Семья", subtitle: "Родные", count: "15 слов", icon: "figure.2.and.child.holdinghands", color: .pink, progress: 0.0)
-                                    }
-                                    NavigationLink(destination: FlashcardView(categories: ["Еда"], isReviewMode: false)) {
-                                        LessonCard(title: "Еда", subtitle: "Ресторан", count: "40 слов", icon: "fork.knife", color: .red, progress: 0.0)
-                                    }
-                                    NavigationLink(destination: FlashcardView(categories: ["Спорт"], isReviewMode: false)) {
-                                        LessonCard(title: "Спорт", subtitle: "Активность", count: "20 слов", icon: "figure.run", color: .indigo, progress: 0.0)
-                                    }
-                                }
-                                .padding(.horizontal)
-                                .padding(.bottom, 20)
-                            }
-                            .frame(height: 410)
-                        }
+                        challengesView
+                        reviewLinkView
+                        quickPracticeView
+                        yourLessonsView
                     }
                     .padding(.bottom, 30)
                 }
             }
             .navigationTitle("").navigationBarHidden(true)
             .background(Color(UIColor.systemGroupedBackground))
-            .onAppear { viewModel.objectWillChange.send() }
             .sheet(isPresented: $showStreakSheet) { StreakView() }
         }
     }
     
-    // ЛОГИКА
+    // --- SUBVIEWS ---
+    
+    var headerView: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Cześć, Uladzislau!").font(.title2).bold()
+                Text("Готов учить польский?").font(.subheadline).foregroundColor(.gray)
+            }
+            Spacer()
+            
+            HStack(spacing: 12) {
+                NavigationLink(destination: LeaderboardView()) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "shield.fill").foregroundColor(Color(hex: "CD7F32"))
+                        Text("Бронза").bold().foregroundColor(.primary)
+                    }
+                    .padding(.horizontal, 10).padding(.vertical, 8)
+                    .background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(12)
+                }
+                
+                Button(action: { showStreakSheet = true }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "flame.fill").foregroundColor(.orange)
+                        Text("\(dayStreak)").bold().foregroundColor(.primary)
+                    }
+                    .padding(.horizontal, 10).padding(.vertical, 8)
+                    .background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(12)
+                }
+            }
+        }
+        .padding(.horizontal).padding(.top, 10)
+    }
+    
+    var challengesView: some View {
+        Group {
+            if !challenges.isEmpty || showAllCompletedMessage {
+                VStack(alignment: .leading, spacing: 16) {
+                    if !challenges.isEmpty {
+                        HStack(spacing: 8) {
+                            Image(systemName: "target").foregroundColor(.purple).font(.title3)
+                            Text("Ежедневные вызовы").font(.title3).bold()
+                        }
+                        .padding(.horizontal).transition(.opacity)
+                        
+                        VStack(spacing: 16) {
+                            ForEach(challenges) { challenge in
+                                DailyChallengeRow(challenge: challenge) { completeChallenge(challenge) }
+                            }
+                        }
+                        .padding(.horizontal)
+                    } else {
+                        VStack(spacing: 12) {
+                            Image(systemName: "trophy.fill").font(.system(size: 40)).foregroundColor(.yellow).padding(.top, 10).symbolEffect(.bounce, value: showAllCompletedMessage)
+                            Text("Все вызовы выполнены!").font(.headline).foregroundColor(.primary)
+                            Text("Отличная работа, так держать!").font(.caption).foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity).padding(.vertical, 20)
+                        .background(Color(UIColor.secondarySystemGroupedBackground).opacity(0.5))
+                        .cornerRadius(16).padding(.horizontal)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
+                .transition(.scale(scale: 0.01, anchor: .top).combined(with: .opacity))
+            }
+        }
+    }
+    
+    var reviewLinkView: some View {
+        NavigationLink(destination: ReviewSelectionView()) {
+            HStack {
+                ZStack {
+                    Circle().fill(Color.blue.opacity(0.1)).frame(width: 50, height: 50)
+                    Image(systemName: "arrow.clockwise").font(.title2).foregroundColor(.blue)
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Повторение").font(.headline).foregroundColor(.primary)
+                    Text("Закрепить материал").font(.caption).foregroundColor(.gray)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").foregroundColor(.gray.opacity(0.4))
+            }
+            .padding().background(Color(UIColor.secondarySystemGroupedBackground))
+            .cornerRadius(20).shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        }
+        .padding(.horizontal)
+    }
+    
+    var quickPracticeView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Быстрая тренировка").font(.title3).bold().padding(.horizontal)
+            
+            HStack(spacing: 16) {
+                NavigationLink(destination: QuizView()) {
+                    PracticeCard(title: "Викторина", subtitle: "Тест", icon: "gamecontroller.fill", color: .purple)
+                }
+                NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false)) {
+                    PracticeCard(title: "Случайное", subtitle: "Микс", icon: "shuffle", color: .blue)
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    HapticManager.instance.impact(style: .medium)
+                })
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    var yourLessonsView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Темы").font(.title3).bold().padding(.horizontal)
+            
+            if selectedCategoriesForHome.isEmpty {
+                NavigationLink(destination: LessonsView()) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill").font(.largeTitle).foregroundColor(.blue)
+                        Text("Добавьте темы для изучения").font(.headline).foregroundColor(.primary)
+                    }
+                    .frame(maxWidth: .infinity).padding(30)
+                    .background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(20)
+                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                }
+                .padding(.horizontal)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHGrid(rows: gridRows, spacing: 16) {
+                        ForEach(selectedCategoriesForHome, id: \.self) { category in
+                            let theme = getTheme(for: category)
+                            NavigationLink(destination: FlashcardView(categories: [category], isReviewMode: false)) {
+                                LessonCard(
+                                    title: category,
+                                    subtitle: "Продолжить",
+                                    count: "Слова",
+                                    icon: theme.icon,
+                                    color: theme.color,
+                                    progress: 0.0
+                                )
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 12) // Позволяет теням карточек не обрезаться
+                }
+            }
+        }
+    }
+    
+    // --- HELPERS ---
+    
+    func getTheme(for category: String) -> (icon: String, color: Color) {
+        let hash = category.hashValue
+        let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
+        let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
+        
+        let color = colors[abs(hash) % colors.count]
+        let icon = icons[abs(hash) % icons.count]
+        return (icon, color)
+    }
+    
     func completeChallenge(_ challenge: DailyChallenge) {
         withAnimation(.spring()) { userXP += challenge.reward }
         withAnimation(.easeInOut(duration: 0.5)) {
@@ -240,7 +239,8 @@ struct HomeView: View {
     }
 }
 
-// MARK: - НОВЫЙ ДИЗАЙН: PracticeCard (Унифицированный стиль)
+// MARK: - UI COMPONENTS
+
 struct PracticeCard: View {
     let title: String
     let subtitle: String
@@ -249,7 +249,6 @@ struct PracticeCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Иконка строго в стиле LessonCard и Повторения
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundColor(color)
@@ -259,31 +258,98 @@ struct PracticeCard: View {
             
             Spacer(minLength: 16)
             
-            // Текстовый блок
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(.headline, design: .rounded))
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.75) // Запрет на разрыв слова
+                    .minimumScaleFactor(0.75)
                 
                 Text(subtitle)
                     .font(.system(.subheadline, design: .rounded))
-                    .foregroundColor(.gray) // Стандартный серый для подзаголовков
+                    .foregroundColor(.gray)
                     .lineLimit(1)
             }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: 130) // Оптимизированная высота
+        .frame(height: 130)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4) // Стандартная тень приложения
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
     }
 }
 
-// MARK: - DailyGoalCard
+struct LessonCard: View {
+    let title: String
+    let subtitle: String
+    let count: String
+    let icon: String
+    let color: Color
+    let progress: Double
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top) {
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: icon)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(color)
+                }
+                Spacer()
+                Image(systemName: "play.circle.fill")
+                    .font(.system(size: 26))
+                    .foregroundColor(color)
+            }
+            
+            Spacer(minLength: 16)
+            
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.system(.title3, design: .rounded))
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                
+                HStack(spacing: 6) {
+                    Text(subtitle)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(color)
+                    
+                    Circle()
+                        .fill(Color.gray.opacity(0.4))
+                        .frame(width: 4, height: 4)
+                    
+                    Text(count)
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding(.bottom, 16)
+            
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.gray.opacity(0.15))
+                    Capsule().fill(color).frame(width: geo.size.width * progress)
+                }
+            }
+            .frame(height: 6)
+        }
+        .padding(16)
+        .frame(width: 160, height: 160)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(24)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+    }
+}
+
 struct DailyGoalCard: View {
     @AppStorage("userXP") var userXP: Int = 1250
     @AppStorage("dailyWordGoal") var dailyGoal: Int = 10
@@ -384,12 +450,11 @@ struct DailyGoalCard: View {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { showSuccessBounce = false }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-             withAnimation { userXP += 50 }
+            withAnimation { userXP += 50 }
         }
     }
 }
 
-// MARK: - СТРОКА ВЫЗОВА
 struct DailyChallengeRow: View {
     let challenge: DailyChallenge
     let onComplete: () -> Void
@@ -434,23 +499,5 @@ struct DailyChallengeCardContent: View {
                 GeometryReader { geo in ZStack(alignment: .leading) { Capsule().fill(Color.gray.opacity(0.15)).frame(height: 8); Capsule().fill(LinearGradient(colors: [Color.purple, Color.pink], startPoint: .leading, endPoint: .trailing)).frame(width: geo.size.width * CGFloat(challenge.progress), height: 8) } }.frame(height: 8)
             }
         }.padding(16).background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(16).shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
-    }
-}
-
-struct LessonCard: View {
-    let title: String; let subtitle: String; let count: String; let icon: String; let color: Color; let progress: Double
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top) {
-                Image(systemName: icon).font(.title2).foregroundColor(color).frame(width: 44, height: 44).background(color.opacity(0.1)).clipShape(Circle()); Spacer()
-                Text(count).font(.caption2).bold().padding(.horizontal, 6).padding(.vertical, 4).background(Color(UIColor.systemBackground).opacity(0.6)).foregroundColor(.gray).cornerRadius(6)
-            }
-            Spacer()
-            VStack(alignment: .leading, spacing: 4) { Text(title).font(.headline).foregroundColor(.primary).lineLimit(1).minimumScaleFactor(0.8); Text(subtitle).font(.caption).foregroundColor(.gray).lineLimit(1) }
-            HStack(spacing: 8) {
-                GeometryReader { geo in ZStack(alignment: .leading) { Capsule().fill(Color.gray.opacity(0.2)); Capsule().fill(color).frame(width: geo.size.width * progress) } }.frame(height: 6)
-                Image(systemName: "play.circle.fill").font(.title2).foregroundColor(color)
-            }
-        }.padding(16).frame(width: 170, height: 185).background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(24).shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
     }
 }
