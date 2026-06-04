@@ -4,6 +4,7 @@ struct GrammarLessonView: View {
     @StateObject var viewModel: GrammarLessonViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
+    @State private var showExitAlert = false
 
     init(lesson: GrammarLesson) {
         _viewModel = StateObject(wrappedValue: GrammarLessonViewModel(lesson: lesson))
@@ -23,14 +24,20 @@ struct GrammarLessonView: View {
         .onAppear {
             viewModel.configure(context: modelContext)
         }
+        .alert("Выйти из урока?", isPresented: $showExitAlert) {
+            Button("Продолжить", role: .cancel) {}
+            Button("Выйти", role: .destructive) { dismiss() }
+        } message: {
+            Text("Прогресс урока не будет сохранён.")
+        }
     }
-    
+
     // MARK: - Основной контент урока
     private var lessonContentView: some View {
         VStack(spacing: 0) {
             // 1. ХЕДЕР
             HStack(spacing: 12) {
-                Button(action: { dismiss() }) {
+                Button(action: { showExitAlert = true }) {
                     Image(systemName: "xmark")
                         .font(.title2)
                         .foregroundColor(.gray)

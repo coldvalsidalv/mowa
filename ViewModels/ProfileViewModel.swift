@@ -101,6 +101,18 @@ final class ProfileViewModel: ObservableObject {
         }
     }
 
+    /// Пересчитывает totalLearnedWords из SwiftData — source of truth.
+    /// Вызывается из ProfileView.onAppear чтобы синхронизировать AppStorage с реальными данными.
+    func refreshLearnedCount(context: ModelContext) {
+        let descriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate { $0.fsrsData.reps > 0 }
+        )
+        let count = (try? context.fetch(descriptor))?.count ?? 0
+        if count != totalLearnedWords {
+            totalLearnedWords = count
+        }
+    }
+
     // MARK: - Actions
 
     func toggleNotifications(_ isEnabled: Bool) {

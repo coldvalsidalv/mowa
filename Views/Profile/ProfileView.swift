@@ -174,7 +174,10 @@ struct ProfileView: View {
                     VocabularyView()
                 }
             }
-            .onAppear { viewModel.loadActivity(context: modelContext) }
+            .onAppear {
+                viewModel.refreshLearnedCount(context: modelContext)
+                viewModel.loadActivity(context: modelContext)
+            }
             .sheet(isPresented: $viewModel.showAchievementsDetail) {
                 AchievementsDetailView(achievements: viewModel.achievements)
             }
