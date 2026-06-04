@@ -49,27 +49,37 @@ final class LessonsViewModel: ObservableObject {
         }
     }
     
-    /// Загрузка данных теперь требует ModelContext для прямого доступа к базе
+    /// Загружает слова из SwiftData синхронно, грамматику — async из API (fallback бандл)
     func loadData(context: ModelContext) {
-        // 1. Выборка слов из SwiftData
         let descriptor = FetchDescriptor<VocabItem>()
         let words = (try? context.fetch(descriptor)) ?? []
-        
-        // 2. Чтение грамматики из статического JSON через обновленный DataManager
-        let rawLessons = DataManager.shared.loadGrammar()
-        let completedIDs = Set(UserDefaults.standard.stringArray(forKey: StorageKeys.completedGrammarLessons) ?? [])
-        
-        // 3. Синхронный расчет статистики категорий
+        updateCategories(from: words)
+
+        Task {
+            let rawLessons = await DataManager.shared.loadGrammarAsync()
+            updateGrammar(from: rawLessons)
+        }
+    }
+
+    private func updateCategories(from words: [VocabItem]) {
         let uniqueCategories = Array(Set(words.map { $0.category })).sorted()
         self.categories = uniqueCategories.map { category in
             let categoryWords = words.filter { $0.category == category }
-            // В FSRS слово считается начатым/выученным, если его состояние отлично от .new
             let learned = categoryWords.filter { $0.fsrsData.state != .new }.count
             let theme = Self.getTheme(for: category)
-            return CategoryStat(id: category, totalWords: categoryWords.count, learnedWords: learned, icon: theme.icon, color: theme.color)
+            return CategoryStat(
+                id: category,
+                totalWords: categoryWords.count,
+                learnedWords: learned,
+                icon: theme.icon,
+                color: theme.color
+            )
         }
-        
-        // 4. Расчет статистики грамматики
+    }
+
+    private func updateGrammar(from rawLessons: [GrammarLesson]) {
+        let completedIDs = Set(UserDefaults.standard.stringArray(forKey: StorageKeys.completedGrammarLessons) ?? [])
+
         let levels = ["A0", "A1", "A2", "B1", "B2"]
         var groups: [GrammarGroupUI] = levels.map { level in
             let levelLessons = rawLessons.filter { $0.level == level }
@@ -86,8 +96,7 @@ final class LessonsViewModel: ObservableObject {
                 completedLessons: completedCount
             )
         }
-        
-        // Добавление экзамена B1
+
         let examLessons = rawLessons.filter { $0.level == "B1_Exam" }
         let examCompleted = examLessons.filter { completedIDs.contains($0.id) }.count
         groups.append(GrammarGroupUI(
@@ -101,7 +110,7 @@ final class LessonsViewModel: ObservableObject {
             totalLessons: examLessons.count,
             completedLessons: examCompleted
         ))
-        
+
         self.allGrammarLessons = rawLessons
         self.completedGrammarLessonIDs = completedIDs
         self.grammarGroups = groups.filter { $0.totalLessons > 0 }
