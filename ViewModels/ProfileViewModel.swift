@@ -24,6 +24,11 @@ final class ProfileViewModel: ObservableObject {
     // Активность за 7 дней — заполняется из ReviewLog через loadActivity()
     @Published var activityData: [ActivityData] = []
 
+    // Три уровня прогресса по словам
+    @Published var wordsLearning: Int = 0  // stability < 3: в процессе
+    @Published var wordsKnown: Int    = 0  // stability 3–21: знаю
+    @Published var wordsMastered: Int = 0  // stability ≥ 21: выучено
+
     // Достижения — вычисляются на основе реального прогресса
     var achievements: [Achievement] {
         [
@@ -103,11 +108,19 @@ final class ProfileViewModel: ObservableObject {
 
     /// Пересчитывает totalLearnedWords из SwiftData — source of truth.
     /// Вызывается из ProfileView.onAppear чтобы синхронизировать AppStorage с реальными данными.
+    /// Источник правды: слово считается "знаю" если stability ≥ 3 дня.
+    /// Фильтрация в памяти — SwiftData не поддерживает Double-предикаты на nested @Model.
     func refreshLearnedCount(context: ModelContext) {
         let descriptor = FetchDescriptor<VocabItem>(
             predicate: #Predicate { $0.fsrsData.reps > 0 }
         )
-        let count = (try? context.fetch(descriptor))?.count ?? 0
+        let all = (try? context.fetch(descriptor)) ?? []
+
+        wordsLearning = all.filter { $0.fsrsData.stability > 0 && $0.fsrsData.stability < 3.0 }.count
+        wordsKnown    = all.filter { $0.fsrsData.stability >= 3.0 && $0.fsrsData.stability < 21.0 }.count
+        wordsMastered = all.filter { $0.fsrsData.stability >= 21.0 }.count
+
+        let count = wordsKnown + wordsMastered
         if count != totalLearnedWords {
             totalLearnedWords = count
         }
