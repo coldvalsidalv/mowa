@@ -88,11 +88,23 @@ final class QuizViewModel: ObservableObject {
     
     private func finishSession() {
         isFinished = true
-        
+
         let defaults = UserDefaults.standard
         let currentXP = defaults.integer(forKey: StorageKeys.userXP)
         defaults.set(currentXP + (score * 5), forKey: StorageKeys.userXP)
-        
+
         StreakManager.shared.completeLesson()
+
+        // Сообщаем HomeViewModel что квиз завершён
+        let isPerfect = score == totalQuestions
+        NotificationCenter.default.post(
+            name: .quizCompleted,
+            object: nil,
+            userInfo: ["isPerfect": isPerfect]
+        )
     }
+}
+
+extension Notification.Name {
+    static let quizCompleted = Notification.Name("quizCompleted")
 }
