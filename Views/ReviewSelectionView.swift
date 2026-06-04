@@ -72,34 +72,36 @@ struct ReviewSelectionView: View {
                         SectionTitle(icon: "text.book.closed.fill", title: "Словарь", color: .blue)
                         
                         VStack(spacing: 12) {
-                            // Обязательная передача контекста для инстанцирования ViewModel
-                            NavigationLink(destination: FlashcardView(categories: ["Weak"], isReviewMode: true, context: context)) {
+                            NavigationLink(destination: FlashcardView(tier: .weak, context: context)) {
                                 ReviewCategoryCard(
                                     title: "Слабые слова",
                                     subtitle: "Частые ошибки",
                                     count: weakWordsCount,
                                     icon: "exclamationmark.triangle.fill",
-                                    color: .red
+                                    color: .red,
+                                    itemLabel: "слова"
                                 )
                             }
-                            
-                            NavigationLink(destination: FlashcardView(categories: ["Medium"], isReviewMode: true, context: context)) {
+
+                            NavigationLink(destination: FlashcardView(tier: .medium, context: context)) {
                                 ReviewCategoryCard(
                                     title: "Средние слова",
                                     subtitle: "Нужна практика",
                                     count: mediumWordsCount,
                                     icon: "hourglass",
-                                    color: .orange
+                                    color: .orange,
+                                    itemLabel: "слова"
                                 )
                             }
-                            
-                            NavigationLink(destination: FlashcardView(categories: ["Strong"], isReviewMode: true, context: context)) {
+
+                            NavigationLink(destination: FlashcardView(tier: .strong, context: context)) {
                                 ReviewCategoryCard(
                                     title: "Сильные слова",
-                                    subtitle: "Надежно в памяти",
+                                    subtitle: "Надёжно в памяти",
                                     count: strongWordsCount,
                                     icon: "checkmark.circle.fill",
-                                    color: .green
+                                    color: .green,
+                                    itemLabel: "слова"
                                 )
                             }
                         }
@@ -120,7 +122,8 @@ struct ReviewSelectionView: View {
                                     subtitle: "Требуют внимания",
                                     count: weakGrammar.count,
                                     icon: "xmark.octagon.fill",
-                                    color: .red
+                                    color: .red,
+                                    itemLabel: "правила"
                                 )
                             }
 
@@ -134,7 +137,8 @@ struct ReviewSelectionView: View {
                                     subtitle: "Иногда путаешь",
                                     count: mediumGrammar.count,
                                     icon: "arrow.triangle.2.circlepath",
-                                    color: .orange
+                                    color: .orange,
+                                    itemLabel: "правила"
                                 )
                             }
 
@@ -148,7 +152,8 @@ struct ReviewSelectionView: View {
                                     subtitle: "Закрепление",
                                     count: strongGrammar.count,
                                     icon: "star.fill",
-                                    color: .green
+                                    color: .green,
+                                    itemLabel: "правила"
                                 )
                             }
                         }
@@ -247,6 +252,7 @@ struct ReviewCategoryCard: View {
     let count: Int
     let icon: String
     let color: Color
+    var itemLabel: String = "слова"
     
     var isCleared: Bool {
         return count == 0 && (color == .red || color == .orange)
@@ -295,7 +301,7 @@ struct ReviewCategoryCard: View {
                             .fontWeight(.bold)
                             .foregroundColor(activeColor)
                         
-                        Text(count == 1 ? "объект" : "объектов")
+                        Text(itemLabel)
                             .font(.caption2)
                             .foregroundColor(.gray)
                     }

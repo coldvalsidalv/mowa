@@ -7,8 +7,8 @@ struct FlashcardView: View {
     
     @StateObject private var viewModel: FlashcardViewModel
     @Environment(\.dismiss) var dismiss
+    @State private var showExitAlert = false
     
-    // Внедрение ModelContext из MowaApp
     init(categories: [String], isReviewMode: Bool, context: ModelContext) {
         self.categories = categories
         self.isReviewMode = isReviewMode
@@ -17,6 +17,13 @@ struct FlashcardView: View {
             isReviewMode: isReviewMode,
             context: context
         ))
+    }
+
+    /// Инициализация через ReviewTier для экрана повторения
+    init(tier: ReviewTier, context: ModelContext) {
+        self.categories = []
+        self.isReviewMode = true
+        _viewModel = StateObject(wrappedValue: FlashcardViewModel(tier: tier, context: context))
     }
     
     var body: some View {
@@ -36,8 +43,14 @@ struct FlashcardView: View {
             }
         }
         .navigationBarHidden(true)
+        .alert("Выйти из урока?", isPresented: $showExitAlert) {
+            Button("Продолжить", role: .cancel) {}
+            Button("Выйти", role: .destructive) { dismiss() }
+        } message: {
+            Text("Прогресс текущей сессии не будет засчитан.")
+        }
     }
-    
+
     private var topBar: some View {
         HStack(spacing: 15) {
             GeometryReader { geo in
@@ -49,8 +62,14 @@ struct FlashcardView: View {
                 }
             }
             .frame(height: 6)
-            
-            Button(action: { dismiss() }) {
+
+            Button(action: {
+                if viewModel.isFinished {
+                    dismiss()
+                } else {
+                    showExitAlert = true
+                }
+            }) {
                 Image(systemName: "xmark")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.secondary)

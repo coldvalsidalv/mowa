@@ -3,109 +3,149 @@ import SwiftData
 import Combine
 import SwiftUI
 
+// MARK: - Review Tier
+
+enum ReviewTier {
+    case all            // умный микс: due + new
+    case category(String) // конкретная тема
+    case weak           // state == relearning || difficulty > 7
+    case medium         // review, stability < 14
+    case strong         // review, stability >= 14
+}
+
 /// Сервис уровня бизнес-логики. Оркестрирует выборку из БД и работу FSRS.
 @MainActor
 final class LearningEngine: ObservableObject {
     private let modelContext: ModelContext
     private let scheduler = FSRSScheduler()
-    
+
     @Published var sessionQueue: [VocabItem] = []
     @Published var sessionProgress: CGFloat = 0.0
     private var totalInSession: Int = 0
-    
+
     init(context: ModelContext) {
         self.modelContext = context
     }
-    
-    /// Загрузка сессии (Смешивание Due карточек и порции New карточек)
+
+    // MARK: - Session builders
+
+    /// Стандартная сессия: due-карточки + новые из категории
     func buildSession(category: String? = nil, newCardsLimit: Int = 10) {
         let now = Date()
-        
-        // 1. Выборка карточек, которые пора повторять (due <= now)
-        // Используем reps > 0 вместо state != .new для обхода бага компилятора SwiftData с enums
+
         let dueDescriptor = FetchDescriptor<VocabItem>(
             predicate: #Predicate { $0.fsrsData.due <= now && $0.fsrsData.reps > 0 },
             sortBy: [SortDescriptor(\.fsrsData.due, order: .forward)]
         )
-        let dueCards = (try? modelContext.fetch(dueDescriptor)) ?? []
-        
-        // 2. Выборка новых карточек с лимитом
+        var dueCards = (try? modelContext.fetch(dueDescriptor)) ?? []
+
+        // Фильтруем по категории если задана
+        if let cat = category {
+            dueCards = dueCards.filter { $0.category == cat }
+        }
+
         var newDescriptor = FetchDescriptor<VocabItem>()
-        
-        // Используем reps == 0 для безопасного определения новых карточек на уровне SQLite
         if let cat = category {
             newDescriptor.predicate = #Predicate { $0.fsrsData.reps == 0 && $0.category == cat }
         } else {
             newDescriptor.predicate = #Predicate { $0.fsrsData.reps == 0 }
         }
-        
         newDescriptor.fetchLimit = newCardsLimit
         let newCards = (try? modelContext.fetch(newDescriptor)) ?? []
-        
-        // Собираем очередь (сначала повторения, затем новые)
+
         self.sessionQueue = dueCards + newCards
         self.totalInSession = sessionQueue.count
         self.sessionProgress = 0.0
     }
-    
-    /// Обработка ответа пользователя
+
+    /// Сессия повторения по FSRS-уровню (weak/medium/strong/all)
+    func buildReviewSession(tier: ReviewTier) {
+        let now = Date()
+
+        // Получаем все due-карточки из памяти, фильтруем по tier в Swift
+        // (SwiftData не поддерживает предикаты на enum .rawValue в nested @Model)
+        let descriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate { $0.fsrsData.reps > 0 && $0.fsrsData.due <= now },
+            sortBy: [SortDescriptor(\.fsrsData.due, order: .forward)]
+        )
+        let allDue = (try? modelContext.fetch(descriptor)) ?? []
+
+        let filtered: [VocabItem]
+        switch tier {
+        case .all:
+            filtered = allDue
+        case .category(let cat):
+            filtered = allDue.filter { $0.category == cat }
+        case .weak:
+            filtered = allDue.filter {
+                $0.fsrsData.state == .relearning || $0.fsrsData.difficulty > 7.0
+            }
+        case .medium:
+            filtered = allDue.filter {
+                $0.fsrsData.state == .review &&
+                $0.fsrsData.difficulty <= 7.0 &&
+                $0.fsrsData.stability < 14.0
+            }
+        case .strong:
+            filtered = allDue.filter {
+                $0.fsrsData.state == .review &&
+                $0.fsrsData.stability >= 14.0
+            }
+        }
+
+        self.sessionQueue = filtered
+        self.totalInSession = sessionQueue.count
+        self.sessionProgress = 0.0
+    }
+
+    // MARK: - Answer processing
+
     func processAnswer(item: VocabItem, rating: FSRSRating, timeSpentMs: Int) {
         let now = Date()
-        
-        // 1. Расчет новых параметров памяти через FSRS
+
         let updatedFSRS = scheduler.schedule(card: item.fsrsData, rating: rating, now: now)
-        
-        // Присваиваем новые значения объекту БД (SwiftData автоматически отследит изменения)
-        item.fsrsData.difficulty = updatedFSRS.difficulty
-        item.fsrsData.stability = updatedFSRS.stability
-        item.fsrsData.state = updatedFSRS.state
-        item.fsrsData.lapses = updatedFSRS.lapses
-        item.fsrsData.reps = updatedFSRS.reps
-        item.fsrsData.due = updatedFSRS.due
-        item.fsrsData.lastReview = updatedFSRS.lastReview
+
+        item.fsrsData.difficulty    = updatedFSRS.difficulty
+        item.fsrsData.stability     = updatedFSRS.stability
+        item.fsrsData.state         = updatedFSRS.state
+        item.fsrsData.lapses        = updatedFSRS.lapses
+        item.fsrsData.reps          = updatedFSRS.reps
+        item.fsrsData.due           = updatedFSRS.due
+        item.fsrsData.lastReview    = updatedFSRS.lastReview
         item.fsrsData.scheduledDays = updatedFSRS.scheduledDays
-        
-        // 2. Педагогическая стратегия: Анлок Cloze-тестов, если стабильность достигла уровня > 7 дней
+
         if updatedFSRS.stability > 7.0 && !item.isClozeUnlocked {
             item.isClozeUnlocked = true
         }
-        
-        // 3. Запись лога для аналитики
+
         let log = ReviewLog(cardId: item.id, rating: rating, reviewDate: now, duration: timeSpentMs)
         modelContext.insert(log)
-        
-        // 4. Управление очередью сессии
-        sessionQueue.removeAll { $0.id == item.id }
-        
-        if rating == .again {
-            // "Желаемое затруднение": Возвращаем в конец очереди с небольшим смещением
-            sessionQueue.append(item)
-            totalInSession += 1 // Увеличиваем знаменатель для прогресс-бара
-        } else {
-            StreakManager.shared.completeLesson() // Начисление XP только за успех
 
-            // Если карточка только что перешла из .new — засчитываем как изученную
+        sessionQueue.removeAll { $0.id == item.id }
+
+        if rating == .again {
+            sessionQueue.append(item)
+            totalInSession += 1
+        } else {
+            StreakManager.shared.completeLesson()
+
             if updatedFSRS.reps == 1 {
                 let current = UserDefaults.standard.integer(forKey: StorageKeys.totalLearnedWords)
                 UserDefaults.standard.set(current + 1, forKey: StorageKeys.totalLearnedWords)
             }
         }
-        
+
         updateProgress()
-        
-        // 5. Сохранение изменений в БД
+
         do {
             try modelContext.save()
         } catch {
             print("❌ LearningEngine: failed to save context — \(error)")
         }
     }
-    
+
     private func updateProgress() {
-        guard totalInSession > 0 else {
-            sessionProgress = 1.0
-            return
-        }
+        guard totalInSession > 0 else { sessionProgress = 1.0; return }
         let completed = totalInSession - sessionQueue.count
         sessionProgress = CGFloat(completed) / CGFloat(totalInSession)
     }
