@@ -1,0 +1,141 @@
+// MARK: - Tab Bar
+"tab.home"        = "Home";
+"tab.learn"       = "Learn";
+"tab.ranking"     = "Ranking";
+"tab.profile"     = "Profile";
+
+// MARK: - Home
+"home.greeting"            = "Ready to learn Polish?";
+"home.daily_goal"          = "Daily Goal";
+"home.goal_completed"      = "Goal completed!";
+"home.words_progress"      = "Learned: %d / %d words";
+"home.xp_earned"           = "+%d XP earned";
+"home.daily_challenges"    = "Daily Challenges";
+"home.all_done"            = "All challenges completed!";
+"home.all_done_sub"        = "Great work, keep it up!";
+"home.quick_practice"      = "Quick Practice";
+"home.topics"              = "Topics";
+"home.add_topics"          = "Add topics to study";
+"home.review"              = "Review";
+"home.review_sub"          = "Reinforce material";
+"home.quiz"                = "Quiz";
+"home.quiz_sub"            = "Test";
+"home.random"              = "Random";
+"home.random_sub"          = "Mix";
+"home.repeat"              = "Repeat";
+
+// MARK: - Flashcard
+"flashcard.again"          = "Again";
+"flashcard.hard"           = "Hard";
+"flashcard.good"           = "Good";
+"flashcard.easy"           = "Easy";
+"flashcard.finish_title"   = "Great work!";
+"flashcard.finish_sub"     = "Session complete. Intervals updated.";
+"flashcard.finish_btn"     = "Finish";
+"flashcard.example"        = "EXAMPLE";
+
+// MARK: - Quiz
+"quiz.question"            = "How do you translate?";
+"quiz.next"                = "Next";
+"quiz.finish"              = "Finish";
+"quiz.result_title"        = "Result";
+"quiz.score"               = "Correct answers: %d of %d";
+
+// MARK: - Grammar
+"grammar.next"             = "Next";
+"grammar.finish"           = "Finish";
+"grammar.done_title"       = "Lesson complete!";
+"grammar.done_btn"         = "Great";
+"grammar.correct"          = "Correct!";
+"grammar.wrong"            = "Wrong, try again";
+"grammar.result"           = "Quiz result: %d of %d";
+
+// MARK: - Library
+"library.title"            = "Library";
+"library.words_tab"        = "Words";
+"library.grammar_tab"      = "Grammar";
+"library.search"           = "Search...";
+"library.lessons_soon"     = "Lessons coming soon";
+
+// MARK: - Review
+"review.title"             = "What to review?";
+"review.subtitle"          = "Our algorithm picked words you'll soon forget.";
+"review.memory_health"     = "Memory Health";
+"review.vocabulary"        = "Vocabulary";
+"review.grammar"           = "Grammar";
+"review.weak"              = "Weak words";
+"review.weak_sub"          = "Frequent mistakes";
+"review.medium"            = "Medium words";
+"review.medium_sub"        = "Needs practice";
+"review.strong"            = "Strong words";
+"review.strong_sub"        = "Firmly in memory";
+"review.smart_mix"         = "Smart Mix";
+"review.no_grammar"        = "No grammar lessons due";
+
+// MARK: - Profile
+"profile.title"            = "Profile";
+"profile.account"          = "Account";
+"profile.personal_data"    = "Personal Data";
+"profile.vocabulary"       = "My Vocabulary";
+"profile.invite"           = "Invite Friends";
+"profile.appearance"       = "Appearance";
+"profile.system_theme"     = "System Theme";
+"profile.theme_light"      = "Light ☀️";
+"profile.theme_dark"       = "Dark 🌙";
+"profile.settings"         = "Settings";
+"profile.language"         = "Language";
+"profile.notifications"    = "Notifications";
+"profile.goals"            = "Goals & Data";
+"profile.daily_goal"       = "Daily Goal";
+"profile.reset"            = "Reset Progress";
+"profile.delete"           = "Delete Account";
+"profile.activity"         = "Activity";
+"profile.achievements"     = "Achievements";
+"profile.words"            = "Words";
+"profile.days"             = "Days";
+"profile.league"           = "League";
+
+// MARK: - Vocabulary
+"vocabulary.title"         = "My Vocabulary";
+"vocabulary.total"         = "Total words";
+"vocabulary.learned"       = "Learned words (%d)";
+"vocabulary.empty"         = "No learned words yet";
+"vocabulary.empty_sub"     = "Complete your first lesson and words will appear here";
+
+// MARK: - Leaderboard
+"ranking.title"            = "Ranking";
+"ranking.coming_soon"      = "Competitors coming soon";
+"ranking.coming_soon_sub"  = "When other users register,\nyou'll be able to compete with them here.";
+
+// MARK: - Onboarding
+"onboarding.welcome_tagline"  = "Learn Polish.\nFast and for real.";
+"onboarding.start"            = "Start";
+"onboarding.takes"            = "Takes 2 minutes";
+"onboarding.language_title"   = "Choose language";
+"onboarding.language_sub"     = "In which language should we explain things?";
+"onboarding.placement_title"  = "What do you already know?";
+"onboarding.placement_sub"    = "We'll skip what you already know";
+"onboarding.know"             = "I know";
+"onboarding.dont_know"        = "Don't know";
+"onboarding.level_zero"       = "Starting from scratch — that's fine 💪";
+"onboarding.level_a1"         = "Level A1 — some basics";
+"onboarding.level_a2"         = "Level A2+ — great start";
+"onboarding.goal_title"       = "Daily Goal";
+"onboarding.goal_sub"         = "How many words to learn each day?";
+"onboarding.goal_easy"        = "Easy";
+"onboarding.goal_easy_sub"    = "5 words · ~5 min";
+"onboarding.goal_normal"      = "Normal";
+"onboarding.goal_normal_sub"  = "10 words · ~10 min";
+"onboarding.goal_serious"     = "Serious";
+"onboarding.goal_serious_sub" = "20 words · ~20 min";
+"onboarding.ready_title"      = "All set!";
+"onboarding.ready_sub"        = "Everything is configured.\nLet's start learning Polish.";
+"onboarding.start_learning"   = "Start Learning";
+"onboarding.next"             = "Next";
+
+// MARK: - Common
+"common.close"    = "Close";
+"common.cancel"   = "Cancel";
+"common.ok"       = "OK";
+"common.objects"  = "items";
+"common.object"   = "item";

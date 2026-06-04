@@ -120,17 +120,20 @@ struct ProfileView: View {
                     }
                 }
                 
-                Section("Настройки") {
-                    Picker("Язык", selection: $viewModel.appLanguage) {
-                        Text("Русский").tag("Ru")
-                        Text("Polski").tag("Pl")
-                        Text("English").tag("En")
+                Section(L("profile.settings")) {
+                    Picker(L("profile.language"), selection: $viewModel.appLanguage) {
+                        Text("Русский").tag("ru")
+                        Text("Українська").tag("uk")
+                        Text("English").tag("en")
                     }
-                    Toggle("Уведомления", isOn: $viewModel.notificationsEnabled)
+                    .onChange(of: viewModel.appLanguage) { _, newLang in
+                        LanguageManager.shared.setLanguage(newLang)
+                    }
+                    Toggle(L("profile.notifications"), isOn: $viewModel.notificationsEnabled)
                         .onChange(of: viewModel.notificationsEnabled) { _, isEnabled in
                             viewModel.toggleNotifications(isEnabled)
                         }
-                    
+
                     if viewModel.notificationsEnabled {
                         DatePicker("Время", selection: viewModel.notificationTimeBinding, displayedComponents: .hourAndMinute)
                     }
