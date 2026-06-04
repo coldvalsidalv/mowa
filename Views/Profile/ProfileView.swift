@@ -25,6 +25,7 @@ struct Achievement: Identifiable {
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
     @ObservedObject private var avatarManager = AvatarManager.shared
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         NavigationStack {
@@ -44,7 +45,7 @@ struct ProfileView: View {
                             }
                         } icon: { Image(systemName: "book.closed.fill").foregroundColor(.indigo) }
                     }
-                    ShareLink(item: URL(string: "https://mova.app")!) {
+                    ShareLink(item: URL(string: "https://verbum.app")!) {
                         Label { Text("Пригласить друзей") } icon: { Image(systemName: "square.and.arrow.up").foregroundColor(.green) }
                     }
                 }
@@ -57,7 +58,7 @@ struct ProfileView: View {
                         Divider()
                         CompactStatItem(value: "\(viewModel.userXP)", title: "XP")
                         Divider()
-                        CompactStatItem(value: "III", title: "Лига", icon: "shield.fill", color: .brown)
+                        CompactStatItem(value: viewModel.currentLeagueTitle, title: "Лига", icon: "shield.fill", color: .brown)
                     }
                     .padding(.vertical, 8)
                 }
@@ -153,7 +154,7 @@ struct ProfileView: View {
                 Section {
                     HStack {
                         Spacer()
-                        Text("Версия 1.0.5 • Mova App").font(.caption2).foregroundColor(.secondary)
+                        Text("Версия \(viewModel.appVersion) • Verbum").font(.caption2).foregroundColor(.secondary)
                         Spacer()
                     }
                 }
@@ -167,9 +168,10 @@ struct ProfileView: View {
                 case .personalData:
                     PersonalDataView()
                 case .vocabulary:
-                    VocabularyView(wordsCount: viewModel.totalLearnedWords)
+                    VocabularyView()
                 }
             }
+            .onAppear { viewModel.loadActivity(context: modelContext) }
             .sheet(isPresented: $viewModel.showAchievementsDetail) {
                 AchievementsDetailView(achievements: viewModel.achievements)
             }

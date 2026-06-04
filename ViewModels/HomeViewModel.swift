@@ -140,10 +140,4 @@ final class HomeViewModel: ObservableObject {
         return formatter.string(from: Date())
     }
     
-    // Вспомогательный метод для UI (Оставить только для тестирования/кнопки, если она необходима)
-    // В production прогресс должен расти ТОЛЬКО через refreshStats(context:) при возврате с экрана карточек
-    func debugIncrementDailyGoal() {
-        // Заглушка, чтобы не ломать верстку в HomeView.
-        // В реальном приложении кнопка прогресс-бара не должна увеличивать прогресс по тапу.
-    }
 }

@@ -1,45 +1,108 @@
 import SwiftUI
+import SwiftData
 import UserNotifications
 import Combine
 
 final class ProfileViewModel: ObservableObject {
-    @AppStorage(StorageKeys.userName) var userName: String = "Uladzislau Kisialiou"
-    @AppStorage(StorageKeys.userEmail) var userEmail: String = "uladzislaukisialiou@gmail.com"
-    @AppStorage(StorageKeys.totalLearnedWords) var totalLearnedWords: Int = 142
-    @AppStorage(StorageKeys.dayStreak) var dayStreak: Int = 5
+    @AppStorage(StorageKeys.userName) var userName: String = ""
+    @AppStorage(StorageKeys.userEmail) var userEmail: String = ""
+    @AppStorage(StorageKeys.totalLearnedWords) var totalLearnedWords: Int = 0
+    @AppStorage(StorageKeys.dayStreak) var dayStreak: Int = 0
     @AppStorage(StorageKeys.dailyGoal) var dailyGoal: Int = 10
-    @AppStorage(StorageKeys.userXP) var userXP: Int = 1250
-    
+    @AppStorage(StorageKeys.userXP) var userXP: Int = 0
+
     @AppStorage(StorageKeys.isDarkMode) var isDarkMode: Bool = false
     @AppStorage(StorageKeys.useSystemTheme) var useSystemTheme: Bool = true
-    @AppStorage(StorageKeys.appLanguage) var appLanguage: String = "Ru"
+    @AppStorage(StorageKeys.appLanguage) var appLanguage: String = "ru"
     @AppStorage(StorageKeys.notificationsEnabled) var notificationsEnabled: Bool = false
     @AppStorage(StorageKeys.notificationTime) var notificationTimeInterval: Double = 32400
-    
+
     @Published var showDeleteAlert = false
     @Published var showResetAlert = false
     @Published var showAchievementsDetail = false
-    
-    let activityData: [ActivityData] = [
-        .init(day: "Пн", xp: 40), .init(day: "Вт", xp: 65), .init(day: "Ср", xp: 30),
-        .init(day: "Чт", xp: 90), .init(day: "Пт", xp: 55), .init(day: "Сб", xp: 120),
-        .init(day: "Вс", xp: 80)
-    ]
-    
-    let achievements: [Achievement] = [
-        .init(title: "Первые шаги", description: "Завершите первый урок без ошибок", icon: "shoe.fill", color: .blue, unlocked: true),
-        .init(title: "Огонь", description: "Поддерживайте серию 7 дней подряд", icon: "flame.fill", color: .orange, unlocked: true),
-        .init(title: "Полиглот", description: "Выучите 500 новых слов", icon: "globe.europe.africa.fill", color: .green, unlocked: false),
-        .init(title: "Ночная сова", description: "Пройдите урок после 23:00", icon: "moon.stars.fill", color: .purple, unlocked: false)
-    ]
-    
+
+    // Активность за 7 дней — заполняется из ReviewLog через loadActivity()
+    @Published var activityData: [ActivityData] = []
+
+    // Достижения — вычисляются на основе реального прогресса
+    var achievements: [Achievement] {
+        [
+            .init(
+                title: "Первые шаги",
+                description: "Изучи первое слово",
+                icon: "shoe.fill",
+                color: .blue,
+                unlocked: totalLearnedWords > 0
+            ),
+            .init(
+                title: "Огонь",
+                description: "Серия 7 дней подряд",
+                icon: "flame.fill",
+                color: .orange,
+                unlocked: dayStreak >= 7
+            ),
+            .init(
+                title: "Полиглот",
+                description: "Выучи 500 слов",
+                icon: "globe.europe.africa.fill",
+                color: .green,
+                unlocked: totalLearnedWords >= 500
+            ),
+            .init(
+                title: "Чемпион",
+                description: "Набери 1000 XP",
+                icon: "trophy.fill",
+                color: .yellow,
+                unlocked: userXP >= 1000
+            ),
+        ]
+    }
+
     var notificationTimeBinding: Binding<Date> {
         Binding(
             get: { Date(timeIntervalSince1970: self.notificationTimeInterval) },
             set: { self.notificationTimeInterval = $0.timeIntervalSince1970 }
         )
     }
-    
+
+    var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+    }
+
+    var currentLeagueTitle: String {
+        UserLeague.determineLeague(for: userXP).title
+    }
+
+    // MARK: - Activity from ReviewLog
+
+    func loadActivity(context: ModelContext) {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let days = (0..<7).reversed().map { offset -> Date in
+            calendar.date(byAdding: .day, value: -offset, to: today)!
+        }
+
+        let weekAgo = days.first!
+        let descriptor = FetchDescriptor<ReviewLog>(
+            predicate: #Predicate { $0.reviewDate >= weekAgo }
+        )
+        let logs = (try? context.fetch(descriptor)) ?? []
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EE"
+        formatter.locale = Locale(identifier: "ru_RU")
+
+        activityData = days.map { day in
+            let nextDay = calendar.date(byAdding: .day, value: 1, to: day)!
+            let dayLogs = logs.filter { $0.reviewDate >= day && $0.reviewDate < nextDay }
+            let xp = dayLogs.count * 5 // ~5 XP за карточку
+            let label = formatter.string(from: day).capitalized
+            return ActivityData(day: label, xp: xp)
+        }
+    }
+
+    // MARK: - Actions
+
     func toggleNotifications(_ isEnabled: Bool) {
         if isEnabled {
             UNUserNotificationCenter.current().getNotificationSettings { settings in
@@ -52,10 +115,7 @@ final class ProfileViewModel: ObservableObject {
                         if let url = URL(string: UIApplication.openSettingsURLString) {
                             UIApplication.shared.open(url)
                         }
-                    case .authorized, .provisional, .ephemeral:
-                        break
-                    @unknown default:
-                        break
+                    default: break
                     }
                 }
             }
@@ -63,7 +123,7 @@ final class ProfileViewModel: ObservableObject {
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         }
     }
-    
+
     func resetAllProgress() {
         userXP = 0
         totalLearnedWords = 0
@@ -71,7 +131,7 @@ final class ProfileViewModel: ObservableObject {
         UserDefaults.standard.removeObject(forKey: StorageKeys.completedGrammarLessons)
         UserDefaults.standard.removeObject(forKey: StorageKeys.completedChallengeIDs)
     }
-    
+
     func deleteAccount() {
         resetAllProgress()
         userName = ""
