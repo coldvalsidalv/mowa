@@ -1,70 +1,33 @@
 import Foundation
 
-// MARK: - Response DTOs
+// MARK: - Remote DTOs (чистые контейнеры для JSON-декодинга, без логики)
 
-struct TeenyListResponse<T: Decodable & Sendable>: Decodable, Sendable {
+struct TeenyListResponse<T: Decodable>: Decodable {
     let items: [T]
     let total: Int
 }
 
-struct RemoteWord: Decodable, Sendable {
-    let id: String
+struct RemoteWord: Decodable {
     let polish: String
     let translation: String
     let transcription: String?
     let part_of_speech: String?
     let example: String?
-    let examples_list: String?   // JSON-строка, декодируем отдельно
+    let examples_list: String?
     let category: String
-    let level: String?
     let image_name: String?
-
-    func toDTO() -> WordItemDTO {
-        var examplesList: [String] = []
-        if let raw = examples_list,
-           let data = raw.data(using: .utf8),
-           let parsed = try? JSONDecoder().decode([String].self, from: data) {
-            examplesList = parsed
-        }
-        return WordItemDTO(
-            id: 0,
-            category: category,
-            polish: polish,
-            translation: translation,
-            transcription: transcription ?? "",
-            example: example ?? "",
-            imageName: image_name ?? "",
-            partOfSpeech: part_of_speech ?? "",
-            examplesList: examplesList
-        )
-    }
 }
 
-struct RemoteGrammarLesson: Decodable, Sendable {
+struct RemoteGrammarLesson: Decodable {
     let lesson_id: String
     let title: String
     let description: String?
     let level: String
     let order_index: Int?
-    let steps: String          // JSON-строка массива шагов
-
-    func toGrammarLesson() -> GrammarLesson? {
-        guard let data = steps.data(using: .utf8),
-              let parsedSteps = try? JSONDecoder().decode([GrammarStep].self, from: data) else {
-            print("❌ APIClient: failed to decode steps for lesson \(lesson_id)")
-            return nil
-        }
-        return GrammarLesson(
-            id: lesson_id,
-            title: title,
-            description: description ?? "",
-            level: level,
-            steps: parsedSteps
-        )
-    }
+    let steps: String
 }
 
-// MARK: - APIClient
+// MARK: - Error
 
 enum APIError: Error {
     case invalidURL
@@ -72,6 +35,8 @@ enum APIError: Error {
     case decodingError(Error)
     case serverError(Int)
 }
+
+// MARK: - APIClient
 
 final class APIClient {
     static let shared = APIClient()
@@ -82,38 +47,32 @@ final class APIClient {
 
     // MARK: - Vocabulary
 
-    /// Загружает все слова с бэкенда постранично.
     func fetchAllWords() async throws -> [WordItemDTO] {
         let pageSize = 100
-        var allWords: [WordItemDTO] = []
-
-        // Сначала получаем total чтобы знать сколько страниц
         let first = try await fetchWords(page: 1, limit: pageSize)
-        allWords.append(contentsOf: first.items.map { $0.toDTO() })
+        var allRemote = first.items
 
         let totalPages = Int(ceil(Double(first.total) / Double(pageSize)))
-
         if totalPages > 1 {
-            try await withThrowingTaskGroup(of: [WordItemDTO].self) { group in
+            try await withThrowingTaskGroup(of: [RemoteWord].self) { group in
                 for p in 2...totalPages {
                     group.addTask { [weak self] in
                         guard let self else { return [] }
-                        let resp = try await self.fetchWords(page: p, limit: pageSize)
-                        return resp.items.map { $0.toDTO() }
+                        return try await self.fetchWords(page: p, limit: pageSize).items
                     }
                 }
                 for try await batch in group {
-                    allWords.append(contentsOf: batch)
+                    allRemote.append(contentsOf: batch)
                 }
             }
         }
 
-        return allWords
+        return allRemote.map { remoteWordToDTO($0) }
     }
 
     private func fetchWords(page: Int, limit: Int) async throws -> TeenyListResponse<RemoteWord> {
-        let body: [String: Any] = ["limit": limit, "offset": (page - 1) * limit]
-        return try await post(path: "/api/v1/table/vocabulary/list", body: body)
+        try await post(path: "/api/v1/table/vocabulary/list",
+                       body: ["limit": limit, "offset": (page - 1) * limit])
     }
 
     // MARK: - Grammar
@@ -123,7 +82,7 @@ final class APIClient {
             path: "/api/v1/table/grammar_lessons/list",
             body: ["limit": 200, "sort": "order_index"]
         )
-        return resp.items.compactMap { $0.toGrammarLesson() }
+        return resp.items.compactMap { remoteToGrammarLesson($0) }
     }
 
     // MARK: - Generic POST
@@ -140,8 +99,7 @@ final class APIClient {
         }
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
-        let data: Data
-        let response: URLResponse
+        let (data, response): (Data, URLResponse)
         do {
             (data, response) = try await session.data(for: request)
         } catch {
@@ -158,4 +116,41 @@ final class APIClient {
             throw APIError.decodingError(error)
         }
     }
+}
+
+// MARK: - Conversion (вне structs — нет actor-изоляции)
+
+private func remoteWordToDTO(_ r: RemoteWord) -> WordItemDTO {
+    var examplesList: [String] = []
+    if let raw = r.examples_list,
+       let data = raw.data(using: .utf8),
+       let parsed = try? JSONDecoder().decode([String].self, from: data) {
+        examplesList = parsed
+    }
+    return WordItemDTO(
+        id: 0,
+        category: r.category,
+        polish: r.polish,
+        translation: r.translation,
+        transcription: r.transcription ?? "",
+        example: r.example ?? "",
+        imageName: r.image_name ?? "",
+        partOfSpeech: r.part_of_speech ?? "",
+        examplesList: examplesList
+    )
+}
+
+private func remoteToGrammarLesson(_ r: RemoteGrammarLesson) -> GrammarLesson? {
+    guard let data = r.steps.data(using: .utf8),
+          let steps = try? JSONDecoder().decode([GrammarStep].self, from: data) else {
+        print("❌ APIClient: failed to decode steps for lesson \(r.lesson_id)")
+        return nil
+    }
+    return GrammarLesson(
+        id: r.lesson_id,
+        title: r.title,
+        description: r.description ?? "",
+        level: r.level,
+        steps: steps
+    )
 }
