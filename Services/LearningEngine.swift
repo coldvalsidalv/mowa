@@ -83,6 +83,12 @@ final class LearningEngine: ObservableObject {
             totalInSession += 1 // Увеличиваем знаменатель для прогресс-бара
         } else {
             StreakManager.shared.completeLesson() // Начисление XP только за успех
+
+            // Если карточка только что перешла из .new — засчитываем как изученную
+            if updatedFSRS.reps == 1 {
+                let current = UserDefaults.standard.integer(forKey: StorageKeys.totalLearnedWords)
+                UserDefaults.standard.set(current + 1, forKey: StorageKeys.totalLearnedWords)
+            }
         }
         
         updateProgress()
