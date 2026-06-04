@@ -4,55 +4,73 @@ import SwiftData
 @MainActor
 final class DatabaseSeeder {
     static let shared = DatabaseSeeder()
-    
-    // Ключ для предотвращения повторной загрузки при последующих запусках
-    private let seedKey = "isDatabaseSeeded_v1"
-    
+
+    private let bundleSeedKey = "isDatabaseSeeded_v1"
+    private let apiSeedKey    = "isDatabaseSeeded_api_v1"
+
     private init() {}
-    
+
+    // MARK: - Public
+
     func seedIfNeeded(context: ModelContext) {
-        // Проверка: была ли база уже заполнена ранее
-        guard !UserDefaults.standard.bool(forKey: seedKey) else {
+        // Уже засеяно (из API или из бандла) — пропускаем
+        guard !UserDefaults.standard.bool(forKey: bundleSeedKey),
+              !UserDefaults.standard.bool(forKey: apiSeedKey) else { return }
+
+        Task {
+            await seedFromAPIOrBundle(context: context)
+        }
+    }
+
+    // MARK: - Internal
+
+    private func seedFromAPIOrBundle(context: ModelContext) async {
+        print("🌱 DatabaseSeeder: starting seed...")
+
+        do {
+            let words = try await APIClient.shared.fetchAllWords()
+            guard !words.isEmpty else { throw APIError.serverError(0) }
+            insert(words: words, context: context)
+            UserDefaults.standard.set(true, forKey: apiSeedKey)
+            print("✅ DatabaseSeeder: seeded \(words.count) words from API")
+        } catch {
+            print("⚠️ DatabaseSeeder: API unavailable (\(error)), falling back to bundle")
+            seedFromBundle(context: context)
+        }
+    }
+
+    private func seedFromBundle(context: ModelContext) {
+        let words = DataManager.shared.loadInitialWordsFromBundle()
+        guard !words.isEmpty else {
+            print("❌ DatabaseSeeder: bundle words.json is empty")
             return
         }
-        
-        print("Начинаю первичную миграцию данных в SwiftData...")
-        
-        // Чтение сырых DTO из бандла приложения
-        let oldWords = DataManager.shared.loadInitialWordsFromBundle()
-        
-        guard !oldWords.isEmpty else {
-            print("❌ Ошибка: JSON words.json пуст или не найден в Bundle.")
-            return
-        }
-        
-        // Маппинг DTO в реляционные модели SwiftData
-        for dto in oldWords {
-            let newItem = VocabItem(
+        insert(words: words, context: context)
+        UserDefaults.standard.set(true, forKey: bundleSeedKey)
+        print("✅ DatabaseSeeder: seeded \(words.count) words from bundle")
+    }
+
+    private func insert(words: [WordItemDTO], context: ModelContext) {
+        for dto in words {
+            let item = VocabItem(
                 polish: dto.polish,
                 translation: dto.translation,
                 partOfSpeech: dto.partOfSpeech,
                 example: dto.example,
                 category: dto.category
             )
-            
-            // Если в JSON были сохранены старые прогрессы (коробки), делаем грубую аппроксимацию для FSRS
+            // Аппроксимация старого box-прогресса в FSRS (для bundle-данных с legacy полями)
             if let box = dto.box, box > 0 {
-                newItem.fsrsData.state = .review
-                newItem.fsrsData.stability = Double(box * 2) // Базовый перевод коробки в дни стабильности
-                newItem.fsrsData.difficulty = 5.0 // Средняя сложность
+                item.fsrsData.state = .review
+                item.fsrsData.stability = Double(box * 2)
+                item.fsrsData.difficulty = 5.0
             }
-            
-            context.insert(newItem)
+            context.insert(item)
         }
-        
         do {
             try context.save()
-            // Устанавливаем флаг успешной миграции
-            UserDefaults.standard.set(true, forKey: seedKey)
-            print("✅ Миграция успешно завершена. В базу добавлено \(oldWords.count) слов.")
         } catch {
-            print("❌ Критическая ошибка сохранения SwiftData при сидировании: \(error)")
+            print("❌ DatabaseSeeder: save failed — \(error)")
         }
     }
 }
