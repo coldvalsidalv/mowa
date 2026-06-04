@@ -10,7 +10,8 @@ struct HomeView: View {
     
     @StateObject private var viewModel = HomeViewModel()
     
-    @AppStorage(StorageKeys.dayStreak) private var dayStreak: Int = 1
+    @AppStorage(StorageKeys.dayStreak) private var dayStreak: Int = 0
+    @AppStorage(StorageKeys.userName) private var userName: String = ""
     @AppStorage(StorageKeys.homeCategories) private var storage: CategoryStorage = CategoryStorage()
     
     @State private var showStreakSheet = false
@@ -32,7 +33,7 @@ struct HomeView: View {
                         isCompleted: viewModel.isDailyGoalCompleted,
                         wordsLearned: viewModel.wordsLearnedToday,
                         goal: viewModel.dailyWordGoal,
-                        onTap: viewModel.debugIncrementDailyGoal
+                        onTap: {}
                     )
                     .padding(.horizontal)
                     
@@ -69,7 +70,7 @@ struct HomeView: View {
     private var headerView: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Cześć, Uladzislau!").font(.title2).bold()
+                Text(userName.isEmpty ? "Cześć!" : "Cześć, \(userName)!").font(.title2).bold()
                 Text("Готов учить польский?").font(.subheadline).foregroundColor(.gray)
             }
             Spacer()
