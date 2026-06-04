@@ -7,7 +7,7 @@ struct TeenyListResponse<T: Decodable>: Decodable {
     let total: Int
 }
 
-struct RemoteWord: Decodable {
+struct RemoteWord: Sendable {
     let polish: String
     let translation: String
     let transcription: String?
@@ -16,6 +16,25 @@ struct RemoteWord: Decodable {
     let examples_list: String?
     let category: String
     let image_name: String?
+}
+
+extension RemoteWord: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case polish, translation, transcription, category
+        case part_of_speech, example, examples_list, image_name
+    }
+
+    nonisolated init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        polish       = try c.decode(String.self, forKey: .polish)
+        translation  = try c.decode(String.self, forKey: .translation)
+        transcription  = try c.decodeIfPresent(String.self, forKey: .transcription)
+        part_of_speech = try c.decodeIfPresent(String.self, forKey: .part_of_speech)
+        example        = try c.decodeIfPresent(String.self, forKey: .example)
+        examples_list  = try c.decodeIfPresent(String.self, forKey: .examples_list)
+        category       = try c.decode(String.self, forKey: .category)
+        image_name     = try c.decodeIfPresent(String.self, forKey: .image_name)
+    }
 }
 
 struct RemoteGrammarLesson: Decodable {

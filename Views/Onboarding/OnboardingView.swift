@@ -10,7 +10,7 @@ struct OnboardingView: View {
     @AppStorage(StorageKeys.dailyGoal) private var dailyGoal = 10
 
     @State private var step = 0
-    @State private var selectedLanguage = "ru"
+    @State private var selectedLanguage = OnboardingView.detectedLanguage()
     @State private var selectedGoal = 10
     @State private var knownWordIDs: Set<Int> = []
 
@@ -30,9 +30,7 @@ struct OnboardingView: View {
         .animation(.easeInOut(duration: 0.35), value: step)
     }
 
-    private func next() {
-        step += 1
-    }
+    private func next() { step += 1 }
 
     private func finish() {
         appLanguage = selectedLanguage
@@ -41,20 +39,29 @@ struct OnboardingView: View {
         hasCompletedOnboarding = true
     }
 
-    /// Слова, которые пользователь отметил как знакомые, получают начальную стабильность FSRS
-    /// чтобы не появляться в первых сессиях
+    /// Определяет язык интерфейса по системным настройкам iOS
+    static func detectedLanguage() -> String {
+        let preferred = Locale.preferredLanguages.first ?? "ru"
+        if preferred.hasPrefix("uk") { return "uk" }
+        if preferred.hasPrefix("en") { return "en" }
+        return "ru"
+    }
+
+    /// Слова, отмеченные как знакомые, получают начальную стабильность FSRS
     private func applyPlacementResults() {
         guard !knownWordIDs.isEmpty else { return }
-        let now = Date()
-        let knownIDs = knownWordIDs
+
+        let knownPolish = Set(
+            PlacementTestStep.testWords
+                .filter { knownWordIDs.contains($0.id) }
+                .map { $0.polish }
+        )
 
         let descriptor = FetchDescriptor<VocabItem>()
         guard let allWords = try? modelContext.fetch(descriptor) else { return }
 
-        for word in allWords {
-            guard let numericID = Int(word.id.uuidString.prefix(4), radix: 16),
-                  knownIDs.contains(numericID % PlacementTestStep.testWords.count) else { continue }
-            // Выставляем начальную стабильность: ~7 дней, состояние review
+        let now = Date()
+        for word in allWords where knownPolish.contains(word.polish) {
             word.fsrsData.stability = 7.0
             word.fsrsData.state = .review
             word.fsrsData.reps = 1
@@ -74,15 +81,13 @@ struct WelcomeStep: View {
         VStack(spacing: 0) {
             Spacer()
 
-            VStack(spacing: 24) {
-                ZStack {
-                    Circle()
-                        .fill(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(width: 100, height: 100)
-                    Text("V")
-                        .font(.system(size: 52, weight: .bold, design: .serif))
-                        .foregroundColor(.white)
-                }
+            VStack(spacing: 28) {
+                Image("AppIconImage")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 110, height: 110)
+                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    .shadow(color: .black.opacity(0.12), radius: 12, y: 6)
 
                 VStack(spacing: 12) {
                     Text("Verbum")
@@ -118,10 +123,10 @@ struct LanguageStep: View {
     @Binding var selected: String
     let onNext: () -> Void
 
-    private let languages: [(code: String, name: String, flag: String)] = [
-        ("ru", "Русский", "🇷🇺"),
-        ("uk", "Українська", "🇺🇦"),
-        ("en", "English", "🇬🇧"),
+    private let languages: [(code: String, name: String)] = [
+        ("ru", "Русский"),
+        ("uk", "Українська"),
+        ("en", "English"),
     ]
 
     var body: some View {
@@ -133,9 +138,10 @@ struct LanguageStep: View {
             VStack(spacing: 12) {
                 ForEach(languages, id: \.code) { lang in
                     Button(action: { selected = lang.code }) {
-                        HStack(spacing: 16) {
-                            Text(lang.flag).font(.title)
-                            Text(lang.name).font(.headline).foregroundColor(.primary)
+                        HStack {
+                            Text(lang.name)
+                                .font(.headline)
+                                .foregroundColor(.primary)
                             Spacer()
                             if selected == lang.code {
                                 Image(systemName: "checkmark.circle.fill")
@@ -175,17 +181,23 @@ struct PlacementTestStep: View {
     @State private var cardOffset: CGFloat = 0
     @State private var cardOpacity: Double = 1
 
+    // A1 → A2 → B1, чтобы реально определить уровень
     static let testWords: [(id: Int, polish: String, translation: String)] = [
-        (0,  "mama",       "мама"),
-        (1,  "dom",        "дом"),
-        (2,  "woda",       "вода"),
-        (3,  "pracować",   "работать"),
-        (4,  "dobry",      "хороший"),
-        (5,  "rozumieć",   "понимать"),
-        (6,  "piękny",     "красивый"),
-        (7,  "zapomnieć",  "забыть"),
-        (8,  "samochód",   "машина"),
-        (9,  "rzeczywistość", "реальность"),
+        (0,  "mama",            "мама"),
+        (1,  "dom",             "дом"),
+        (2,  "woda",            "вода"),
+        (3,  "dobry",           "хороший"),
+        (4,  "jeść",            "есть / кушать"),
+        (5,  "kupować",         "покупать"),
+        (6,  "pogoda",          "погода"),
+        (7,  "rozumieć",        "понимать"),
+        (8,  "piękny",          "красивый"),
+        (9,  "samochód",        "машина"),
+        (10, "zapomnieć",       "забыть"),
+        (11, "przyzwyczajenie", "привычка"),
+        (12, "wyjaśnić",        "объяснить"),
+        (13, "skomplikowany",   "сложный"),
+        (14, "przedsiębiorstwo","предприятие"),
     ]
 
     private var isFinished: Bool { currentIndex >= Self.testWords.count }
@@ -209,28 +221,31 @@ struct PlacementTestStep: View {
 
     private var testCardView: some View {
         VStack(spacing: 0) {
-            // Прогресс
             HStack {
                 Text("\(currentIndex + 1) / \(Self.testWords.count)")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
+                Button("Пропустить") { onNext() }
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
             }
             .padding(.horizontal, 32)
             .padding(.top, 8)
 
             Spacer()
 
-            // Карточка
             let word = Self.testWords[currentIndex]
             VStack(spacing: 16) {
                 Text(word.polish)
-                    .font(.system(size: 42, weight: .bold))
+                    .font(.system(size: 40, weight: .bold))
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
                     .foregroundColor(.primary)
-
                 Text(word.translation.uppercased())
                     .font(.subheadline.bold())
                     .foregroundColor(.secondary)
+                    .tracking(1)
             }
             .frame(maxWidth: .infinity)
             .padding(40)
@@ -243,7 +258,6 @@ struct PlacementTestStep: View {
 
             Spacer()
 
-            // Кнопки
             HStack(spacing: 16) {
                 Button(action: { respond(known: false) }) {
                     VStack(spacing: 6) {
@@ -294,15 +308,15 @@ struct PlacementTestStep: View {
 
     private var levelLabel: String {
         switch knownIDs.count {
-        case 0..<3: return "Начинаем с нуля — это нормально 💪"
-        case 3..<7: return "Уровень A1 — есть база"
-        default:    return "Уровень A2+ — отличный старт"
+        case 0..<4:  return "Начинаем с нуля — это нормально 💪"
+        case 4..<8:  return "Уровень A1 — есть база"
+        case 8..<12: return "Уровень A2 — хороший старт"
+        default:     return "Уровень B1+ — сразу к сложному"
         }
     }
 
     private func respond(known: Bool) {
-        let id = Self.testWords[currentIndex].id
-        if known { knownIDs.insert(id) }
+        if known { knownIDs.insert(Self.testWords[currentIndex].id) }
 
         withAnimation(.easeInOut(duration: 0.2)) {
             cardOffset = known ? 60 : -60
@@ -428,7 +442,6 @@ struct OnboardingHeader: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            // Прогресс-точки
             HStack(spacing: 8) {
                 ForEach(1...total, id: \.self) { i in
                     Capsule()

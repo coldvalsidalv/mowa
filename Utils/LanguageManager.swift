@@ -32,9 +32,9 @@ extension Notification.Name {
 
 // MARK: - Bundle swizzle для runtime смены языка
 
-private var bundleKey = "VerbumLanguageBundle"
+private var bundleKey: UInt8 = 0
 
-final class LanguageBundle: Bundle {
+final class LanguageBundle: Bundle, @unchecked Sendable {
     override func localizedString(forKey key: String, value: String?, table tableName: String?) -> String {
         guard let bundle = objc_getAssociatedObject(self, &bundleKey) as? Bundle else {
             return super.localizedString(forKey: key, value: value, table: tableName)
