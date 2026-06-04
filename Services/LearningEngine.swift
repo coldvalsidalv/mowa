@@ -88,7 +88,11 @@ final class LearningEngine: ObservableObject {
         updateProgress()
         
         // 5. Сохранение изменений в БД
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("❌ LearningEngine: failed to save context — \(error)")
+        }
     }
     
     private func updateProgress() {

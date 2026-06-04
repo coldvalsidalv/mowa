@@ -36,10 +36,28 @@ struct ReviewSelectionView: View {
         return Double(healthyCount) / Double(studiedWords.count)
     }
     
-    // Грамматика пока остается заглушкой до внедрения FSRS-моделей для грамматических правил
-    let weakGrammarCount = 0
-    let mediumGrammarCount = 0
-    let strongGrammarCount = 0
+    // Грамматика: реальные данные из SwiftData
+    @Query(filter: #Predicate<GrammarProgress> { $0.fsrsData.reps > 0 })
+    private var studiedGrammar: [GrammarProgress]
+
+    private var dueGrammar: [GrammarProgress] {
+        let now = Date()
+        return studiedGrammar.filter { $0.fsrsData.due <= now }
+    }
+
+    private var weakGrammar: [GrammarProgress] {
+        dueGrammar.filter { $0.fsrsData.state == .relearning || $0.fsrsData.difficulty > 7.0 }
+    }
+
+    private var mediumGrammar: [GrammarProgress] {
+        dueGrammar.filter { $0.fsrsData.state == .review && $0.fsrsData.difficulty <= 7.0 && $0.fsrsData.stability < 14.0 }
+    }
+
+    private var strongGrammar: [GrammarProgress] {
+        dueGrammar.filter { $0.fsrsData.state == .review && $0.fsrsData.stability >= 14.0 }
+    }
+
+    private let allGrammarLessons = DataManager.shared.loadGrammar()
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -90,33 +108,45 @@ struct ReviewSelectionView: View {
                     
                     VStack(alignment: .leading, spacing: 16) {
                         SectionTitle(icon: "function", title: "Грамматика", color: .purple)
-                        
+
                         VStack(spacing: 12) {
-                            NavigationLink(destination: Text("Grammar Weak")) {
+                            NavigationLink(destination: GrammarDueListView(
+                                title: "Сложные правила",
+                                items: weakGrammar,
+                                allLessons: allGrammarLessons
+                            )) {
                                 ReviewCategoryCard(
                                     title: "Сложные правила",
                                     subtitle: "Требуют внимания",
-                                    count: weakGrammarCount,
+                                    count: weakGrammar.count,
                                     icon: "xmark.octagon.fill",
                                     color: .red
                                 )
                             }
-                            
-                            NavigationLink(destination: Text("Grammar Medium")) {
+
+                            NavigationLink(destination: GrammarDueListView(
+                                title: "В процессе",
+                                items: mediumGrammar,
+                                allLessons: allGrammarLessons
+                            )) {
                                 ReviewCategoryCard(
                                     title: "В процессе",
                                     subtitle: "Иногда путаешь",
-                                    count: mediumGrammarCount,
+                                    count: mediumGrammar.count,
                                     icon: "arrow.triangle.2.circlepath",
                                     color: .orange
                                 )
                             }
-                            
-                            NavigationLink(destination: Text("Grammar Strong")) {
+
+                            NavigationLink(destination: GrammarDueListView(
+                                title: "Усвоенные темы",
+                                items: strongGrammar,
+                                allLessons: allGrammarLessons
+                            )) {
                                 ReviewCategoryCard(
                                     title: "Усвоенные темы",
                                     subtitle: "Закрепление",
-                                    count: strongGrammarCount,
+                                    count: strongGrammar.count,
                                     icon: "star.fill",
                                     color: .green
                                 )
@@ -309,6 +339,71 @@ struct SectionTitle: View {
             Spacer()
         }
         .padding(.horizontal)
+    }
+}
+
+// MARK: - СПИСОК ГРАММАТИЧЕСКИХ УРОКОВ К ПОВТОРЕНИЮ
+struct GrammarDueListView: View {
+    let title: String
+    let items: [GrammarProgress]
+    let allLessons: [GrammarLesson]
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                if items.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 48))
+                            .foregroundColor(.green)
+                            .padding(.top, 60)
+                        Text("Нет уроков к повторению")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                } else {
+                    ForEach(items) { progress in
+                        if let lesson = allLessons.first(where: { $0.id == progress.lessonId }) {
+                            NavigationLink(destination: GrammarLessonView(lesson: lesson)) {
+                                HStack(spacing: 16) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(lesson.title)
+                                            .font(.headline)
+                                            .foregroundColor(.primary)
+                                        HStack(spacing: 8) {
+                                            Text(lesson.level)
+                                                .font(.caption)
+                                                .padding(.horizontal, 8)
+                                                .padding(.vertical, 3)
+                                                .background(Color.purple.opacity(0.1))
+                                                .foregroundColor(.purple)
+                                                .cornerRadius(6)
+                                            Text("Результат: \(Int(progress.lastScore * 100))%")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.bold())
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(16)
+                                .background(Color(UIColor.secondarySystemGroupedBackground))
+                                .cornerRadius(16)
+                                .shadow(color: .black.opacity(0.04), radius: 5, x: 0, y: 2)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                }
+            }
+            .padding()
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
     }
 }
 

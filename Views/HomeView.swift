@@ -14,8 +14,7 @@ struct HomeView: View {
     @AppStorage(StorageKeys.homeCategories) private var storage: CategoryStorage = CategoryStorage()
     
     @State private var showStreakSheet = false
-    @State private var showRecommendedLesson = false
-    @State private var categoryToOpen: String = ""
+    @State private var recommendedCategory: String? = nil
     
     let gridRows = [
         GridItem(.fixed(160), spacing: 16),
@@ -50,16 +49,12 @@ struct HomeView: View {
             .sheet(isPresented: $showStreakSheet) {
                 StreakView(onStartLesson: {
                     if let best = getBestCategory() {
-                        categoryToOpen = best
-                        showRecommendedLesson = true
+                        recommendedCategory = best
                     }
                 })
             }
-            .navigationDestination(isPresented: $showRecommendedLesson) {
-                if !categoryToOpen.isEmpty {
-                    // Инъекция контекста обязательна
-                    FlashcardView(categories: [categoryToOpen], isReviewMode: false, context: modelContext)
-                }
+            .navigationDestination(item: $recommendedCategory) { category in
+                FlashcardView(categories: [category], isReviewMode: false, context: modelContext)
             }
             .onAppear {
                 // Инициализация базы данных при первом входе
