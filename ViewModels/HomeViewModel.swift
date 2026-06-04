@@ -29,6 +29,36 @@ final class HomeViewModel: ObservableObject {
     init() {
         self.userXP = UserDefaults.standard.integer(forKey: StorageKeys.userXP)
         loadDailyState()
+        subscribeToCompletionEvents()
+    }
+
+    private func subscribeToCompletionEvents() {
+        NotificationCenter.default.addObserver(
+            forName: .grammarLessonCompleted,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateChallengeProgress(type: .grammar, progress: 1)
+            self?.autoCompleteIfReady(type: .grammar)
+        }
+
+        NotificationCenter.default.addObserver(
+            forName: .quizCompleted,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            let isPerfect = notification.userInfo?["isPerfect"] as? Bool ?? false
+            if isPerfect {
+                self?.updateChallengeProgress(type: .quiz, progress: 1)
+                self?.autoCompleteIfReady(type: .quiz)
+            }
+        }
+    }
+
+    private func autoCompleteIfReady(type: ChallengeType) {
+        guard let challenge = challenges.first(where: { $0.type == type }),
+              challenge.isCompleted else { return }
+        completeChallenge(challenge)
     }
     
     /// Основной метод синхронизации UI с реальной базой данных.

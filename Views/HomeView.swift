@@ -112,9 +112,10 @@ struct HomeView: View {
                         
                         VStack(spacing: 16) {
                             ForEach(viewModel.challenges) { challenge in
-                                DailyChallengeRow(challenge: challenge) {
-                                    viewModel.completeChallenge(challenge)
+                                NavigationLink(destination: challengeDestination(for: challenge)) {
+                                    DailyChallengeCardContent(challenge: challenge)
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                         .padding(.horizontal)
@@ -232,6 +233,18 @@ struct HomeView: View {
         return (icons[abs(hash) % icons.count], colors[abs(hash) % colors.count])
     }
     
+    @ViewBuilder
+    private func challengeDestination(for challenge: DailyChallenge) -> some View {
+        switch challenge.type {
+        case .words:
+            FlashcardView(categories: [], isReviewMode: false, context: modelContext)
+        case .quiz:
+            QuizView()
+        case .grammar:
+            LessonsView()
+        }
+    }
+
     private func getBestCategory() -> String? {
         var bestCategory: String? = nil
         var highestProgress: Double = -1.0
@@ -308,46 +321,6 @@ struct DailyGoalCard: View {
     }
 }
 
-struct DailyChallengeRow: View {
-    let challenge: DailyChallenge
-    let onComplete: () -> Void
-    @State private var isAnimatingCompletion = false
-    
-    var body: some View {
-        ZStack {
-            if isAnimatingCompletion {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LinearGradient(colors: [.yellow, .orange], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .shadow(color: .orange.opacity(0.6), radius: 10, x: 0, y: 5)
-                    
-                    HStack(spacing: 8) {
-                        Image(systemName: "star.fill").font(.title).foregroundColor(.white)
-                        Text("+\(challenge.reward)").font(.largeTitle).bold().foregroundColor(.white)
-                    }
-                    .scaleEffect(1.1)
-                }
-                .transition(.opacity)
-            } else {
-                DailyChallengeCardContent(challenge: challenge)
-                    .contentShape(Rectangle())
-                    .onTapGesture { triggerCompletion() }
-                    .transition(.opacity)
-            }
-        }
-        .frame(height: 100)
-    }
-    
-    private func triggerCompletion() {
-        withAnimation(.easeInOut(duration: 0.3)) { isAnimatingCompletion = true }
-        Task {
-            try? await Task.sleep(nanoseconds: 1_200_000_000)
-            await MainActor.run {
-                withAnimation { onComplete() }
-            }
-        }
-    }
-}
 
 struct DailyChallengeCardContent: View {
     let challenge: DailyChallenge

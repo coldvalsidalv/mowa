@@ -108,5 +108,11 @@ final class GrammarLessonViewModel: ObservableObject {
         } catch {
             print("❌ GrammarLessonViewModel: failed to save — \(error)")
         }
+
+        NotificationCenter.default.post(name: .grammarLessonCompleted, object: nil)
     }
+}
+
+extension Notification.Name {
+    static let grammarLessonCompleted = Notification.Name("grammarLessonCompleted")
 }
