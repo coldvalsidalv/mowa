@@ -2,12 +2,12 @@ import Foundation
 
 // MARK: - Response DTOs
 
-struct TeenyListResponse<T: Decodable>: Decodable {
+struct TeenyListResponse<T: Decodable & Sendable>: Decodable, Sendable {
     let items: [T]
     let total: Int
 }
 
-struct RemoteWord: Decodable {
+struct RemoteWord: Decodable, Sendable {
     let id: String
     let polish: String
     let translation: String
@@ -40,7 +40,7 @@ struct RemoteWord: Decodable {
     }
 }
 
-struct RemoteGrammarLesson: Decodable {
+struct RemoteGrammarLesson: Decodable, Sendable {
     let lesson_id: String
     let title: String
     let description: String?
@@ -86,7 +86,6 @@ final class APIClient {
     func fetchAllWords() async throws -> [WordItemDTO] {
         let pageSize = 100
         var allWords: [WordItemDTO] = []
-        var page = 1
 
         // Сначала получаем total чтобы знать сколько страниц
         let first = try await fetchWords(page: 1, limit: pageSize)

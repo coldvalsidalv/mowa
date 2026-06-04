@@ -1,7 +1,7 @@
 import Foundation
 
 /// Временная структура (DTO) исключительно для парсинга JSON.
-struct WordItemDTO: Codable {
+struct WordItemDTO: Codable, Sendable {
     let id: Int
     let category: String
     let polish: String
