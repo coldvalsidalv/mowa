@@ -1,0 +1,9 @@
+node_modules/
+.wrangler/
+.local-persist/
+.teeny/
+.tmp.tsconfig.dev.json
+dist/
+*.log
+.dev.vars
+.prod.vars

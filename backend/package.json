@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "generate": "npx teeny generate --config teenybase.ts --local",
+    "deploy:local": "npx teeny deploy --config teenybase.ts --local",
+    "dev": "npx teeny dev --config teenybase.ts --local"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "teenybase": "^0.0.14",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.98.0"
+  }
+}
