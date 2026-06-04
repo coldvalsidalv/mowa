@@ -7,6 +7,16 @@ enum FSRSRating: Int, Codable {
     case hard = 2
     case good = 3
     case easy = 4
+
+    /// Конвертирует результат грамматического теста в рейтинг FSRS
+    static func from(score: Double) -> FSRSRating {
+        switch score {
+        case 0.9...: return .easy
+        case 0.7..<0.9: return .good
+        case 0.5..<0.7: return .hard
+        default: return .again
+        }
+    }
 }
 
 /// Состояния карточки
@@ -64,6 +74,26 @@ final class VocabItem {
         self.example = example
         self.category = category
         self.isClozeUnlocked = false
+        self.fsrsData = FSRSCardData()
+    }
+}
+
+/// FSRS прогресс по грамматическому уроку
+@Model
+final class GrammarProgress {
+    @Attribute(.unique) var lessonId: String
+    var lessonTitle: String
+    var lessonLevel: String
+    var lastScore: Double
+
+    @Relationship(deleteRule: .cascade)
+    var fsrsData: FSRSCardData
+
+    init(lessonId: String, lessonTitle: String, lessonLevel: String) {
+        self.lessonId = lessonId
+        self.lessonTitle = lessonTitle
+        self.lessonLevel = lessonLevel
+        self.lastScore = 0.0
         self.fsrsData = FSRSCardData()
     }
 }

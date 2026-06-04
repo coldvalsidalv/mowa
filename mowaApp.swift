@@ -20,7 +20,7 @@ struct MowaApp: App {
             ContentView()
         }
         // Инициализация локальной базы данных (SwiftData)
-        .modelContainer(for: [VocabItem.self, ReviewLog.self])
+        .modelContainer(for: [VocabItem.self, ReviewLog.self, GrammarProgress.self])
         .onChange(of: scenePhase) { oldPhase, newPhase in
             // ... логика уведомлений
         }

@@ -3,15 +3,16 @@ import SwiftUI
 struct GrammarLessonView: View {
     @StateObject var viewModel: GrammarLessonViewModel
     @Environment(\.dismiss) var dismiss
-    
+    @Environment(\.modelContext) private var modelContext
+
     init(lesson: GrammarLesson) {
         _viewModel = StateObject(wrappedValue: GrammarLessonViewModel(lesson: lesson))
     }
-    
+
     var body: some View {
         ZStack {
             Color(UIColor.systemGroupedBackground).ignoresSafeArea()
-            
+
             if viewModel.showResults {
                 resultsView
             } else {
@@ -19,6 +20,9 @@ struct GrammarLessonView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            viewModel.configure(context: modelContext)
+        }
     }
     
     // MARK: - Основной контент урока
