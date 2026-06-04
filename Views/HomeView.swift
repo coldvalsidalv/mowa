@@ -112,10 +112,11 @@ struct HomeView: View {
                         
                         VStack(spacing: 16) {
                             ForEach(viewModel.challenges) { challenge in
-                                NavigationLink(destination: challengeDestination(for: challenge)) {
-                                    DailyChallengeCardContent(challenge: challenge)
+                                DailyChallengeRow(challenge: challenge) {
+                                    viewModel.completeChallenge(challenge)
+                                } destination: {
+                                    challengeDestination(for: challenge)
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
                         .padding(.horizontal)
@@ -241,7 +242,7 @@ struct HomeView: View {
         case .quiz:
             QuizView()
         case .grammar:
-            LessonsView()
+            LessonsView(initialTab: 1)
         }
     }
 
@@ -321,6 +322,51 @@ struct DailyGoalCard: View {
     }
 }
 
+
+// MARK: - DailyChallengeRow: навигация к заданию + анимация при выполнении
+
+struct DailyChallengeRow<Destination: View>: View {
+    let challenge: DailyChallenge
+    let onComplete: () -> Void
+    let destination: () -> Destination
+
+    @State private var isAnimatingCompletion = false
+
+    var body: some View {
+        ZStack {
+            if isAnimatingCompletion {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(LinearGradient(colors: [.yellow, .orange], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .shadow(color: .orange.opacity(0.6), radius: 10, x: 0, y: 5)
+                    .overlay(
+                        HStack(spacing: 8) {
+                            Image(systemName: "star.fill").font(.title).foregroundColor(.white)
+                            Text("+\(challenge.reward)").font(.largeTitle).bold().foregroundColor(.white)
+                        }
+                    )
+                    .transition(.opacity)
+            } else {
+                NavigationLink(destination: destination()) {
+                    DailyChallengeCardContent(challenge: challenge)
+                }
+                .buttonStyle(.plain)
+                .transition(.opacity)
+            }
+        }
+        .frame(height: 100)
+        // Анимация запускается когда задание выполнено (прогресс достиг цели)
+        .onChange(of: challenge.isCompleted) { _, completed in
+            guard completed, !isAnimatingCompletion else { return }
+            withAnimation(.easeInOut(duration: 0.3)) { isAnimatingCompletion = true }
+            Task {
+                try? await Task.sleep(nanoseconds: 1_200_000_000)
+                await MainActor.run {
+                    withAnimation { onComplete() }
+                }
+            }
+        }
+    }
+}
 
 struct DailyChallengeCardContent: View {
     let challenge: DailyChallenge

@@ -4,7 +4,11 @@ import SwiftData
 struct LessonsView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = LessonsViewModel()
-    @State private var selectedTab = 0
+    @State private var selectedTab: Int
+
+    init(initialTab: Int = 0) {
+        _selectedTab = State(initialValue: initialTab)
+    }
     
     let gridColumns = [
         GridItem(.flexible(), spacing: 16),
