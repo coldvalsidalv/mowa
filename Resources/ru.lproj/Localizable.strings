@@ -1,0 +1,141 @@
+// MARK: - Tab Bar
+"tab.home"        = "Старт";
+"tab.learn"       = "Учить";
+"tab.ranking"     = "Рейтинг";
+"tab.profile"     = "Профиль";
+
+// MARK: - Home
+"home.greeting"            = "Готов учить польский?";
+"home.daily_goal"          = "Дневная цель";
+"home.goal_completed"      = "Цель выполнена!";
+"home.words_progress"      = "Выучено: %d / %d слов";
+"home.xp_earned"           = "+%d XP получено";
+"home.daily_challenges"    = "Ежедневные вызовы";
+"home.all_done"            = "Все вызовы выполнены!";
+"home.all_done_sub"        = "Отличная работа, так держать!";
+"home.quick_practice"      = "Быстрая тренировка";
+"home.topics"              = "Темы";
+"home.add_topics"          = "Добавьте темы для изучения";
+"home.review"              = "Повторение";
+"home.review_sub"          = "Закрепить материал";
+"home.quiz"                = "Викторина";
+"home.quiz_sub"            = "Тест";
+"home.random"              = "Случайное";
+"home.random_sub"          = "Микс";
+"home.repeat"              = "Повторение";
+
+// MARK: - Flashcard
+"flashcard.again"          = "Снова";
+"flashcard.hard"           = "Трудно";
+"flashcard.good"           = "Хорошо";
+"flashcard.easy"           = "Легко";
+"flashcard.finish_title"   = "Отличная работа!";
+"flashcard.finish_sub"     = "Сессия завершена. Интервалы обновлены.";
+"flashcard.finish_btn"     = "Завершить";
+"flashcard.example"        = "PRZYKŁAD";
+
+// MARK: - Quiz
+"quiz.question"            = "Как переводится?";
+"quiz.next"                = "Далее";
+"quiz.finish"              = "Завершить";
+"quiz.result_title"        = "Результат";
+"quiz.score"               = "Правильных ответов: %d из %d";
+
+// MARK: - Grammar
+"grammar.next"             = "Далее";
+"grammar.finish"           = "Завершить";
+"grammar.done_title"       = "Урок завершен!";
+"grammar.done_btn"         = "Отлично";
+"grammar.correct"          = "Правильно!";
+"grammar.wrong"            = "Неверно, попробуй ещё раз";
+"grammar.result"           = "Результат теста: %d из %d";
+
+// MARK: - Library
+"library.title"            = "Библиотека";
+"library.words_tab"        = "Слова";
+"library.grammar_tab"      = "Грамматика";
+"library.search"           = "Поиск...";
+"library.lessons_soon"     = "Уроки скоро появятся";
+
+// MARK: - Review
+"review.title"             = "Что повторим?";
+"review.subtitle"          = "Умный алгоритм подобрал слова, которые ты скоро забудешь.";
+"review.memory_health"     = "Здоровье памяти";
+"review.vocabulary"        = "Словарь";
+"review.grammar"           = "Грамматика";
+"review.weak"              = "Слабые слова";
+"review.weak_sub"          = "Частые ошибки";
+"review.medium"            = "Средние слова";
+"review.medium_sub"        = "Нужна практика";
+"review.strong"            = "Сильные слова";
+"review.strong_sub"        = "Надёжно в памяти";
+"review.smart_mix"         = "Умный микс";
+"review.no_grammar"        = "Нет уроков к повторению";
+
+// MARK: - Profile
+"profile.title"            = "Профиль";
+"profile.account"          = "Аккаунт";
+"profile.personal_data"    = "Персональные данные";
+"profile.vocabulary"       = "Мой словарь";
+"profile.invite"           = "Пригласить друзей";
+"profile.appearance"       = "Внешний вид";
+"profile.system_theme"     = "Системная тема";
+"profile.theme_light"      = "Светлая ☀️";
+"profile.theme_dark"       = "Темная 🌙";
+"profile.settings"         = "Настройки";
+"profile.language"         = "Язык";
+"profile.notifications"    = "Уведомления";
+"profile.goals"            = "Цели и данные";
+"profile.daily_goal"       = "Дневная цель";
+"profile.reset"            = "Сбросить прогресс";
+"profile.delete"           = "Удалить аккаунт";
+"profile.activity"         = "Активность";
+"profile.achievements"     = "Достижения";
+"profile.words"            = "Слов";
+"profile.days"             = "Дней";
+"profile.league"           = "Лига";
+
+// MARK: - Vocabulary
+"vocabulary.title"         = "Мой словарь";
+"vocabulary.total"         = "Всего слов";
+"vocabulary.learned"       = "Изученные слова (%d)";
+"vocabulary.empty"         = "Ещё нет изученных слов";
+"vocabulary.empty_sub"     = "Пройди первый урок и слова появятся здесь";
+
+// MARK: - Leaderboard
+"ranking.title"            = "Рейтинг";
+"ranking.coming_soon"      = "Соперники появятся скоро";
+"ranking.coming_soon_sub"  = "Когда другие пользователи зарегистрируются,\nты сможешь соревноваться с ними здесь.";
+
+// MARK: - Onboarding
+"onboarding.welcome_tagline"  = "Выучи польский язык.\nБыстро и по-настоящему.";
+"onboarding.start"            = "Начать";
+"onboarding.takes"            = "Займёт 2 минуты";
+"onboarding.language_title"   = "Выбери язык";
+"onboarding.language_sub"     = "На каком языке тебе объяснять?";
+"onboarding.placement_title"  = "Что ты уже знаешь?";
+"onboarding.placement_sub"    = "Пропустим то, что тебе знакомо";
+"onboarding.know"             = "Знаю";
+"onboarding.dont_know"        = "Не знаю";
+"onboarding.level_zero"       = "Начинаем с нуля — это нормально 💪";
+"onboarding.level_a1"         = "Уровень A1 — есть база";
+"onboarding.level_a2"         = "Уровень A2+ — отличный старт";
+"onboarding.goal_title"       = "Дневная цель";
+"onboarding.goal_sub"         = "Сколько слов учить каждый день?";
+"onboarding.goal_easy"        = "Легко";
+"onboarding.goal_easy_sub"    = "5 слов · ~5 минут";
+"onboarding.goal_normal"      = "Нормально";
+"onboarding.goal_normal_sub"  = "10 слов · ~10 минут";
+"onboarding.goal_serious"     = "Серьёзно";
+"onboarding.goal_serious_sub" = "20 слов · ~20 минут";
+"onboarding.ready_title"      = "Готово!";
+"onboarding.ready_sub"        = "Всё настроено.\nНачинаем учить польский.";
+"onboarding.start_learning"   = "Начать учить";
+"onboarding.next"             = "Далее";
+
+// MARK: - Common
+"common.close"    = "Закрыть";
+"common.cancel"   = "Отмена";
+"common.ok"       = "OK";
+"common.objects"  = "объектов";
+"common.object"   = "объект";

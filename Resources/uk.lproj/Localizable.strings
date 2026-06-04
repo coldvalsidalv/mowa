@@ -1,0 +1,141 @@
+// MARK: - Tab Bar
+"tab.home"        = "Старт";
+"tab.learn"       = "Вчити";
+"tab.ranking"     = "Рейтинг";
+"tab.profile"     = "Профіль";
+
+// MARK: - Home
+"home.greeting"            = "Готовий вчити польську?";
+"home.daily_goal"          = "Денна ціль";
+"home.goal_completed"      = "Ціль виконана!";
+"home.words_progress"      = "Вивчено: %d / %d слів";
+"home.xp_earned"           = "+%d XP отримано";
+"home.daily_challenges"    = "Щоденні виклики";
+"home.all_done"            = "Усі виклики виконано!";
+"home.all_done_sub"        = "Чудова робота, так тримати!";
+"home.quick_practice"      = "Швидке тренування";
+"home.topics"              = "Теми";
+"home.add_topics"          = "Додайте теми для вивчення";
+"home.review"              = "Повторення";
+"home.review_sub"          = "Закріпити матеріал";
+"home.quiz"                = "Вікторина";
+"home.quiz_sub"            = "Тест";
+"home.random"              = "Випадкове";
+"home.random_sub"          = "Мікс";
+"home.repeat"              = "Повторення";
+
+// MARK: - Flashcard
+"flashcard.again"          = "Знову";
+"flashcard.hard"           = "Важко";
+"flashcard.good"           = "Добре";
+"flashcard.easy"           = "Легко";
+"flashcard.finish_title"   = "Чудова робота!";
+"flashcard.finish_sub"     = "Сесія завершена. Інтервали оновлені.";
+"flashcard.finish_btn"     = "Завершити";
+"flashcard.example"        = "ПРИКЛАД";
+
+// MARK: - Quiz
+"quiz.question"            = "Як перекладається?";
+"quiz.next"                = "Далі";
+"quiz.finish"              = "Завершити";
+"quiz.result_title"        = "Результат";
+"quiz.score"               = "Правильних відповідей: %d з %d";
+
+// MARK: - Grammar
+"grammar.next"             = "Далі";
+"grammar.finish"           = "Завершити";
+"grammar.done_title"       = "Урок завершено!";
+"grammar.done_btn"         = "Чудово";
+"grammar.correct"          = "Правильно!";
+"grammar.wrong"            = "Невірно, спробуй ще раз";
+"grammar.result"           = "Результат тесту: %d з %d";
+
+// MARK: - Library
+"library.title"            = "Бібліотека";
+"library.words_tab"        = "Слова";
+"library.grammar_tab"      = "Граматика";
+"library.search"           = "Пошук...";
+"library.lessons_soon"     = "Уроки з'являться незабаром";
+
+// MARK: - Review
+"review.title"             = "Що повторимо?";
+"review.subtitle"          = "Алгоритм підібрав слова, які ти скоро забудеш.";
+"review.memory_health"     = "Здоров'я пам'яті";
+"review.vocabulary"        = "Словник";
+"review.grammar"           = "Граматика";
+"review.weak"              = "Слабкі слова";
+"review.weak_sub"          = "Часті помилки";
+"review.medium"            = "Середні слова";
+"review.medium_sub"        = "Потрібна практика";
+"review.strong"            = "Сильні слова";
+"review.strong_sub"        = "Надійно в пам'яті";
+"review.smart_mix"         = "Розумний мікс";
+"review.no_grammar"        = "Немає уроків для повторення";
+
+// MARK: - Profile
+"profile.title"            = "Профіль";
+"profile.account"          = "Акаунт";
+"profile.personal_data"    = "Особисті дані";
+"profile.vocabulary"       = "Мій словник";
+"profile.invite"           = "Запросити друзів";
+"profile.appearance"       = "Зовнішній вигляд";
+"profile.system_theme"     = "Системна тема";
+"profile.theme_light"      = "Світла ☀️";
+"profile.theme_dark"       = "Темна 🌙";
+"profile.settings"         = "Налаштування";
+"profile.language"         = "Мова";
+"profile.notifications"    = "Сповіщення";
+"profile.goals"            = "Цілі та дані";
+"profile.daily_goal"       = "Денна ціль";
+"profile.reset"            = "Скинути прогрес";
+"profile.delete"           = "Видалити акаунт";
+"profile.activity"         = "Активність";
+"profile.achievements"     = "Досягнення";
+"profile.words"            = "Слів";
+"profile.days"             = "Днів";
+"profile.league"           = "Ліга";
+
+// MARK: - Vocabulary
+"vocabulary.title"         = "Мій словник";
+"vocabulary.total"         = "Всього слів";
+"vocabulary.learned"       = "Вивчені слова (%d)";
+"vocabulary.empty"         = "Ще немає вивчених слів";
+"vocabulary.empty_sub"     = "Пройди перший урок і слова з'являться тут";
+
+// MARK: - Leaderboard
+"ranking.title"            = "Рейтинг";
+"ranking.coming_soon"      = "Суперники з'являться незабаром";
+"ranking.coming_soon_sub"  = "Коли інші користувачі зареєструються,\nти зможеш змагатись з ними тут.";
+
+// MARK: - Onboarding
+"onboarding.welcome_tagline"  = "Вивчи польську мову.\nШвидко і по-справжньому.";
+"onboarding.start"            = "Почати";
+"onboarding.takes"            = "Займе 2 хвилини";
+"onboarding.language_title"   = "Обери мову";
+"onboarding.language_sub"     = "Якою мовою тобі пояснювати?";
+"onboarding.placement_title"  = "Що ти вже знаєш?";
+"onboarding.placement_sub"    = "Пропустимо те, що тобі знайоме";
+"onboarding.know"             = "Знаю";
+"onboarding.dont_know"        = "Не знаю";
+"onboarding.level_zero"       = "Починаємо з нуля — це нормально 💪";
+"onboarding.level_a1"         = "Рівень A1 — є база";
+"onboarding.level_a2"         = "Рівень A2+ — чудовий старт";
+"onboarding.goal_title"       = "Денна ціль";
+"onboarding.goal_sub"         = "Скільки слів вчити щодня?";
+"onboarding.goal_easy"        = "Легко";
+"onboarding.goal_easy_sub"    = "5 слів · ~5 хвилин";
+"onboarding.goal_normal"      = "Нормально";
+"onboarding.goal_normal_sub"  = "10 слів · ~10 хвилин";
+"onboarding.goal_serious"     = "Серйозно";
+"onboarding.goal_serious_sub" = "20 слів · ~20 хвилин";
+"onboarding.ready_title"      = "Готово!";
+"onboarding.ready_sub"        = "Все налаштовано.\nПочинаємо вчити польську.";
+"onboarding.start_learning"   = "Почати вчити";
+"onboarding.next"             = "Далі";
+
+// MARK: - Common
+"common.close"    = "Закрити";
+"common.cancel"   = "Скасувати";
+"common.ok"       = "OK";
+"common.objects"  = "об'єктів";
+"common.object"   = "об'єкт";
