@@ -19,4 +19,5 @@ enum StorageKeys {
     static let appLanguage = "appLanguage"
     static let notificationsEnabled = "notificationsEnabled"
     static let notificationTime = "notificationTime"
+    static let hasCompletedOnboarding = "hasCompletedOnboarding"
 }
