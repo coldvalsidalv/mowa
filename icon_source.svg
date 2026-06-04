@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Deep indigo to rich violet background -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1145"/>
+      <stop offset="55%" style="stop-color:#2d1b69"/>
+      <stop offset="100%" style="stop-color:#0f2d6b"/>
+    </linearGradient>
+
+    <!-- Gold shimmer for accents -->
+    <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE082"/>
+      <stop offset="50%" style="stop-color:#FFB300"/>
+      <stop offset="100%" style="stop-color:#FF8F00"/>
+    </linearGradient>
+
+    <!-- White-to-pale for the V letterform -->
+    <linearGradient id="vgrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="100%" style="stop-color:#C5CAE9"/>
+    </linearGradient>
+
+    <filter id="vshadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="18" flood-color="#000033" flood-opacity="0.5"/>
+    </filter>
+
+    <filter id="glowgold">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="220" ry="220" fill="url(#bg)"/>
+
+  <!-- Subtle radial highlight center-top -->
+  <radialGradient id="vignette" cx="50%" cy="30%" r="55%">
+    <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.07"/>
+    <stop offset="100%" style="stop-color:#000000;stop-opacity:0"/>
+  </radialGradient>
+  <rect width="1024" height="1024" rx="220" ry="220" fill="url(#vignette)"/>
+
+  <!-- Thin decorative horizontal rule (like a Latin manuscript line) -->
+  <rect x="140" y="700" width="744" height="3" rx="1.5" fill="#FFB300" opacity="0.5"/>
+
+  <!-- ===== Large V letterform with classical serifs ===== -->
+  <g filter="url(#vshadow)">
+    <!-- Left arm of V -->
+    <polygon
+      points="
+        175,195
+        260,195
+        512,640
+        764,195
+        849,195
+        512,750
+      "
+      fill="url(#vgrad)"
+    />
+
+    <!-- Top-left serif (horizontal bar) -->
+    <rect x="148" y="195" width="139" height="52" rx="6" fill="url(#vgrad)"/>
+    <!-- Top-right serif -->
+    <rect x="737" y="195" width="139" height="52" rx="6" fill="url(#vgrad)"/>
+
+    <!-- Bottom serif at tip of V (small diamond) -->
+    <ellipse cx="512" cy="752" rx="22" ry="14" fill="url(#vgrad)" opacity="0.8"/>
+  </g>
+
+  <!-- ===== Gold accent: small open book below the V ===== -->
+  <g transform="translate(512, 830)" filter="url(#glowgold)">
+    <!-- Book spine -->
+    <rect x="-4" y="-38" width="8" height="60" rx="3" fill="url(#gold)"/>
+
+    <!-- Left page -->
+    <path d="M -4,-34 Q -72,-28 -80,16 L -4,22 Z" fill="url(#gold)" opacity="0.85"/>
+    <!-- Right page -->
+    <path d="M 4,-34 Q 72,-28 80,16 L 4,22 Z" fill="url(#gold)" opacity="0.85"/>
+
+    <!-- Page lines on left -->
+    <line x1="-60" y1="-8" x2="-18" y2="-6" stroke="#FFF8E1" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <line x1="-58" y1="2" x2="-16" y2="3" stroke="#FFF8E1" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <line x1="-55" y1="11" x2="-14" y2="12" stroke="#FFF8E1" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+
+    <!-- Page lines on right -->
+    <line x1="18" y1="-6" x2="60" y2="-8" stroke="#FFF8E1" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <line x1="16" y1="3" x2="58" y2="2" stroke="#FFF8E1" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <line x1="14" y1="12" x2="55" y2="11" stroke="#FFF8E1" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+  </g>
+
+  <!-- ===== Four small stars / sparkles ===== -->
+  <!-- Top-right star -->
+  <g transform="translate(840, 148)" opacity="0.8">
+    <polygon points="0,-18 4,-6 17,-6 7,2 11,14 0,7 -11,14 -7,2 -17,-6 -4,-6" fill="#FFD54F"/>
+  </g>
+  <!-- Top-left small dot -->
+  <circle cx="188" cy="152" r="9" fill="#FFD54F" opacity="0.6"/>
+  <!-- Small left -->
+  <circle cx="148" cy="580" r="6" fill="#7986CB" opacity="0.5"/>
+  <!-- Small right -->
+  <circle cx="876" cy="580" r="6" fill="#7986CB" opacity="0.5"/>
+</svg>
