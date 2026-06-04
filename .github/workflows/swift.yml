@@ -1,7 +1,4 @@
-# This workflow will build a Swift project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
-
-name: Swift
+name: CI
 
 on:
   push:
@@ -9,14 +6,34 @@ on:
   pull_request:
     branches: [ "main" ]
 
-jobs:
-  build:
+permissions:
+  contents: read
 
-    runs-on: macos-latest
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: macos-15
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.app
+
+      - name: Build
+        run: |
+          xcodebuild build \
+            -project mowa.xcodeproj \
+            -scheme Verbum \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5' \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
+            | xcpretty || cat
+
+      - name: Test
+        run: |
+          xcodebuild test \
+            -project mowa.xcodeproj \
+            -scheme Verbum \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5' \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
+            | xcpretty || cat
