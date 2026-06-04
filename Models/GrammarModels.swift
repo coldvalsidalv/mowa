@@ -7,7 +7,7 @@ enum GrammarStepType: String, Codable {
 }
 
 // Один шаг (слайд) урока
-struct GrammarStep: Identifiable, Codable, Hashable {
+struct GrammarStep: Identifiable, Codable, Hashable, Sendable {
     var id: String = UUID().uuidString
     let type: GrammarStepType
     
@@ -22,7 +22,7 @@ struct GrammarStep: Identifiable, Codable, Hashable {
 }
 
 // Модель самого урока
-struct GrammarLesson: Identifiable, Codable, Hashable {
+struct GrammarLesson: Identifiable, Codable, Hashable, Sendable {
     let id: String
     let title: String
     let description: String
