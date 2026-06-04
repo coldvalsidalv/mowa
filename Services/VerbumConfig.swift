@@ -3,7 +3,7 @@ import Foundation
 enum VerbumConfig {
     /// Базовый URL бэкенда. Меняем только здесь при деплое в прод.
     #if DEBUG
-    static let baseURL = "http://localhost:8787"
+    static let baseURL = "http://127.0.0.1:8787"
     #else
     static let baseURL = "https://verbum-backend.YOUR_ACCOUNT.workers.dev"
     #endif
