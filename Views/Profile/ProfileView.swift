@@ -52,13 +52,61 @@ struct ProfileView: View {
                 
                 Section {
                     HStack(alignment: .center) {
-                        CompactStatItem(value: "\(viewModel.totalLearnedWords)", title: "Слов")
-                        Divider()
                         CompactStatItem(value: "\(viewModel.dayStreak)", title: "Дней", icon: "flame.fill", color: .orange)
                         Divider()
                         CompactStatItem(value: "\(viewModel.userXP)", title: "XP")
                         Divider()
                         CompactStatItem(value: viewModel.currentLeagueTitle, title: "Лига", icon: "shield.fill", color: .brown)
+                    }
+                    .padding(.vertical, 8)
+                }
+
+                Section {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Прогресс слов").font(.headline)
+                        HStack(spacing: 0) {
+                            WordProgressItem(
+                                count: viewModel.wordsLearning,
+                                label: "Учу",
+                                color: .orange
+                            )
+                            Divider()
+                            WordProgressItem(
+                                count: viewModel.wordsKnown,
+                                label: "Знаю",
+                                color: .blue
+                            )
+                            Divider()
+                            WordProgressItem(
+                                count: viewModel.wordsMastered,
+                                label: "Выучено",
+                                color: .green
+                            )
+                        }
+                        .padding(.vertical, 4)
+
+                        // Прогресс-бар с тремя сегментами
+                        let total = max(1, viewModel.wordsLearning + viewModel.wordsKnown + viewModel.wordsMastered)
+                        GeometryReader { geo in
+                            HStack(spacing: 2) {
+                                if viewModel.wordsLearning > 0 {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color.orange)
+                                        .frame(width: geo.size.width * CGFloat(viewModel.wordsLearning) / CGFloat(total))
+                                }
+                                if viewModel.wordsKnown > 0 {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color.blue)
+                                        .frame(width: geo.size.width * CGFloat(viewModel.wordsKnown) / CGFloat(total))
+                                }
+                                if viewModel.wordsMastered > 0 {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color.green)
+                                        .frame(maxWidth: .infinity)
+                                }
+                            }
+                        }
+                        .frame(height: 8)
                     }
                     .padding(.vertical, 8)
                 }
@@ -219,6 +267,24 @@ struct ProfileView: View {
         }
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets())
+    }
+}
+
+struct WordProgressItem: View {
+    let count: Int
+    let label: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text("\(count)")
+                .font(.title2).bold()
+                .foregroundColor(color)
+            Text(label)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
