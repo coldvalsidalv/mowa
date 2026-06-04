@@ -1,5 +1,19 @@
 import SwiftUI
 
+// MARK: - Root: онбординг или основной экран
+
+struct RootView: View {
+    @AppStorage(StorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
+
+    var body: some View {
+        if hasCompletedOnboarding {
+            ContentView()
+        } else {
+            OnboardingView()
+        }
+    }
+}
+
 struct ContentView: View {
     @State private var selectedTab = 0
     

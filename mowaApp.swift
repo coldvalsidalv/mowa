@@ -17,7 +17,7 @@ struct MowaApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
         // Инициализация локальной базы данных (SwiftData)
         .modelContainer(for: [VocabItem.self, ReviewLog.self, GrammarProgress.self])
