@@ -17,7 +17,6 @@ final class ProfileViewModel: ObservableObject {
     @AppStorage(StorageKeys.notificationsEnabled) var notificationsEnabled: Bool = false
     @AppStorage(StorageKeys.notificationTime) var notificationTimeInterval: Double = 32400
 
-    @Published var showDeleteAlert = false
     @Published var showResetAlert = false
     @Published var showAchievementsDetail = false
 
@@ -74,8 +73,16 @@ final class ProfileViewModel: ObservableObject {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 
+    var displayName: String {
+        userName.isEmpty ? "Пользователь" : userName
+    }
+
+    var currentLeague: UserLeague {
+        UserLeague.determineLeague(for: userXP)
+    }
+
     var currentLeagueTitle: String {
-        UserLeague.determineLeague(for: userXP).title
+        currentLeague.title
     }
 
     // MARK: - Activity from ReviewLog

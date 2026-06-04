@@ -16,6 +16,17 @@ enum UserLeague: Int, CaseIterable, Identifiable {
         case .diamond: return "Liga Diamentowa"
         }
     }
+
+    var shortTitle: String {
+        switch self {
+        case .bronze:  return "Brązowa"
+        case .silver:  return "Srebrna"
+        case .gold:    return "Złota"
+        case .diamond: return "Diamentowa"
+        }
+    }
+
+    var color: Color { gradientColors.first ?? .gray }
     
     var icon: String {
         switch self {

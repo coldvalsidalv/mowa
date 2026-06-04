@@ -38,8 +38,10 @@ final class HomeViewModel: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.updateChallengeProgress(type: .grammar, progress: 1)
-            self?.autoCompleteIfReady(type: .grammar)
+            Task { @MainActor [weak self] in
+                self?.updateChallengeProgress(type: .grammar, progress: 1)
+                self?.autoCompleteIfReady(type: .grammar)
+            }
         }
 
         NotificationCenter.default.addObserver(
@@ -49,8 +51,10 @@ final class HomeViewModel: ObservableObject {
         ) { [weak self] notification in
             let isPerfect = notification.userInfo?["isPerfect"] as? Bool ?? false
             if isPerfect {
-                self?.updateChallengeProgress(type: .quiz, progress: 1)
-                self?.autoCompleteIfReady(type: .quiz)
+                Task { @MainActor [weak self] in
+                    self?.updateChallengeProgress(type: .quiz, progress: 1)
+                    self?.autoCompleteIfReady(type: .quiz)
+                }
             }
         }
     }

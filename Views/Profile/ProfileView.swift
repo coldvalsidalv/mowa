@@ -32,100 +32,62 @@ struct ProfileView: View {
             List {
                 headerSection
                 
-                Section("Аккаунт") {
-                    NavigationLink(value: ProfileRoute.personalData) {
-                        Label { Text("Персональные данные") } icon: { Image(systemName: "person.crop.circle").foregroundColor(.blue) }
-                    }
-                    NavigationLink(value: ProfileRoute.vocabulary) {
-                        Label {
-                            HStack {
-                                Text("Мой словарь")
-                                Spacer()
-                                Text("\(viewModel.totalLearnedWords) слов").foregroundColor(.secondary).font(.subheadline)
-                            }
-                        } icon: { Image(systemName: "book.closed.fill").foregroundColor(.indigo) }
-                    }
-                    ShareLink(item: URL(string: "https://verbum.app")!) {
-                        Label { Text("Пригласить друзей") } icon: { Image(systemName: "square.and.arrow.up").foregroundColor(.green) }
-                    }
-                }
-                
-                Section {
-                    HStack(alignment: .center) {
-                        CompactStatItem(value: "\(viewModel.dayStreak)", title: "Дней", icon: "flame.fill", color: .orange)
-                        Divider()
-                        CompactStatItem(value: "\(viewModel.userXP)", title: "XP")
-                        Divider()
-                        CompactStatItem(value: viewModel.currentLeagueTitle, title: "Лига", icon: "shield.fill", color: .brown)
-                    }
-                    .padding(.vertical, 8)
-                }
-
-                Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Прогресс слов").font(.headline)
+                // MARK: Прогресс слов
+                Section("Прогресс слов") {
+                    let total = viewModel.wordsLearning + viewModel.wordsKnown + viewModel.wordsMastered
+                    if total == 0 {
+                        Text("Начни учить слова — здесь появится твой прогресс")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.vertical, 8)
+                    } else {
                         HStack(spacing: 0) {
-                            WordProgressItem(
-                                count: viewModel.wordsLearning,
-                                label: "Учу",
-                                color: .orange
-                            )
-                            Divider()
-                            WordProgressItem(
-                                count: viewModel.wordsKnown,
-                                label: "Знаю",
-                                color: .blue
-                            )
-                            Divider()
-                            WordProgressItem(
-                                count: viewModel.wordsMastered,
-                                label: "Выучено",
-                                color: .green
-                            )
+                            ProfileStatItem(icon: "circle.fill", color: .orange, value: "\(viewModel.wordsLearning)", label: "Учу")
+                            Divider().frame(height: 36)
+                            ProfileStatItem(icon: "circle.fill", color: .blue, value: "\(viewModel.wordsKnown)", label: "Знаю")
+                            Divider().frame(height: 36)
+                            ProfileStatItem(icon: "circle.fill", color: .green, value: "\(viewModel.wordsMastered)", label: "Выучено")
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 10)
 
-                        // Прогресс-бар с тремя сегментами
-                        let total = max(1, viewModel.wordsLearning + viewModel.wordsKnown + viewModel.wordsMastered)
                         GeometryReader { geo in
                             HStack(spacing: 2) {
                                 if viewModel.wordsLearning > 0 {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color.orange)
+                                    RoundedRectangle(cornerRadius: 3).fill(Color.orange)
                                         .frame(width: geo.size.width * CGFloat(viewModel.wordsLearning) / CGFloat(total))
                                 }
                                 if viewModel.wordsKnown > 0 {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color.blue)
+                                    RoundedRectangle(cornerRadius: 3).fill(Color.blue)
                                         .frame(width: geo.size.width * CGFloat(viewModel.wordsKnown) / CGFloat(total))
                                 }
                                 if viewModel.wordsMastered > 0 {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color.green)
+                                    RoundedRectangle(cornerRadius: 3).fill(Color.green)
                                         .frame(maxWidth: .infinity)
                                 }
                             }
                         }
-                        .frame(height: 8)
+                        .frame(height: 6)
+                        .padding(.bottom, 8)
                     }
-                    .padding(.vertical, 8)
                 }
-                
-                Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Активность").font(.headline)
+
+                // MARK: Активность
+                let hasActivity = viewModel.activityData.contains { $0.xp > 0 }
+                if hasActivity {
+                    Section("Активность") {
                         Chart(viewModel.activityData) { item in
                             BarMark(x: .value("Day", item.day), y: .value("XP", item.xp))
                                 .foregroundStyle(LinearGradient(colors: [.blue, .purple], startPoint: .bottom, endPoint: .top))
                                 .cornerRadius(6)
                         }
-                        .frame(height: 160)
+                        .frame(height: 130)
                         .chartYAxis { AxisMarks(position: .leading) }
                         .chartXAxis { AxisMarks { _ in AxisValueLabel().font(.caption2).foregroundStyle(.secondary) } }
+                        .padding(.vertical, 8)
                     }
-                    .padding(.vertical, 12)
                 }
-                
+
+                // MARK: Достижения
                 Section {
                     Button(action: { viewModel.showAchievementsDetail = true }) {
                         VStack(alignment: .leading, spacing: 12) {
@@ -147,13 +109,32 @@ struct ProfileView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                
+
+                // MARK: Аккаунт
+                Section("Аккаунт") {
+                    NavigationLink(value: ProfileRoute.personalData) {
+                        Label { Text("Персональные данные") } icon: {
+                            Image(systemName: "person.crop.circle").foregroundColor(.blue)
+                        }
+                    }
+                    NavigationLink(value: ProfileRoute.vocabulary) {
+                        Label {
+                            HStack {
+                                Text("Мой словарь")
+                                Spacer()
+                                Text("\(viewModel.totalLearnedWords) слов")
+                                    .foregroundColor(.secondary).font(.subheadline)
+                            }
+                        } icon: { Image(systemName: "book.closed.fill").foregroundColor(.indigo) }
+                    }
+                }
+
+                // MARK: Настройки
                 Section("Внешний вид") {
                     Toggle("Системная тема", isOn: $viewModel.useSystemTheme)
                         .onChange(of: viewModel.useSystemTheme) { _, newValue in
                             ThemeApplier.applyTheme(useSystemTheme: newValue, isDarkMode: viewModel.isDarkMode, animated: true)
                         }
-                    
                     if !viewModel.useSystemTheme {
                         Picker("Тема", selection: $viewModel.isDarkMode) {
                             Text("Светлая ☀️").tag(false)
@@ -167,7 +148,7 @@ struct ProfileView: View {
                         }
                     }
                 }
-                
+
                 Section(L("profile.settings")) {
                     Picker(L("profile.language"), selection: $viewModel.appLanguage) {
                         Text("Русский").tag("ru")
@@ -181,31 +162,27 @@ struct ProfileView: View {
                         .onChange(of: viewModel.notificationsEnabled) { _, isEnabled in
                             viewModel.toggleNotifications(isEnabled)
                         }
-
                     if viewModel.notificationsEnabled {
                         DatePicker("Время", selection: viewModel.notificationTimeBinding, displayedComponents: .hourAndMinute)
                     }
                 }
-                
-                Section("Цели и данные") {
+
+                Section("Обучение") {
                     Picker("Дневная цель", selection: $viewModel.dailyGoal) {
                         Text("5 слов").tag(5)
                         Text("10 слов").tag(10)
                         Text("20 слов").tag(20)
                     }
-                    Button(role: .destructive) { viewModel.showResetAlert = true } label: { Text("Сбросить прогресс") }
-                }
-                
-                Section {
-                    Button(action: { viewModel.showDeleteAlert = true }) {
-                        Text("Удалить аккаунт").font(.body).foregroundColor(.red).frame(maxWidth: .infinity, alignment: .center)
+                    Button(role: .destructive) { viewModel.showResetAlert = true } label: {
+                        Text("Сбросить прогресс")
                     }
                 }
-                
+
                 Section {
                     HStack {
                         Spacer()
-                        Text("Версия \(viewModel.appVersion) • Verbum").font(.caption2).foregroundColor(.secondary)
+                        Text("Версия \(viewModel.appVersion) • Verbum")
+                            .font(.caption2).foregroundColor(.secondary)
                         Spacer()
                     }
                 }
@@ -226,13 +203,13 @@ struct ProfileView: View {
                 viewModel.refreshLearnedCount(context: modelContext)
                 viewModel.loadActivity(context: modelContext)
             }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                viewModel.refreshLearnedCount(context: modelContext)
+                viewModel.loadActivity(context: modelContext)
+            }
             .sheet(isPresented: $viewModel.showAchievementsDetail) {
                 AchievementsDetailView(achievements: viewModel.achievements)
             }
-            .alert("Удалить аккаунт?", isPresented: $viewModel.showDeleteAlert) {
-                Button("Отмена", role: .cancel) { }
-                Button("Удалить", role: .destructive) { viewModel.deleteAccount() }
-            } message: { Text("Это действие нельзя отменить.") }
             .alert("Сбросить прогресс?", isPresented: $viewModel.showResetAlert) {
                 Button("Отмена", role: .cancel) { }
                 Button("Сбросить", role: .destructive) { viewModel.resetAllProgress() }
@@ -242,61 +219,67 @@ struct ProfileView: View {
     
     private var headerSection: some View {
         Section {
-            VStack(spacing: 8) {
-                AvatarView(
-                    urlString: nil,
-                    localImage: avatarManager.avatar,
-                    name: viewModel.userName,
-                    color: .blue,
-                    size: 100
-                )
-                
-                VStack(spacing: 2) {
-                    Text(viewModel.userName)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                    Text(viewModel.userEmail)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
+            VStack(spacing: 20) {
+                // Аватарка + имя
+                VStack(spacing: 10) {
+                    AvatarView(
+                        urlString: nil,
+                        localImage: avatarManager.avatar,
+                        name: viewModel.displayName,
+                        color: .blue,
+                        size: 88
+                    )
+                    VStack(spacing: 2) {
+                        Text(viewModel.displayName)
+                            .font(.title3).fontWeight(.semibold)
+                        if !viewModel.userEmail.isEmpty {
+                            Text(viewModel.userEmail)
+                                .font(.footnote).foregroundColor(.secondary)
+                        }
+                    }
+                }
+
+                // Статистика
+                HStack(spacing: 0) {
+                    ProfileStatItem(icon: "flame.fill", color: .orange,
+                                    value: "\(viewModel.dayStreak)", label: "Дней")
+                    Divider().frame(height: 32)
+                    ProfileStatItem(icon: "star.fill", color: .yellow,
+                                    value: "\(viewModel.userXP)", label: "XP")
+                    Divider().frame(height: 32)
+                    ProfileStatItem(
+                        icon: viewModel.currentLeague.icon,
+                        color: viewModel.currentLeague.color,
+                        value: "",
+                        label: viewModel.currentLeague.shortTitle
+                    )
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.top, 0)
-            .padding(.bottom, 12)
+            .padding(.vertical, 16)
         }
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets())
     }
 }
 
-struct WordProgressItem: View {
-    let count: Int
-    let label: String
+struct ProfileStatItem: View {
+    let icon: String
     let color: Color
+    let value: String
+    let label: String
 
     var body: some View {
         VStack(spacing: 4) {
-            Text("\(count)")
-                .font(.title2).bold()
-                .foregroundColor(color)
-            Text(label)
-                .font(.caption2)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-    }
-}
-
-struct CompactStatItem: View {
-    let value: String; let title: String; var icon: String? = nil; var color: Color = .primary
-    var body: some View {
-        VStack(spacing: 2) {
             HStack(spacing: 4) {
-                if let icon = icon { Image(systemName: icon).font(.caption2).foregroundColor(color) }
-                Text(value).font(.headline).fontWeight(.semibold).foregroundColor(color == .primary ? .primary : color)
+                Image(systemName: icon).font(.caption).foregroundColor(color)
+                Text(value)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
             }
-            Text(title).font(.caption2).foregroundColor(.secondary)
+            Text(label).font(.caption2).foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
     }
