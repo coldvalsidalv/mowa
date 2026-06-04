@@ -171,7 +171,7 @@
 			productReference = 2BF024762EF0BDBE00CAC740 /* Verbum.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2BF024822EF0BDC000CAC740 /* mowaTests */ = {
+		2BF024822EF0BDC000CAC740 /* VerbumTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2BF0249A2EF0BDC000CAC740 /* Build configuration list for PBXNativeTarget "VerbumTests" */;
 			buildPhases = (
@@ -194,7 +194,7 @@
 			productReference = 2BF024832EF0BDC000CAC740 /* VerbumTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		2BF0248C2EF0BDC000CAC740 /* mowaUITests */ = {
+		2BF0248C2EF0BDC000CAC740 /* VerbumUITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2BF0249D2EF0BDC000CAC740 /* Build configuration list for PBXNativeTarget "VerbumUITests" */;
 			buildPhases = (
@@ -240,7 +240,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 2BF024712EF0BDBE00CAC740 /* Build configuration list for PBXProject "Verbum" */;
+			buildConfigurationList = 2BF024712EF0BDBE00CAC740 /* Build configuration list for PBXProject "mowa" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -255,8 +255,8 @@
 			projectRoot = "";
 			targets = (
 				2BF024752EF0BDBE00CAC740 /* Verbum */,
-				2BF024822EF0BDC000CAC740 /* mowaTests */,
-				2BF0248C2EF0BDC000CAC740 /* mowaUITests */,
+				2BF024822EF0BDC000CAC740 /* VerbumTests */,
+				2BF0248C2EF0BDC000CAC740 /* VerbumUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -533,7 +533,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Verbum.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/mowa";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Verbum.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Verbum";
 			};
 			name = Debug;
 		};
@@ -555,7 +555,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Verbum.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/mowa";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Verbum.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Verbum";
 			};
 			name = Release;
 		};
@@ -602,7 +602,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2BF024712EF0BDBE00CAC740 /* Build configuration list for PBXProject "Verbum" */ = {
+		2BF024712EF0BDBE00CAC740 /* Build configuration list for PBXProject "mowa" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2BF024952EF0BDC000CAC740 /* Debug */,
