@@ -23,12 +23,12 @@ async function fetchAll() {
   return (await resp.json()).items
 }
 
-async function updateWord(id, category, rank) {
+async function updateWord(id, category, rank, inflections) {
   const res = await fetch(`${DB_URL}/api/v1/table/vocabulary/update`, {
     method: 'POST', headers: HEADERS,
     body: JSON.stringify({
       where: `id = '${id}'`,
-      setValues: { category, rank },
+      setValues: { category, rank, inflections: JSON.stringify(inflections ?? {}) },
     }),
   })
   return res.ok
@@ -52,7 +52,7 @@ async function main() {
 
   // Загружаем words.json (уже с rank и новыми категориями)
   const bundleWords = JSON.parse(readFileSync(resolve(ROOT, 'Resources/words.json'), 'utf8'))
-  const bundleMap = new Map(bundleWords.map(w => [w.polish, { category: w.category, rank: w.rank }]))
+  const bundleMap = new Map(bundleWords.map(w => [w.polish, { category: w.category, rank: w.rank, inflections: w.inflections ?? {} }]))
   console.log(`→ Bundle: ${bundleWords.length} words`)
 
   // Загружаем все слова из DB
@@ -66,8 +66,7 @@ async function main() {
   for (const dbWord of dbWords) {
     const bundle = bundleMap.get(dbWord.polish)
     if (!bundle) { noMatch++; continue }
-    if (dbWord.category === bundle.category && dbWord.rank === bundle.rank) continue
-    tasks.push(() => updateWord(dbWord.id, bundle.category, bundle.rank))
+    tasks.push(() => updateWord(dbWord.id, bundle.category, bundle.rank, bundle.inflections))
   }
 
   console.log(`\n→ Need to update: ${tasks.length} words (${noMatch} not in bundle, skipped)`)

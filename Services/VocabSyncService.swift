@@ -100,18 +100,22 @@ private extension VocabItem {
             example: remote.example ?? "",
             category: remote.category,
             rank: remote.rank ?? 0,
+            inflections: remote.inflections ?? "{}",
             remoteId: remote.id
         )
     }
 
     convenience init(bundle: BundleWord) {
+        let inflJson = (try? JSONSerialization.data(withJSONObject: bundle.inflections))
+            .flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
         self.init(
             polish: bundle.polish,
             translation: bundle.translation,
             partOfSpeech: bundle.partOfSpeech,
             example: bundle.example,
             category: bundle.category,
-            rank: bundle.rank
+            rank: bundle.rank,
+            inflections: inflJson
         )
     }
 
@@ -122,5 +126,6 @@ private extension VocabItem {
         example = word.example ?? example
         category = word.category
         rank = word.rank ?? rank
+        inflections = word.inflections ?? inflections
     }
 }

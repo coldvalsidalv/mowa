@@ -9,6 +9,7 @@ struct BundleWord: Decodable, Sendable {
     let partOfSpeech: String
     let category: String
     let rank: Int
+    let inflections: [String: String]
 }
 
 final class DataManager {

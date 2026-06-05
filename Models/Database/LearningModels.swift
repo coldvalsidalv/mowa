@@ -63,6 +63,8 @@ final class VocabItem {
     var category: String
     /// Порядок внутри категории по частотности (1 = самое частое)
     var rank: Int
+    /// Ключевые флексии: {"1sg":"czytam","3sg":"czyta","past":"czytał","imp":"czytaj"}
+    var inflections: String
     
     // Педагогическая стратегия: фаза обучения (single-word -> cloze-test)
     var isClozeUnlocked: Bool
@@ -70,7 +72,7 @@ final class VocabItem {
     @Relationship(deleteRule: .cascade)
     var fsrsData: FSRSCardData
     
-    init(polish: String, translation: String, partOfSpeech: String, example: String, category: String, rank: Int = 0, remoteId: String? = nil) {
+    init(polish: String, translation: String, partOfSpeech: String, example: String, category: String, rank: Int = 0, inflections: String = "{}", remoteId: String? = nil) {
         self.id = UUID()
         self.remoteId = remoteId
         self.polish = polish
@@ -79,6 +81,7 @@ final class VocabItem {
         self.example = example
         self.category = category
         self.rank = rank
+        self.inflections = inflections
         self.isClozeUnlocked = false
         self.fsrsData = FSRSCardData()
     }
