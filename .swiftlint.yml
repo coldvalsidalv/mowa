@@ -43,10 +43,4 @@ identifier_name:
     - d                       # FSRS: difficulty
     - t                       # FSRS: time
     - w                       # FSRS: weight
-    - i                       # цикл-счётчик
-    - p                       # APIClient: page counter / pagination
-    - x                       # геометрия: координата X
-    - y                       # геометрия: координата Y
-    - c                       # CodingKeys container
-    - f                       # DateFormatter локал
   allowed_symbols: "_"        # разрешаем snake_case (API-модели)

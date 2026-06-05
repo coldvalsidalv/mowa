@@ -29,19 +29,19 @@ extension RemoteWord: Decodable {
     }
 
     nonisolated init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        id           = try c.decode(String.self, forKey: .id)
-        polish       = try c.decode(String.self, forKey: .polish)
-        translation  = try c.decode(String.self, forKey: .translation)
-        transcription  = try c.decodeIfPresent(String.self, forKey: .transcription)
-        part_of_speech = try c.decodeIfPresent(String.self, forKey: .part_of_speech)
-        example        = try c.decodeIfPresent(String.self, forKey: .example)
-        examples_list  = try c.decodeIfPresent(String.self, forKey: .examples_list)
-        category       = try c.decode(String.self, forKey: .category)
-        image_name     = try c.decodeIfPresent(String.self, forKey: .image_name)
-        updated        = try c.decodeIfPresent(String.self, forKey: .updated)
-        rank           = try c.decodeIfPresent(Int.self, forKey: .rank)
-        inflections    = try c.decodeIfPresent(String.self, forKey: .inflections)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id           = try container.decode(String.self, forKey: .id)
+        polish       = try container.decode(String.self, forKey: .polish)
+        translation  = try container.decode(String.self, forKey: .translation)
+        transcription  = try container.decodeIfPresent(String.self, forKey: .transcription)
+        part_of_speech = try container.decodeIfPresent(String.self, forKey: .part_of_speech)
+        example        = try container.decodeIfPresent(String.self, forKey: .example)
+        examples_list  = try container.decodeIfPresent(String.self, forKey: .examples_list)
+        category       = try container.decode(String.self, forKey: .category)
+        image_name     = try container.decodeIfPresent(String.self, forKey: .image_name)
+        updated        = try container.decodeIfPresent(String.self, forKey: .updated)
+        rank           = try container.decodeIfPresent(Int.self, forKey: .rank)
+        inflections    = try container.decodeIfPresent(String.self, forKey: .inflections)
     }
 }
 
@@ -99,11 +99,11 @@ final class APIClient {
         let totalPages = Int(ceil(Double(first.total) / Double(pageSize)))
         if totalPages > 1 {
             try await withThrowingTaskGroup(of: [RemoteWord].self) { group in
-                for p in 2...totalPages {
+                for page in 2...totalPages {
                     group.addTask { [weak self] in
                         guard let self else { return [] }
                         var pageBody = body
-                        pageBody["offset"] = (p - 1) * pageSize
+                        pageBody["offset"] = (page - 1) * pageSize
                         let resp: TeenyListResponse<RemoteWord> = try await self.post(
                             path: "/api/v1/table/vocabulary/list", body: pageBody)
                         return await resp.items
@@ -163,10 +163,10 @@ final class APIClient {
 extension ISO8601DateFormatter {
     /// Формат дат Teenybase: "2026-06-04 19:10:47" (SQLite CURRENT_TIMESTAMP)
     static let teenybase: ISO8601DateFormatter = {
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withFullDate, .withSpaceBetweenDateAndTime, .withTime, .withColonSeparatorInTime]
-        f.timeZone = TimeZone(identifier: "UTC")
-        return f
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate, .withSpaceBetweenDateAndTime, .withTime, .withColonSeparatorInTime]
+        formatter.timeZone = TimeZone(identifier: "UTC")
+        return formatter
     }()
 }
 
