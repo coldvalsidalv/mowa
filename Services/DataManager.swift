@@ -1,57 +1,36 @@
 import Foundation
 
-/// Временная структура (DTO) исключительно для парсинга JSON.
-struct WordItemDTO: Codable, Sendable {
-    let id: Int
-    let category: String
+/// Структура для декодирования words.json из бандла (offline fallback).
+struct BundleWord: Decodable, Sendable {
     let polish: String
     let translation: String
     let transcription: String
     let example: String
-    let imageName: String
     let partOfSpeech: String
-    let examplesList: [String]
-
-    // Legacy поля из старого box-алгоритма
-    var box: Int?
-    var nextReview: Int?
-    var lastReview: Int?
+    let category: String
+    let rank: Int
+    let inflections: [String: String]
 }
 
 final class DataManager {
     static let shared = DataManager()
     private init() {}
 
-    // MARK: - Bundle (fallback)
+    // MARK: - Vocabulary (offline fallback для VocabSyncService)
 
-    func loadInitialWordsFromBundle() -> [WordItemDTO] {
+    func loadWordsFromBundle() -> [BundleWord] {
         guard let url = Bundle.main.url(forResource: "words", withExtension: "json"),
               let data = try? Data(contentsOf: url),
-              let words = try? JSONDecoder().decode([WordItemDTO].self, from: data) else {
+              let words = try? JSONDecoder().decode([BundleWord].self, from: data) else {
             print("❌ DataManager: failed to read words.json from bundle")
             return []
         }
         return words
     }
 
-    // MARK: - Grammar (API-first, bundle fallback)
+    // MARK: - Grammar
 
     func loadGrammar() -> [GrammarLesson] {
-        loadGrammarFromBundle()
-    }
-
-    /// Async вариант: пробует API, при недоступности возвращает бандл.
-    func loadGrammarAsync() async -> [GrammarLesson] {
-        do {
-            let lessons = try await APIClient.shared.fetchAllGrammarLessons()
-            if !lessons.isEmpty { return lessons }
-        } catch {
-            print("⚠️ DataManager: grammar API unavailable — \(error)")
-        }
-        return loadGrammarFromBundle()
-    }
-
-    private func loadGrammarFromBundle() -> [GrammarLesson] {
         guard let url = Bundle.main.url(forResource: "grammar", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let lessons = try? JSONDecoder().decode([GrammarLesson].self, from: data) else {
@@ -59,5 +38,15 @@ final class DataManager {
             return []
         }
         return lessons
+    }
+
+    func loadGrammarAsync() async -> [GrammarLesson] {
+        do {
+            let lessons = try await APIClient.shared.fetchAllGrammarLessons()
+            if !lessons.isEmpty { return lessons }
+        } catch {
+            print("⚠️ DataManager: grammar API unavailable — \(error)")
+        }
+        return loadGrammar()
     }
 }

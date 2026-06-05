@@ -54,11 +54,17 @@ final class FSRSCardData {
 @Model
 final class VocabItem {
     @Attribute(.unique) var id: UUID
+    /// UUID из Teenybase — используется для upsert при синхронизации
+    var remoteId: String?
     var polish: String
     var translation: String
     var partOfSpeech: String
     var example: String
     var category: String
+    /// Порядок внутри категории по частотности (1 = самое частое)
+    var rank: Int = 0
+    /// Ключевые флексии: {"1sg":"czytam","3sg":"czyta","past":"czytał","imp":"czytaj"}
+    var inflections: String = "{}"
     
     // Педагогическая стратегия: фаза обучения (single-word -> cloze-test)
     var isClozeUnlocked: Bool
@@ -66,13 +72,16 @@ final class VocabItem {
     @Relationship(deleteRule: .cascade)
     var fsrsData: FSRSCardData
     
-    init(polish: String, translation: String, partOfSpeech: String, example: String, category: String) {
+    init(polish: String, translation: String, partOfSpeech: String, example: String, category: String, rank: Int = 0, inflections: String = "{}", remoteId: String? = nil) {
         self.id = UUID()
+        self.remoteId = remoteId
         self.polish = polish
         self.translation = translation
         self.partOfSpeech = partOfSpeech
         self.example = example
         self.category = category
+        self.rank = rank
+        self.inflections = inflections
         self.isClozeUnlocked = false
         self.fsrsData = FSRSCardData()
     }

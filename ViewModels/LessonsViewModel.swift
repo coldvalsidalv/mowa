@@ -49,27 +49,32 @@ final class LessonsViewModel: ObservableObject {
         }
     }
     
-    /// Загружает грамматику async — вызывается из onAppear
+    /// Загружает грамматику: бандл синхронно (мгновенно), API обновляет в фоне
     func loadGrammar() {
+        updateGrammar(from: DataManager.shared.loadGrammar())
         Task {
-            let rawLessons = await DataManager.shared.loadGrammarAsync()
-            updateGrammar(from: rawLessons)
+            do {
+                let apiLessons = try await APIClient.shared.fetchAllGrammarLessons()
+                if !apiLessons.isEmpty { updateGrammar(from: apiLessons) }
+            } catch {}
         }
     }
 
-    /// Обновляет категории слов — вызывается реактивно через @Query
+    /// Обновляет категории слов — O(n) через Dictionary grouping
     func updateCategories(from words: [VocabItem]) {
-        let uniqueCategories = Array(Set(words.map { $0.category })).sorted()
-        self.categories = uniqueCategories.map { category in
-            let categoryWords = words.filter { $0.category == category }
-            let learned = categoryWords.filter { $0.fsrsData.state != .new }.count
-            let theme = Self.getTheme(for: category)
+        let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
+        let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
+        let grouped = Dictionary(grouping: words, by: \.category)
+        self.categories = grouped.keys.sorted().map { category in
+            let items = grouped[category]!
+            let learned = items.filter { $0.fsrsData.state != .new }.count
+            let hash = abs(category.hashValue)
             return CategoryStat(
                 id: category,
-                totalWords: categoryWords.count,
+                totalWords: items.count,
                 learnedWords: learned,
-                icon: theme.icon,
-                color: theme.color
+                icon: icons[hash % icons.count],
+                color: colors[hash % colors.count]
             )
         }
     }
@@ -126,14 +131,7 @@ final class LessonsViewModel: ObservableObject {
     }
     
     // MARK: - Вспомогательные статические методы
-    
-    private static func getTheme(for category: String) -> (icon: String, color: Color) {
-        let hash = category.hashValue
-        let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
-        let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
-        return (icons[abs(hash) % icons.count], colors[abs(hash) % colors.count])
-    }
-    
+
     private static func getColor(for level: String) -> Color {
         switch level {
         case "A0", "A1": return .green

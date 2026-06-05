@@ -136,10 +136,10 @@ struct FlashcardView: View {
             
             // FSRS БЛОК КНОПОК
             HStack(spacing: 10) {
-                ratingButton(title: "Снова", color: .red, rating: .again)
-                ratingButton(title: "Трудно", color: .orange, rating: .hard)
-                ratingButton(title: "Хорошо", color: .green, rating: .good)
-                ratingButton(title: "Легко", color: .blue, rating: .easy)
+                ratingButton(title: "Снова", color: Color(red: 0.85, green: 0.18, blue: 0.18), rating: .again)
+                ratingButton(title: "Трудно", color: Color(red: 0.90, green: 0.50, blue: 0.10), rating: .hard)
+                ratingButton(title: "Хорошо", color: Color(red: 0.18, green: 0.70, blue: 0.35), rating: .good)
+                ratingButton(title: "Легко", color: Color(red: 0.05, green: 0.60, blue: 0.75), rating: .easy)
             }
             .padding(.bottom, 20)
         }
@@ -148,16 +148,15 @@ struct FlashcardView: View {
     
     private func ratingButton(title: String, color: Color, rating: FSRSRating) -> some View {
         Button(action: { viewModel.submitRating(rating) }) {
-            VStack(spacing: 4) {
-                Text(title)
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                    .foregroundColor(color)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 60)
-            .background(color.opacity(0.15))
-            .cornerRadius(16)
+            Text(title)
+                .font(.subheadline)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 60)
+                .background(color)
+                .cornerRadius(16)
+                .shadow(color: color.opacity(0.4), radius: 6, x: 0, y: 3)
         }
     }
 }

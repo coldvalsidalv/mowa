@@ -44,6 +44,8 @@ export default {
         { name: 'category',     type: 'text', sqlType: 'text', notNull: true },
         { name: 'level',        type: 'text', sqlType: 'text' },
         { name: 'image_name',   type: 'text', sqlType: 'text' },
+        { name: 'rank',         type: 'number', sqlType: 'integer', default: { q: '0' } },
+        { name: 'inflections',  type: 'json',   sqlType: 'json' },
       ],
       triggers: [createdTrigger, updatedTrigger],
       extensions: [

@@ -32,45 +32,6 @@ struct ProfileView: View {
             List {
                 headerSection
                 
-                // MARK: Прогресс слов
-                Section("Прогресс слов") {
-                    let total = viewModel.wordsLearning + viewModel.wordsKnown + viewModel.wordsMastered
-                    if total == 0 {
-                        Text("Начни учить слова — здесь появится твой прогресс")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.vertical, 8)
-                    } else {
-                        HStack(spacing: 0) {
-                            ProfileStatItem(icon: "circle.fill", color: .orange, value: "\(viewModel.wordsLearning)", label: "Учу")
-                            Divider().frame(height: 36)
-                            ProfileStatItem(icon: "circle.fill", color: .blue, value: "\(viewModel.wordsKnown)", label: "Знаю")
-                            Divider().frame(height: 36)
-                            ProfileStatItem(icon: "circle.fill", color: .green, value: "\(viewModel.wordsMastered)", label: "Выучено")
-                        }
-                        .padding(.vertical, 10)
-
-                        GeometryReader { geo in
-                            HStack(spacing: 2) {
-                                if viewModel.wordsLearning > 0 {
-                                    RoundedRectangle(cornerRadius: 3).fill(Color.orange)
-                                        .frame(width: geo.size.width * CGFloat(viewModel.wordsLearning) / CGFloat(total))
-                                }
-                                if viewModel.wordsKnown > 0 {
-                                    RoundedRectangle(cornerRadius: 3).fill(Color.blue)
-                                        .frame(width: geo.size.width * CGFloat(viewModel.wordsKnown) / CGFloat(total))
-                                }
-                                if viewModel.wordsMastered > 0 {
-                                    RoundedRectangle(cornerRadius: 3).fill(Color.green)
-                                        .frame(maxWidth: .infinity)
-                                }
-                            }
-                        }
-                        .frame(height: 6)
-                        .padding(.bottom, 8)
-                    }
-                }
-
                 // MARK: Активность
                 let hasActivity = viewModel.activityData.contains { $0.xp > 0 }
                 if hasActivity {
@@ -88,26 +49,25 @@ struct ProfileView: View {
                 }
 
                 // MARK: Достижения
-                Section {
-                    Button(action: { viewModel.showAchievementsDetail = true }) {
+                let unlocked = viewModel.achievements.filter { $0.unlocked }
+                if !unlocked.isEmpty {
+                    Section {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
-                                Text("Достижения").font(.headline).foregroundColor(.primary)
+                                Text("Достижения").font(.headline)
                                 Spacer()
-                                Image(systemName: "chevron.right").font(.caption).foregroundColor(.secondary)
+                                Text("\(unlocked.count) из \(viewModel.achievements.count)")
+                                    .font(.subheadline).foregroundColor(.secondary)
                             }
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 20) {
-                                    ForEach(viewModel.achievements) { item in
-                                        AchievementItemView(item: item)
-                                    }
+                            HStack(spacing: 16) {
+                                ForEach(unlocked) { item in
+                                    AchievementItemView(item: item)
                                 }
-                                .padding(.horizontal, 4)
+                                Spacer()
                             }
                         }
-                        .padding(.vertical, 12)
+                        .padding(.vertical, 8)
                     }
-                    .buttonStyle(.plain)
                 }
 
                 // MARK: Аккаунт
@@ -200,15 +160,10 @@ struct ProfileView: View {
                 }
             }
             .onAppear {
-                viewModel.refreshLearnedCount(context: modelContext)
                 viewModel.loadActivity(context: modelContext)
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                viewModel.refreshLearnedCount(context: modelContext)
                 viewModel.loadActivity(context: modelContext)
-            }
-            .sheet(isPresented: $viewModel.showAchievementsDetail) {
-                AchievementsDetailView(achievements: viewModel.achievements)
             }
             .alert("Сбросить прогресс?", isPresented: $viewModel.showResetAlert) {
                 Button("Отмена", role: .cancel) { }
