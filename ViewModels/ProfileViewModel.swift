@@ -23,11 +23,6 @@ final class ProfileViewModel: ObservableObject {
     // Активность за 7 дней — заполняется из ReviewLog через loadActivity()
     @Published var activityData: [ActivityData] = []
 
-    // Четыре уровня прогресса по словам
-    @Published var wordsNew:      Int = 0  // state == .new
-    @Published var wordsLearning: Int = 0  // learning/relearning или review && stability < 3
-    @Published var wordsKnown:    Int = 0  // review && stability 3–21
-    @Published var wordsMastered: Int = 0  // review && stability ≥ 21
 
     // Достижения — вычисляются на основе реального прогресса
     var achievements: [Achievement] {
@@ -114,23 +109,6 @@ final class ProfileViewModel: ObservableObject {
         }
     }
 
-    /// Пересчитывает прогресс слов из SwiftData.
-    /// Логика бакетов совпадает с CategoryDetailView.
-    func refreshLearnedCount(context: ModelContext) {
-        let all = (try? context.fetch(FetchDescriptor<VocabItem>())) ?? []
-
-        wordsNew      = all.filter { $0.fsrsData.state == .new }.count
-        wordsLearning = all.filter {
-            $0.fsrsData.state == .learning ||
-            $0.fsrsData.state == .relearning ||
-            ($0.fsrsData.state == .review && $0.fsrsData.stability < 3.0)
-        }.count
-        wordsKnown    = all.filter { $0.fsrsData.state == .review && $0.fsrsData.stability >= 3.0 && $0.fsrsData.stability < 21.0 }.count
-        wordsMastered = all.filter { $0.fsrsData.state == .review && $0.fsrsData.stability >= 21.0 }.count
-
-        let count = wordsKnown + wordsMastered
-        if count != totalLearnedWords { totalLearnedWords = count }
-    }
 
     // MARK: - Actions
 
