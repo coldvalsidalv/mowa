@@ -20,8 +20,22 @@ disabled_rules:
 
 opt_in_rules:
   - empty_count               # .count == 0 → .isEmpty
-  - force_unwrapping          # запретить !
   - private_outlet            # @IBOutlet должен быть private
-  - sorted_imports            # import в алфавитном порядке
 
-warning_threshold: 20
+function_name:
+  excluded:
+    - L                       # локализационный хелпер L("key")
+
+identifier_name:
+  min_length:
+    error: 1                  # разрешаем i, j, x, y в циклах/замыканиях
+    warning: 1
+  excluded:
+    - id                      # SwiftUI/SwiftData стандарт
+    - xp                      # доменный термин
+    - r                       # FSRS: retrievability
+    - s                       # FSRS: stability
+    - d                       # FSRS: difficulty
+    - t                       # FSRS: time
+    - w                       # FSRS: weight
+  allowed_symbols: "_"
