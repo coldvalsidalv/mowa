@@ -99,6 +99,7 @@ private extension VocabItem {
             partOfSpeech: remote.part_of_speech ?? "",
             example: remote.example ?? "",
             category: remote.category,
+            rank: remote.rank ?? 0,
             remoteId: remote.id
         )
     }
@@ -109,7 +110,8 @@ private extension VocabItem {
             translation: bundle.translation,
             partOfSpeech: bundle.partOfSpeech,
             example: bundle.example,
-            category: bundle.category
+            category: bundle.category,
+            rank: bundle.rank
         )
     }
 
@@ -119,5 +121,6 @@ private extension VocabItem {
         partOfSpeech = word.part_of_speech ?? partOfSpeech
         example = word.example ?? example
         category = word.category
+        rank = word.rank ?? rank
     }
 }

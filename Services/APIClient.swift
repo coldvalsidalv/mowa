@@ -18,11 +18,12 @@ struct RemoteWord: Sendable {
     let category: String
     let image_name: String?
     let updated: String?
+    let rank: Int?
 }
 
 extension RemoteWord: Decodable {
     enum CodingKeys: String, CodingKey {
-        case id, polish, translation, transcription, category, updated
+        case id, polish, translation, transcription, category, updated, rank
         case part_of_speech, example, examples_list, image_name
     }
 
@@ -38,6 +39,7 @@ extension RemoteWord: Decodable {
         category       = try c.decode(String.self, forKey: .category)
         image_name     = try c.decodeIfPresent(String.self, forKey: .image_name)
         updated        = try c.decodeIfPresent(String.self, forKey: .updated)
+        rank           = try c.decodeIfPresent(Int.self, forKey: .rank)
     }
 }
 

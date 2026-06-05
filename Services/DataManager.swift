@@ -8,6 +8,7 @@ struct BundleWord: Decodable, Sendable {
     let example: String
     let partOfSpeech: String
     let category: String
+    let rank: Int
 }
 
 final class DataManager {
