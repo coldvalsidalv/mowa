@@ -1,0 +1,27 @@
+included:
+  - Views
+  - ViewModels
+  - Services
+  - Models
+  - Utils
+
+excluded:
+  - .claude
+  - backend
+  - mowaTests
+
+disabled_rules:
+  - trailing_whitespace       # Xcode сам расставляет
+  - line_length               # SwiftUI-код естественно длинный
+  - type_body_length          # крупные View-файлы допустимы
+  - file_length               # компоненты могут быть в одном файле
+  - function_body_length      # buildBody в SwiftUI длинный по природе
+  - cyclomatic_complexity     # FSRS математика сложная
+
+opt_in_rules:
+  - empty_count               # .count == 0 → .isEmpty
+  - force_unwrapping          # запретить !
+  - private_outlet            # @IBOutlet должен быть private
+  - sorted_imports            # import в алфавитном порядке
+
+warning_threshold: 20
