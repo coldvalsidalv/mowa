@@ -22,37 +22,154 @@ final class ProfileViewModel: ObservableObject {
     // Активность за 7 дней — заполняется из ReviewLog через loadActivity()
     @Published var activityData: [ActivityData] = []
 
+    var completedGrammarCount: Int {
+        (UserDefaults.standard.stringArray(forKey: StorageKeys.completedGrammarLessons) ?? []).count
+    }
+
 
     // Достижения — вычисляются на основе реального прогресса
     var achievements: [Achievement] {
-        [
+        let grammar = completedGrammarCount
+        return [
+            // ── Словарный запас ──────────────────────────────────────────
             .init(
-                title: "Первые шаги",
-                description: "Изучи первое слово",
-                icon: "shoe.fill",
+                title: "Первое слово",
+                description: "Выучи своё первое слово",
+                icon: "hand.raised.fill",
                 color: .blue,
-                unlocked: totalLearnedWords > 0
+                unlocked: totalLearnedWords >= 1,
+                progress: min(Double(totalLearnedWords) / 1, 1.0),
+                progressLabel: "\(totalLearnedWords) / 1 слово"
             ),
             .init(
-                title: "Огонь",
-                description: "Серия 7 дней подряд",
-                icon: "flame.fill",
-                color: .orange,
-                unlocked: dayStreak >= 7
+                title: "Десятка",
+                description: "Выучи 10 слов",
+                icon: "sparkles",
+                color: .cyan,
+                unlocked: totalLearnedWords >= 10,
+                progress: min(Double(totalLearnedWords) / 10, 1.0),
+                progressLabel: "\(totalLearnedWords) / 10 слов"
+            ),
+            .init(
+                title: "Сотня",
+                description: "Выучи 100 слов",
+                icon: "graduationcap.fill",
+                color: .indigo,
+                unlocked: totalLearnedWords >= 100,
+                progress: min(Double(totalLearnedWords) / 100, 1.0),
+                progressLabel: "\(totalLearnedWords) / 100 слов"
             ),
             .init(
                 title: "Полиглот",
                 description: "Выучи 500 слов",
                 icon: "globe.europe.africa.fill",
                 color: .green,
-                unlocked: totalLearnedWords >= 500
+                unlocked: totalLearnedWords >= 500,
+                progress: min(Double(totalLearnedWords) / 500, 1.0),
+                progressLabel: "\(totalLearnedWords) / 500 слов"
+            ),
+            .init(
+                title: "Мастер слов",
+                description: "Выучи 2000 слов",
+                icon: "crown.fill",
+                color: .yellow,
+                unlocked: totalLearnedWords >= 2000,
+                progress: min(Double(totalLearnedWords) / 2000, 1.0),
+                progressLabel: "\(totalLearnedWords) / 2000 слов"
+            ),
+            // ── Серия дней ───────────────────────────────────────────────
+            .init(
+                title: "Привычка",
+                description: "3 дня занятий подряд",
+                icon: "flame",
+                color: .orange,
+                unlocked: dayStreak >= 3,
+                progress: min(Double(dayStreak) / 3, 1.0),
+                progressLabel: "\(dayStreak) / 3 дня"
+            ),
+            .init(
+                title: "Огонь",
+                description: "7 дней занятий подряд",
+                icon: "flame.fill",
+                color: .red,
+                unlocked: dayStreak >= 7,
+                progress: min(Double(dayStreak) / 7, 1.0),
+                progressLabel: "\(dayStreak) / 7 дней"
+            ),
+            .init(
+                title: "Несгораемый",
+                description: "30 дней занятий подряд",
+                icon: "bolt.fill",
+                color: .pink,
+                unlocked: dayStreak >= 30,
+                progress: min(Double(dayStreak) / 30, 1.0),
+                progressLabel: "\(dayStreak) / 30 дней"
+            ),
+            // ── Опыт ─────────────────────────────────────────────────────
+            .init(
+                title: "Первые очки",
+                description: "Набери 100 XP",
+                icon: "star.fill",
+                color: .blue,
+                unlocked: userXP >= 100,
+                progress: min(Double(userXP) / 100, 1.0),
+                progressLabel: "\(userXP) / 100 XP"
             ),
             .init(
                 title: "Чемпион",
                 description: "Набери 1000 XP",
                 icon: "trophy.fill",
-                color: .yellow,
-                unlocked: userXP >= 1000
+                color: .orange,
+                unlocked: userXP >= 1000,
+                progress: min(Double(userXP) / 1000, 1.0),
+                progressLabel: "\(userXP) / 1000 XP"
+            ),
+            .init(
+                title: "Легенда",
+                description: "Набери 5000 XP",
+                icon: "medal.fill",
+                color: .purple,
+                unlocked: userXP >= 5000,
+                progress: min(Double(userXP) / 5000, 1.0),
+                progressLabel: "\(userXP) / 5000 XP"
+            ),
+            // ── Грамматика ────────────────────────────────────────────────
+            .init(
+                title: "Первый урок",
+                description: "Пройди первый урок грамматики",
+                icon: "pencil.and.list.clipboard",
+                color: .teal,
+                unlocked: grammar >= 1,
+                progress: min(Double(grammar) / 1, 1.0),
+                progressLabel: "\(grammar) / 1 урок"
+            ),
+            .init(
+                title: "Грамматик",
+                description: "Пройди 5 уроков грамматики",
+                icon: "text.book.closed.fill",
+                color: .green,
+                unlocked: grammar >= 5,
+                progress: min(Double(grammar) / 5, 1.0),
+                progressLabel: "\(grammar) / 5 уроков"
+            ),
+            .init(
+                title: "Профессор",
+                description: "Пройди все уроки грамматики",
+                icon: "brain.head.profile",
+                color: .purple,
+                unlocked: grammar >= 20,
+                progress: min(Double(grammar) / 20, 1.0),
+                progressLabel: "\(grammar) / 20 уроков"
+            ),
+            // ── Особые ───────────────────────────────────────────────────
+            .init(
+                title: "Разносторонний",
+                description: "50 слов и 3 урока грамматики",
+                icon: "square.grid.2x2.fill",
+                color: .mint,
+                unlocked: totalLearnedWords >= 50 && grammar >= 3,
+                progress: min(Double(min(totalLearnedWords, 50)) / 50 * 0.5 + Double(min(grammar, 3)) / 3 * 0.5, 1.0),
+                progressLabel: totalLearnedWords < 50 ? "\(totalLearnedWords) / 50 слов" : "\(grammar) / 3 урока"
             ),
         ]
     }

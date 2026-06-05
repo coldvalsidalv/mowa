@@ -164,30 +164,30 @@ struct DeterministicParticleCanvas: View {
             Canvas { context, size in
                 let now = timeline.date.timeIntervalSinceReferenceDate
                 
-                for i in 0..<particleCount {
-                    let seed = Double(i) * 13.7
+                for particleIndex in 0..<particleCount {
+                    let seed = Double(particleIndex) * 13.7
                     let randomX = sin(seed)
                     let speed = 40.0 + abs(cos(seed)) * 80.0
-                    
+
                     let timeOffset = now * speed + seed * 100
                     let cycle = timeOffset.truncatingRemainder(dividingBy: size.height)
-                    
+
                     if isFire {
-                        let y = size.height - cycle
-                        let x = (size.width / 2) + randomX * 80.0 + sin(now * 3 + Double(i)) * 20.0
+                        let posY = size.height - cycle
+                        let posX = (size.width / 2) + randomX * 80.0 + sin(now * 3 + Double(particleIndex)) * 20.0
                         let pSize = 3.0 + abs(sin(seed)) * 5.0
-                        let opacity = max(0, y / size.height)
-                        
+                        let opacity = max(0, posY / size.height)
+
                         context.opacity = opacity
-                        context.fill(Path(ellipseIn: CGRect(x: x, y: y, width: pSize, height: pSize)), with: .color(.orange))
+                        context.fill(Path(ellipseIn: CGRect(x: posX, y: posY, width: pSize, height: pSize)), with: .color(.orange))
                     } else {
-                        let y = cycle
-                        let x = (size.width / 2) + randomX * 150.0 + cos(now * 1.5 + Double(i)) * 30.0
+                        let posY = cycle
+                        let posX = (size.width / 2) + randomX * 150.0 + cos(now * 1.5 + Double(particleIndex)) * 30.0
                         let pSize = 2.0 + abs(cos(seed)) * 4.0
-                        let opacity = max(0, 1.0 - (y / size.height))
-                        
+                        let opacity = max(0, 1.0 - (posY / size.height))
+
                         context.opacity = opacity
-                        context.fill(Path(ellipseIn: CGRect(x: x, y: y, width: pSize, height: pSize)), with: .color(.white))
+                        context.fill(Path(ellipseIn: CGRect(x: posX, y: posY, width: pSize, height: pSize)), with: .color(.white))
                     }
                 }
             }

@@ -183,21 +183,21 @@ struct PlacementTestStep: View {
 
     // A1 → A2 → B1, чтобы реально определить уровень
     static let testWords: [(id: Int, polish: String, translation: String)] = [
-        (0,  "mama",            "мама"),
-        (1,  "dom",             "дом"),
-        (2,  "woda",            "вода"),
-        (3,  "dobry",           "хороший"),
-        (4,  "jeść",            "есть / кушать"),
-        (5,  "kupować",         "покупать"),
-        (6,  "pogoda",          "погода"),
-        (7,  "rozumieć",        "понимать"),
-        (8,  "piękny",          "красивый"),
-        (9,  "samochód",        "машина"),
-        (10, "zapomnieć",       "забыть"),
+        (0, "mama", "мама"),
+        (1, "dom", "дом"),
+        (2, "woda", "вода"),
+        (3, "dobry", "хороший"),
+        (4, "jeść", "есть / кушать"),
+        (5, "kupować", "покупать"),
+        (6, "pogoda", "погода"),
+        (7, "rozumieć", "понимать"),
+        (8, "piękny", "красивый"),
+        (9, "samochód", "машина"),
+        (10, "zapomnieć", "забыть"),
         (11, "przyzwyczajenie", "привычка"),
-        (12, "wyjaśnić",        "объяснить"),
-        (13, "skomplikowany",   "сложный"),
-        (14, "przedsiębiorstwo","предприятие"),
+        (12, "wyjaśnić", "объяснить"),
+        (13, "skomplikowany", "сложный"),
+        (14, "przedsiębiorstwo", "предприятие"),
     ]
 
     private var isFinished: Bool { currentIndex >= Self.testWords.count }
@@ -340,9 +340,9 @@ struct GoalStep: View {
     let onNext: () -> Void
 
     private let options: [(words: Int, label: String, description: String)] = [
-        (5,  "Легко",     "5 слов · ~5 минут"),
+        (5, "Легко", "5 слов · ~5 минут"),
         (10, "Нормально", "10 слов · ~10 минут"),
-        (20, "Серьёзно",  "20 слов · ~20 минут"),
+        (20, "Серьёзно", "20 слов · ~20 минут"),
     ]
 
     var body: some View {

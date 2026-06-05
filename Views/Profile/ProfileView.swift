@@ -20,6 +20,8 @@ struct Achievement: Identifiable {
     let icon: String
     let color: Color
     let unlocked: Bool
+    let progress: Double       // 0.0–1.0
+    let progressLabel: String  // "28 / 500 слов"
 }
 
 struct ProfileView: View {
@@ -49,25 +51,22 @@ struct ProfileView: View {
                 }
 
                 // MARK: Достижения
-                let unlocked = viewModel.achievements.filter { $0.unlocked }
-                if !unlocked.isEmpty {
-                    Section {
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("Достижения").font(.headline)
-                                Spacer()
-                                Text("\(unlocked.count) из \(viewModel.achievements.count)")
-                                    .font(.subheadline).foregroundColor(.secondary)
-                            }
-                            HStack(spacing: 16) {
-                                ForEach(unlocked) { item in
-                                    AchievementItemView(item: item)
-                                }
-                                Spacer()
+                Section {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("Достижения").font(.headline)
+                            Spacer()
+                            let unlockedCount = viewModel.achievements.filter { $0.unlocked }.count
+                            Text("\(unlockedCount) из \(viewModel.achievements.count)")
+                                .font(.subheadline).foregroundColor(.secondary)
+                        }
+                        LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                            ForEach(viewModel.achievements) { item in
+                                AchievementCardView(item: item)
                             }
                         }
-                        .padding(.vertical, 8)
                     }
+                    .padding(.vertical, 8)
                 }
 
                 // MARK: Аккаунт
@@ -240,17 +239,59 @@ struct ProfileStatItem: View {
     }
 }
 
-struct AchievementItemView: View {
+struct AchievementCardView: View {
     let item: Achievement
+
     var body: some View {
-        VStack(spacing: 8) {
-            ZStack {
-                Circle().fill(item.unlocked ? item.color.opacity(0.15) : Color.gray.opacity(0.1)).frame(width: 60, height: 60)
-                Image(systemName: item.icon).font(.title3).foregroundColor(item.unlocked ? item.color : .gray)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(item.unlocked ? item.color.opacity(0.18) : Color.secondary.opacity(0.1))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: item.icon)
+                        .font(.body)
+                        .foregroundColor(item.unlocked ? item.color : .secondary)
+                }
+                Spacer()
+                if item.unlocked {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(item.color)
+                        .font(.title3)
+                }
             }
-            Text(item.title).font(.caption2).fontWeight(.medium).foregroundColor(item.unlocked ? .primary : .secondary)
-                .multilineTextAlignment(.center).lineLimit(2).fixedSize(horizontal: false, vertical: true)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(item.title)
+                    .font(.subheadline).bold()
+                    .foregroundColor(item.unlocked ? .primary : .secondary)
+                Text(item.description)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            }
+
+            if !item.unlocked {
+                VStack(alignment: .leading, spacing: 4) {
+                    ProgressView(value: item.progress)
+                        .tint(item.color)
+                    Text(item.progressLabel)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
         }
-        .frame(width: 80)
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            item.unlocked
+                ? item.color.opacity(0.07)
+                : Color(UIColor.secondarySystemGroupedBackground)
+        )
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(item.unlocked ? item.color.opacity(0.3) : Color.clear, lineWidth: 1)
+        )
     }
 }

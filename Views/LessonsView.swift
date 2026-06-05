@@ -99,7 +99,7 @@ struct LessonsView: View {
         .pickerStyle(SegmentedPickerStyle())
         .padding(.horizontal)
         .padding(.top, 10)
-        .onChange(of: selectedTab) { oldTab, newTab in
+        .onChange(of: selectedTab) { _, newTab in
             if newTab == 1 { viewModel.isEditMode = false }
         }
     }

@@ -76,7 +76,7 @@ struct ReviewSelectionView: View {
                                 ReviewCategoryCard(
                                     title: "Слабые слова",
                                     subtitle: "Частые ошибки",
-                                    count: weakWordsCount,
+                                    itemCount: weakWordsCount,
                                     icon: "exclamationmark.triangle.fill",
                                     color: .red,
                                     itemLabel: "слова"
@@ -87,7 +87,7 @@ struct ReviewSelectionView: View {
                                 ReviewCategoryCard(
                                     title: "Средние слова",
                                     subtitle: "Нужна практика",
-                                    count: mediumWordsCount,
+                                    itemCount: mediumWordsCount,
                                     icon: "hourglass",
                                     color: .orange,
                                     itemLabel: "слова"
@@ -98,7 +98,7 @@ struct ReviewSelectionView: View {
                                 ReviewCategoryCard(
                                     title: "Сильные слова",
                                     subtitle: "Надёжно в памяти",
-                                    count: strongWordsCount,
+                                    itemCount: strongWordsCount,
                                     icon: "checkmark.circle.fill",
                                     color: .green,
                                     itemLabel: "слова"
@@ -120,7 +120,7 @@ struct ReviewSelectionView: View {
                                 ReviewCategoryCard(
                                     title: "Сложные правила",
                                     subtitle: "Требуют внимания",
-                                    count: weakGrammar.count,
+                                    itemCount: weakGrammar.count,
                                     icon: "xmark.octagon.fill",
                                     color: .red,
                                     itemLabel: "правила"
@@ -135,7 +135,7 @@ struct ReviewSelectionView: View {
                                 ReviewCategoryCard(
                                     title: "В процессе",
                                     subtitle: "Иногда путаешь",
-                                    count: mediumGrammar.count,
+                                    itemCount: mediumGrammar.count,
                                     icon: "arrow.triangle.2.circlepath",
                                     color: .orange,
                                     itemLabel: "правила"
@@ -150,7 +150,7 @@ struct ReviewSelectionView: View {
                                 ReviewCategoryCard(
                                     title: "Усвоенные темы",
                                     subtitle: "Закрепление",
-                                    count: strongGrammar.count,
+                                    itemCount: strongGrammar.count,
                                     icon: "star.fill",
                                     color: .green,
                                     itemLabel: "правила"
@@ -249,13 +249,13 @@ struct MemoryHealthHeader: View {
 struct ReviewCategoryCard: View {
     let title: String
     let subtitle: String
-    let count: Int
+    let itemCount: Int
     let icon: String
     let color: Color
     var itemLabel: String = "слова"
     
     var isCleared: Bool {
-        return count == 0 && (color == .red || color == .orange)
+        return itemCount == 0 && (color == .red || color == .orange)
     }
     
     var activeColor: Color { isCleared ? .yellow : color }
@@ -296,7 +296,7 @@ struct ReviewCategoryCard: View {
                         .foregroundColor(.yellow)
                 } else {
                     VStack(alignment: .trailing, spacing: 0) {
-                        Text("\(count)")
+                        Text("\(itemCount)")
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundColor(activeColor)

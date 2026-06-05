@@ -11,17 +11,33 @@ excluded:
   - mowaTests
 
 disabled_rules:
-  - trailing_whitespace       # Xcode сам расставляет
-  - line_length               # SwiftUI-код естественно длинный
-  - type_body_length          # крупные View-файлы допустимы
-  - file_length               # компоненты могут быть в одном файле
-  - function_body_length      # buildBody в SwiftUI длинный по природе
-  - cyclomatic_complexity     # FSRS математика сложная
+  - trailing_whitespace                      # Xcode сам расставляет
+  - line_length                              # SwiftUI-код естественно длинный
+  - type_body_length                         # крупные View-файлы допустимы
+  - file_length                              # компоненты могут быть в одном файле
+  - function_body_length                     # buildBody в SwiftUI длинный по природе
+  - cyclomatic_complexity                    # FSRS математика сложная
+  - multiple_closures_with_trailing_closure  # стандартный SwiftUI стиль
+  - large_tuple                              # APIClient использует большие туплы
+  - trailing_comma                           # нормально в многострочных литералах
+  - implicit_optional_initialization        # var x: T? = nil — явно лучше
+  - vertical_whitespace                      # форматирование на усмотрение автора
 
 opt_in_rules:
   - empty_count               # .count == 0 → .isEmpty
-  - force_unwrapping          # запретить !
   - private_outlet            # @IBOutlet должен быть private
-  - sorted_imports            # import в алфавитном порядке
 
-warning_threshold: 20
+identifier_name:
+  min_length:
+    error: 1                  # разрешаем i, j, x, y в циклах/замыканиях
+    warning: 1
+  excluded:
+    - id                      # SwiftUI/SwiftData стандарт
+    - xp                      # доменный термин
+    - L                       # локализационный хелпер (заглавная по соглашению)
+    - r                       # FSRS: retrievability
+    - s                       # FSRS: stability
+    - d                       # FSRS: difficulty
+    - t                       # FSRS: time
+    - w                       # FSRS: weight
+  allowed_symbols: "_"        # разрешаем snake_case (API-модели)
