@@ -117,7 +117,7 @@ struct LessonsView: View {
                             }
                         }
                 } else {
-                    NavigationLink(destination: FlashcardView(categories: [stat.id], isReviewMode: false, context: modelContext)) {
+                    NavigationLink(destination: CategoryDetailView(category: stat.id)) {
                         CategoryCardView(stat: stat, isSelected: false, isEditMode: false)
                     }
                     .buttonStyle(PlainButtonStyle())
