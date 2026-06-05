@@ -18,7 +18,6 @@ final class ProfileViewModel: ObservableObject {
     @AppStorage(StorageKeys.notificationTime) var notificationTimeInterval: Double = 32400
 
     @Published var showResetAlert = false
-    @Published var showAchievementsDetail = false
 
     // Активность за 7 дней — заполняется из ReviewLog через loadActivity()
     @Published var activityData: [ActivityData] = []

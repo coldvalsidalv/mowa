@@ -49,26 +49,25 @@ struct ProfileView: View {
                 }
 
                 // MARK: Достижения
-                Section {
-                    Button(action: { viewModel.showAchievementsDetail = true }) {
+                let unlocked = viewModel.achievements.filter { $0.unlocked }
+                if !unlocked.isEmpty {
+                    Section {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
-                                Text("Достижения").font(.headline).foregroundColor(.primary)
+                                Text("Достижения").font(.headline)
                                 Spacer()
-                                Image(systemName: "chevron.right").font(.caption).foregroundColor(.secondary)
+                                Text("\(unlocked.count) из \(viewModel.achievements.count)")
+                                    .font(.subheadline).foregroundColor(.secondary)
                             }
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 20) {
-                                    ForEach(viewModel.achievements) { item in
-                                        AchievementItemView(item: item)
-                                    }
+                            HStack(spacing: 16) {
+                                ForEach(unlocked) { item in
+                                    AchievementItemView(item: item)
                                 }
-                                .padding(.horizontal, 4)
+                                Spacer()
                             }
                         }
-                        .padding(.vertical, 12)
+                        .padding(.vertical, 8)
                     }
-                    .buttonStyle(.plain)
                 }
 
                 // MARK: Аккаунт
@@ -165,9 +164,6 @@ struct ProfileView: View {
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 viewModel.loadActivity(context: modelContext)
-            }
-            .sheet(isPresented: $viewModel.showAchievementsDetail) {
-                AchievementsDetailView(achievements: viewModel.achievements)
             }
             .alert("Сбросить прогресс?", isPresented: $viewModel.showResetAlert) {
                 Button("Отмена", role: .cancel) { }
