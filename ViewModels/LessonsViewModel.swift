@@ -49,19 +49,16 @@ final class LessonsViewModel: ObservableObject {
         }
     }
     
-    /// Загружает слова из SwiftData синхронно, грамматику — async из API (fallback бандл)
-    func loadData(context: ModelContext) {
-        let descriptor = FetchDescriptor<VocabItem>()
-        let words = (try? context.fetch(descriptor)) ?? []
-        updateCategories(from: words)
-
+    /// Загружает грамматику async — вызывается из onAppear
+    func loadGrammar() {
         Task {
             let rawLessons = await DataManager.shared.loadGrammarAsync()
             updateGrammar(from: rawLessons)
         }
     }
 
-    private func updateCategories(from words: [VocabItem]) {
+    /// Обновляет категории слов — вызывается реактивно через @Query
+    func updateCategories(from words: [VocabItem]) {
         let uniqueCategories = Array(Set(words.map { $0.category })).sorted()
         self.categories = uniqueCategories.map { category in
             let categoryWords = words.filter { $0.category == category }

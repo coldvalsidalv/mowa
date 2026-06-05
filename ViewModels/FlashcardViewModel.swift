@@ -7,21 +7,26 @@ final class FlashcardViewModel: ObservableObject {
     @Published var currentWord: VocabItem?
     @Published var isFinished = false
     @Published var progress: CGFloat = 0.0
+    @Published var remainingNewCards: Int = 0
 
     private let engine: LearningEngine
     private var sessionStartTime: Date
+    private var category: String?
+    private let batchSize = 20
 
     /// Обычный режим — по категориям + новые карточки
     init(categories: [String], isReviewMode: Bool, context: ModelContext) {
         self.engine = LearningEngine(context: context)
         self.sessionStartTime = Date()
+        self.category = categories.first
 
         if isReviewMode {
             engine.buildReviewSession(tier: .all)
         } else {
-            engine.buildSession(category: categories.first, newCardsLimit: 15)
+            engine.buildSession(category: categories.first, newCardsLimit: batchSize)
         }
         bindEngineState()
+        updateRemaining()
     }
 
     /// Режим повторения по FSRS-уровню (weak / medium / strong)
@@ -32,13 +37,24 @@ final class FlashcardViewModel: ObservableObject {
         bindEngineState()
     }
 
+    func loadNextBatch() {
+        engine.buildSession(category: category, newCardsLimit: batchSize)
+        bindEngineState()
+        updateRemaining()
+    }
+
     private func bindEngineState() {
         if let first = engine.sessionQueue.first {
             self.currentWord = first
             self.sessionStartTime = Date()
+            self.isFinished = false
         } else {
             self.isFinished = true
         }
+    }
+
+    private func updateRemaining() {
+        remainingNewCards = engine.countRemainingNew(category: category)
     }
 
     func submitRating(_ rating: FSRSRating) {
@@ -53,6 +69,7 @@ final class FlashcardViewModel: ObservableObject {
         } else {
             self.currentWord = nil
             self.isFinished = true
+            updateRemaining()
         }
     }
 }

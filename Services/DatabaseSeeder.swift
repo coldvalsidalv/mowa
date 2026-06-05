@@ -5,17 +5,32 @@ import SwiftData
 final class DatabaseSeeder {
     static let shared = DatabaseSeeder()
 
-    private let bundleSeedKey = "isDatabaseSeeded_v1"
-    private let apiSeedKey    = "isDatabaseSeeded_api_v1"
+    private let bundleSeedKey = "isDatabaseSeeded_v2"
+    private let apiSeedKey    = "isDatabaseSeeded_api_v2"
 
     private init() {}
 
     // MARK: - Public
 
     func seedIfNeeded(context: ModelContext) {
-        // Уже засеяно (из API или из бандла) — пропускаем
-        guard !UserDefaults.standard.bool(forKey: bundleSeedKey),
-              !UserDefaults.standard.bool(forKey: apiSeedKey) else { return }
+        let defaults = UserDefaults.standard
+
+        // Уже засеяно текущей версией — пропускаем
+        guard !defaults.bool(forKey: bundleSeedKey),
+              !defaults.bool(forKey: apiSeedKey) else { return }
+
+        // Сносим старые данные если была предыдущая версия сида
+        let hasPreviousSeed = defaults.bool(forKey: "isDatabaseSeeded_v1")
+            || defaults.bool(forKey: "isDatabaseSeeded_api_v1")
+        if hasPreviousSeed {
+            if let items = try? context.fetch(FetchDescriptor<VocabItem>()) {
+                items.forEach { context.delete($0) }
+                try? context.save()
+            }
+            defaults.removeObject(forKey: "isDatabaseSeeded_v1")
+            defaults.removeObject(forKey: "isDatabaseSeeded_api_v1")
+            print("🗑️ DatabaseSeeder: cleared old v1 data")
+        }
 
         Task {
             await seedFromAPIOrBundle(context: context)
@@ -27,28 +42,34 @@ final class DatabaseSeeder {
     private func seedFromAPIOrBundle(context: ModelContext) async {
         print("🌱 DatabaseSeeder: starting seed...")
 
+        let bundleWords = DataManager.shared.loadInitialWordsFromBundle()
+
         do {
-            let words = try await APIClient.shared.fetchAllWords()
-            guard !words.isEmpty else { throw APIError.serverError(0) }
-            insert(words: words, context: context)
-            UserDefaults.standard.set(true, forKey: apiSeedKey)
-            print("✅ DatabaseSeeder: seeded \(words.count) words from API")
+            let apiWords = try await APIClient.shared.fetchAllWords()
+            guard !apiWords.isEmpty else { throw APIError.serverError(0) }
+
+            // Предпочитаем бандл если в нём больше слов (бандл = актуальный контент)
+            if bundleWords.count > apiWords.count {
+                print("📦 DatabaseSeeder: bundle (\(bundleWords.count)) > API (\(apiWords.count)), using bundle")
+                insert(words: bundleWords, context: context)
+                UserDefaults.standard.set(true, forKey: bundleSeedKey)
+            } else {
+                insert(words: apiWords, context: context)
+                UserDefaults.standard.set(true, forKey: apiSeedKey)
+                print("✅ DatabaseSeeder: seeded \(apiWords.count) words from API")
+            }
         } catch {
-            print("⚠️ DatabaseSeeder: API unavailable (\(error)), falling back to bundle")
-            seedFromBundle(context: context)
+            print("⚠️ DatabaseSeeder: API unavailable, using bundle")
+            guard !bundleWords.isEmpty else {
+                print("❌ DatabaseSeeder: bundle is empty")
+                return
+            }
+            insert(words: bundleWords, context: context)
+            UserDefaults.standard.set(true, forKey: bundleSeedKey)
+            print("✅ DatabaseSeeder: seeded \(bundleWords.count) words from bundle")
         }
     }
 
-    private func seedFromBundle(context: ModelContext) {
-        let words = DataManager.shared.loadInitialWordsFromBundle()
-        guard !words.isEmpty else {
-            print("❌ DatabaseSeeder: bundle words.json is empty")
-            return
-        }
-        insert(words: words, context: context)
-        UserDefaults.standard.set(true, forKey: bundleSeedKey)
-        print("✅ DatabaseSeeder: seeded \(words.count) words from bundle")
-    }
 
     private func insert(words: [WordItemDTO], context: ModelContext) {
         for dto in words {

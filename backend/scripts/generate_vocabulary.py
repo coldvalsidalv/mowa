@@ -142,10 +142,30 @@ def enrich_batch(client, words: list[str]) -> list[dict]:
 # ORCHESTRATION
 # ---------------------------------------------------------------------------
 
-def load_progress() -> dict:
+def load_progress(scraped_words: list[dict] | None = None) -> dict:
+    # Resume from progress checkpoint if exists
     if os.path.exists(PROGRESS_FILE):
         with open(PROGRESS_FILE) as f:
             return json.load(f)
+    # Resume from already-generated output (credits ran out mid-run).
+    # Claude lemmatizes words so string matching fails — instead we assume
+    # generation ran in rank order and mark the first N ranks as done,
+    # where N ≈ words_generated * (SCRAPE_TOP_N / TARGET_WORDS) with a buffer.
+    if os.path.exists(OUTPUT_FILE) and scraped_words:
+        with open(OUTPUT_FILE) as f:
+            existing = json.load(f)
+        if existing:
+            n = len(existing)
+            # Attach sequential ranks/frequencies back for finalize step
+            for i, w in enumerate(existing):
+                if "rank" not in w and i < len(scraped_words):
+                    w["rank"] = scraped_words[i]["rank"]
+                    w["frequency"] = scraped_words[i]["frequency"]
+            # Mark first n ranks as processed (generation is sequential)
+            done_ranks = [w["rank"] for w in scraped_words[:n]]
+            print(f"  Resuming from {OUTPUT_FILE}: {n} words done, "
+                  f"marking ranks 1–{done_ranks[-1]} as processed")
+            return {"processed_ranks": done_ranks, "words": existing}
     return {"processed_ranks": [], "words": []}
 
 
@@ -171,7 +191,7 @@ def run_enrich(scraped_words: list[dict]):
         sys.exit(1)
 
     client = anthropic.Anthropic(api_key=api_key)
-    progress = load_progress()
+    progress = load_progress(scraped_words)
 
     done_ranks = set(progress["processed_ranks"])
     all_enriched = progress["words"]

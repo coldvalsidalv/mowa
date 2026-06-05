@@ -34,7 +34,11 @@ struct FlashcardView: View {
                 topBar
                 
                 if viewModel.isFinished {
-                    FinishView(dismiss: dismiss)
+                    FinishView(
+                        remainingNewCards: viewModel.remainingNewCards,
+                        onContinue: { viewModel.loadNextBatch() },
+                        dismiss: dismiss
+                    )
                 } else if let word = viewModel.currentWord {
                     cardContent(for: word)
                 } else {
@@ -160,29 +164,52 @@ struct FlashcardView: View {
 
 // MARK: - Вспомогательные компоненты
 struct FinishView: View {
+    let remainingNewCards: Int
+    let onContinue: () -> Void
     let dismiss: DismissAction
+
     var body: some View {
         VStack(spacing: 25) {
             Spacer()
             Image(systemName: "star.circle.fill")
                 .font(.system(size: 100))
                 .foregroundColor(.orange)
-            
+
             VStack(spacing: 10) {
                 Text("Отличная работа!")
-                    .font(.title)
-                    .bold()
+                    .font(.title).bold()
                 Text("Сессия завершена. Интервалы обновлены.")
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
+                if remainingNewCards > 0 {
+                    Text("Ещё \(remainingNewCards) новых слов в этой теме")
+                        .font(.subheadline)
+                        .foregroundColor(.orange)
+                }
             }
             Spacer()
-            Button(action: { dismiss() }) {
-                Text("Завершить")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity).frame(height: 58)
-                    .background(Color.orange).cornerRadius(29)
+
+            VStack(spacing: 12) {
+                if remainingNewCards > 0 {
+                    Button(action: onContinue) {
+                        Text("Продолжить")
+                            .font(.headline).foregroundColor(.white)
+                            .frame(maxWidth: .infinity).frame(height: 58)
+                            .background(Color.orange).cornerRadius(29)
+                    }
+                }
+                Button(action: { dismiss() }) {
+                    Text("Завершить")
+                        .font(.headline)
+                        .foregroundColor(remainingNewCards > 0 ? .secondary : .white)
+                        .frame(maxWidth: .infinity).frame(height: 58)
+                        .background(remainingNewCards > 0 ? Color.clear : Color.orange)
+                        .overlay(
+                            remainingNewCards > 0 ?
+                            RoundedRectangle(cornerRadius: 29).stroke(Color.secondary.opacity(0.3), lineWidth: 1) : nil
+                        )
+                        .cornerRadius(29)
+                }
             }
             .padding(.horizontal, 30).padding(.bottom, 30)
         }

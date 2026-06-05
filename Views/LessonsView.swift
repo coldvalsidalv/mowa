@@ -4,6 +4,7 @@ import SwiftData
 struct LessonsView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = LessonsViewModel()
+    @Query private var allWords: [VocabItem]
     @State private var selectedTab: Int
 
     init(initialTab: Int = 0) {
@@ -61,7 +62,13 @@ struct LessonsView: View {
                     }
                 }
             }
-            .onAppear { viewModel.loadData(context: modelContext) }
+            .onAppear {
+                viewModel.updateCategories(from: allWords)
+                viewModel.loadGrammar()
+            }
+            .onChange(of: allWords.count) { _, _ in
+                viewModel.updateCategories(from: allWords)
+            }
         }
     }
     

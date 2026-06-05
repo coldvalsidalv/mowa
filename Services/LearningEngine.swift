@@ -98,6 +98,18 @@ final class LearningEngine: ObservableObject {
         self.sessionProgress = 0.0
     }
 
+    // MARK: - Helpers
+
+    func countRemainingNew(category: String?) -> Int {
+        var descriptor = FetchDescriptor<VocabItem>(
+            predicate: category.map { cat in
+                #Predicate { $0.fsrsData.reps == 0 && $0.category == cat }
+            } ?? #Predicate { $0.fsrsData.reps == 0 }
+        )
+        descriptor.fetchLimit = 500
+        return (try? modelContext.fetchCount(descriptor)) ?? 0
+    }
+
     // MARK: - Answer processing
 
     func processAnswer(item: VocabItem, rating: FSRSRating, timeSpentMs: Int) {
