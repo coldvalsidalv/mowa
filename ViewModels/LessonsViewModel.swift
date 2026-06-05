@@ -49,34 +49,43 @@ final class LessonsViewModel: ObservableObject {
         }
     }
     
-    /// Загружает грамматику: сначала из бандла (мгновенно), потом обновляет из API в фоне
+    /// Загружает грамматику полностью в фоне — бандл мгновенный, API не блокирует
     func loadGrammar() {
-        let bundleLessons = DataManager.shared.loadGrammar()
-        updateGrammar(from: bundleLessons)
-        Task {
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            let bundleLessons = DataManager.shared.loadGrammar()
+            await MainActor.run { self.updateGrammar(from: bundleLessons) }
             do {
                 let apiLessons = try await APIClient.shared.fetchAllGrammarLessons()
                 if !apiLessons.isEmpty {
-                    updateGrammar(from: apiLessons)
+                    await MainActor.run { self.updateGrammar(from: apiLessons) }
                 }
             } catch {}
         }
     }
 
-    /// Обновляет категории слов — O(n) через Dictionary grouping
+    /// Обновляет категории: snapshot на main (SwiftData), группировка в фоне
     func updateCategories(from words: [VocabItem]) {
-        let grouped = Dictionary(grouping: words, by: \.category)
-        self.categories = grouped.keys.sorted().map { category in
-            let categoryWords = grouped[category]!
-            let learned = categoryWords.filter { $0.fsrsData.state != .new }.count
-            let theme = Self.getTheme(for: category)
-            return CategoryStat(
-                id: category,
-                totalWords: categoryWords.count,
-                learnedWords: learned,
-                icon: theme.icon,
-                color: theme.color
-            )
+        struct WordInfo: Sendable { let category: String; let isNew: Bool }
+        let snapshot = words.map { WordInfo(category: $0.category, isNew: $0.fsrsData.state == .new) }
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
+            let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
+            let grouped = Dictionary(grouping: snapshot, by: \.category)
+            let stats = grouped.keys.sorted().map { category in
+                let items = grouped[category]!
+                let learned = items.filter { !$0.isNew }.count
+                let hash = abs(category.hashValue)
+                return CategoryStat(
+                    id: category,
+                    totalWords: items.count,
+                    learnedWords: learned,
+                    icon: icons[hash % icons.count],
+                    color: colors[hash % colors.count]
+                )
+            }
+            await MainActor.run { self.categories = stats }
         }
     }
 
@@ -132,14 +141,7 @@ final class LessonsViewModel: ObservableObject {
     }
     
     // MARK: - Вспомогательные статические методы
-    
-    private static func getTheme(for category: String) -> (icon: String, color: Color) {
-        let hash = category.hashValue
-        let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
-        let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
-        return (icons[abs(hash) % icons.count], colors[abs(hash) % colors.count])
-    }
-    
+
     private static func getColor(for level: String) -> Color {
         switch level {
         case "A0", "A1": return .green

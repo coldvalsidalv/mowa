@@ -4,13 +4,18 @@ import SwiftUI
 
 struct RootView: View {
     @AppStorage(StorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
+    @AppStorage(StorageKeys.isDarkMode) private var isDarkMode = false
+    @AppStorage(StorageKeys.useSystemTheme) private var useSystemTheme = true
 
     var body: some View {
-        if hasCompletedOnboarding {
-            ContentView()
-        } else {
-            OnboardingView()
+        Group {
+            if hasCompletedOnboarding {
+                ContentView()
+            } else {
+                OnboardingView()
+            }
         }
+        .preferredColorScheme(useSystemTheme ? nil : (isDarkMode ? .dark : .light))
     }
 }
 
