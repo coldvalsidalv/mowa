@@ -49,43 +49,33 @@ final class LessonsViewModel: ObservableObject {
         }
     }
     
-    /// Загружает грамматику полностью в фоне — бандл мгновенный, API не блокирует
+    /// Загружает грамматику: бандл синхронно (мгновенно), API обновляет в фоне
     func loadGrammar() {
-        Task.detached(priority: .userInitiated) { [weak self] in
-            guard let self else { return }
-            let bundleLessons = DataManager.shared.loadGrammar()
-            await MainActor.run { self.updateGrammar(from: bundleLessons) }
+        updateGrammar(from: DataManager.shared.loadGrammar())
+        Task {
             do {
                 let apiLessons = try await APIClient.shared.fetchAllGrammarLessons()
-                if !apiLessons.isEmpty {
-                    await MainActor.run { self.updateGrammar(from: apiLessons) }
-                }
+                if !apiLessons.isEmpty { updateGrammar(from: apiLessons) }
             } catch {}
         }
     }
 
-    /// Обновляет категории: snapshot на main (SwiftData), группировка в фоне
+    /// Обновляет категории слов — O(n) через Dictionary grouping
     func updateCategories(from words: [VocabItem]) {
-        struct WordInfo: Sendable { let category: String; let isNew: Bool }
-        let snapshot = words.map { WordInfo(category: $0.category, isNew: $0.fsrsData.state == .new) }
-        Task.detached(priority: .userInitiated) { [weak self] in
-            guard let self else { return }
-            let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
-            let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
-            let grouped = Dictionary(grouping: snapshot, by: \.category)
-            let stats = grouped.keys.sorted().map { category in
-                let items = grouped[category]!
-                let learned = items.filter { !$0.isNew }.count
-                let hash = abs(category.hashValue)
-                return CategoryStat(
-                    id: category,
-                    totalWords: items.count,
-                    learnedWords: learned,
-                    icon: icons[hash % icons.count],
-                    color: colors[hash % colors.count]
-                )
-            }
-            await MainActor.run { self.categories = stats }
+        let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
+        let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
+        let grouped = Dictionary(grouping: words, by: \.category)
+        self.categories = grouped.keys.sorted().map { category in
+            let items = grouped[category]!
+            let learned = items.filter { $0.fsrsData.state != .new }.count
+            let hash = abs(category.hashValue)
+            return CategoryStat(
+                id: category,
+                totalWords: items.count,
+                learnedWords: learned,
+                icon: icons[hash % icons.count],
+                color: colors[hash % colors.count]
+            )
         }
     }
 
