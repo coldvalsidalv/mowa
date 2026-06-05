@@ -27,10 +27,6 @@ opt_in_rules:
   - empty_count               # .count == 0 → .isEmpty
   - private_outlet            # @IBOutlet должен быть private
 
-function_name:
-  excluded:
-    - L                       # локализационный хелпер L("key")
-
 identifier_name:
   min_length:
     error: 1                  # разрешаем i, j, x, y в циклах/замыканиях
@@ -38,6 +34,7 @@ identifier_name:
   excluded:
     - id                      # SwiftUI/SwiftData стандарт
     - xp                      # доменный термин
+    - L                       # локализационный хелпер (заглавная по соглашению)
     - r                       # FSRS: retrievability
     - s                       # FSRS: stability
     - d                       # FSRS: difficulty
