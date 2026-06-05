@@ -58,8 +58,7 @@ struct HomeView: View {
                 FlashcardView(categories: [category], isReviewMode: false, context: modelContext)
             }
             .onAppear {
-                // Инициализация базы данных при первом входе
-                DatabaseSeeder.shared.seedIfNeeded(context: modelContext)
+                VocabSyncService.shared.syncIfNeeded(context: modelContext)
                 viewModel.refreshStats(context: modelContext)
             }
         }

@@ -2,12 +2,13 @@ import Foundation
 
 // MARK: - Remote DTOs (чистые контейнеры для JSON-декодинга, без логики)
 
-struct TeenyListResponse<T: Decodable>: Decodable {
+struct TeenyListResponse<T: Decodable>: Decodable, @unchecked Sendable {
     let items: [T]
     let total: Int
 }
 
 struct RemoteWord: Sendable {
+    let id: String
     let polish: String
     let translation: String
     let transcription: String?
@@ -16,16 +17,18 @@ struct RemoteWord: Sendable {
     let examples_list: String?
     let category: String
     let image_name: String?
+    let updated: String?
 }
 
 extension RemoteWord: Decodable {
     enum CodingKeys: String, CodingKey {
-        case polish, translation, transcription, category
+        case id, polish, translation, transcription, category, updated
         case part_of_speech, example, examples_list, image_name
     }
 
     nonisolated init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
+        id           = try c.decode(String.self, forKey: .id)
         polish       = try c.decode(String.self, forKey: .polish)
         translation  = try c.decode(String.self, forKey: .translation)
         transcription  = try c.decodeIfPresent(String.self, forKey: .transcription)
@@ -34,10 +37,11 @@ extension RemoteWord: Decodable {
         examples_list  = try c.decodeIfPresent(String.self, forKey: .examples_list)
         category       = try c.decode(String.self, forKey: .category)
         image_name     = try c.decodeIfPresent(String.self, forKey: .image_name)
+        updated        = try c.decodeIfPresent(String.self, forKey: .updated)
     }
 }
 
-struct RemoteGrammarLesson: Decodable {
+struct RemoteGrammarLesson: Decodable, Sendable {
     let lesson_id: String
     let title: String
     let description: String?
@@ -66,10 +70,27 @@ final class APIClient {
 
     // MARK: - Vocabulary
 
-    func fetchAllWords() async throws -> [WordItemDTO] {
-        let pageSize = 100
-        let first = try await fetchWords(page: 1, limit: pageSize)
-        var allRemote = first.items
+    /// Загружает все слова (полный sync при первом запуске)
+    func fetchAllWords() async throws -> [RemoteWord] {
+        try await fetchWords(updatedSince: nil)
+    }
+
+    /// Загружает только слова обновлённые после `since` (delta sync)
+    func fetchWordsDelta(since: Date) async throws -> [RemoteWord] {
+        try await fetchWords(updatedSince: since)
+    }
+
+    private func fetchWords(updatedSince: Date?) async throws -> [RemoteWord] {
+        let pageSize = 200
+        var body: [String: Any] = ["limit": pageSize, "offset": 0]
+        if let since = updatedSince {
+            let formatted = ISO8601DateFormatter.teenybase.string(from: since)
+            body["where"] = "updated > \"\(formatted)\""
+        }
+
+        let first: TeenyListResponse<RemoteWord> = try await post(
+            path: "/api/v1/table/vocabulary/list", body: body)
+        var all = first.items
 
         let totalPages = Int(ceil(Double(first.total) / Double(pageSize)))
         if totalPages > 1 {
@@ -77,21 +98,17 @@ final class APIClient {
                 for p in 2...totalPages {
                     group.addTask { [weak self] in
                         guard let self else { return [] }
-                        return try await self.fetchWords(page: p, limit: pageSize).items
+                        var pageBody = body
+                        pageBody["offset"] = (p - 1) * pageSize
+                        let resp: TeenyListResponse<RemoteWord> = try await self.post(
+                            path: "/api/v1/table/vocabulary/list", body: pageBody)
+                        return await resp.items
                     }
                 }
-                for try await batch in group {
-                    allRemote.append(contentsOf: batch)
-                }
+                for try await batch in group { all.append(contentsOf: batch) }
             }
         }
-
-        return allRemote.map { remoteWordToDTO($0) }
-    }
-
-    private func fetchWords(page: Int, limit: Int) async throws -> TeenyListResponse<RemoteWord> {
-        try await post(path: "/api/v1/table/vocabulary/list",
-                       body: ["limit": limit, "offset": (page - 1) * limit])
+        return all
     }
 
     // MARK: - Grammar
@@ -137,26 +154,16 @@ final class APIClient {
     }
 }
 
-// MARK: - Conversion (вне structs — нет actor-изоляции)
+// MARK: - Helpers
 
-private func remoteWordToDTO(_ r: RemoteWord) -> WordItemDTO {
-    var examplesList: [String] = []
-    if let raw = r.examples_list,
-       let data = raw.data(using: .utf8),
-       let parsed = try? JSONDecoder().decode([String].self, from: data) {
-        examplesList = parsed
-    }
-    return WordItemDTO(
-        id: 0,
-        category: r.category,
-        polish: r.polish,
-        translation: r.translation,
-        transcription: r.transcription ?? "",
-        example: r.example ?? "",
-        imageName: r.image_name ?? "",
-        partOfSpeech: r.part_of_speech ?? "",
-        examplesList: examplesList
-    )
+extension ISO8601DateFormatter {
+    /// Формат дат Teenybase: "2026-06-04 19:10:47" (SQLite CURRENT_TIMESTAMP)
+    static let teenybase: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withFullDate, .withSpaceBetweenDateAndTime, .withTime, .withColonSeparatorInTime]
+        f.timeZone = TimeZone(identifier: "UTC")
+        return f
+    }()
 }
 
 private func remoteToGrammarLesson(_ r: RemoteGrammarLesson) -> GrammarLesson? {

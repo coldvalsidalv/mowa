@@ -54,6 +54,8 @@ final class FSRSCardData {
 @Model
 final class VocabItem {
     @Attribute(.unique) var id: UUID
+    /// UUID из Teenybase — используется для upsert при синхронизации
+    var remoteId: String?
     var polish: String
     var translation: String
     var partOfSpeech: String
@@ -66,8 +68,9 @@ final class VocabItem {
     @Relationship(deleteRule: .cascade)
     var fsrsData: FSRSCardData
     
-    init(polish: String, translation: String, partOfSpeech: String, example: String, category: String) {
+    init(polish: String, translation: String, partOfSpeech: String, example: String, category: String, remoteId: String? = nil) {
         self.id = UUID()
+        self.remoteId = remoteId
         self.polish = polish
         self.translation = translation
         self.partOfSpeech = partOfSpeech
