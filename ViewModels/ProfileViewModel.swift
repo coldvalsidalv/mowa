@@ -31,28 +31,36 @@ final class ProfileViewModel: ObservableObject {
                 description: "Изучи первое слово",
                 icon: "shoe.fill",
                 color: .blue,
-                unlocked: totalLearnedWords > 0
+                unlocked: totalLearnedWords > 0,
+                progress: totalLearnedWords > 0 ? 1.0 : 0.0,
+                progressLabel: totalLearnedWords > 0 ? "Выполнено" : "0 / 1 слово"
             ),
             .init(
                 title: "Огонь",
                 description: "Серия 7 дней подряд",
                 icon: "flame.fill",
                 color: .orange,
-                unlocked: dayStreak >= 7
+                unlocked: dayStreak >= 7,
+                progress: min(Double(dayStreak) / 7.0, 1.0),
+                progressLabel: "\(dayStreak) / 7 дней"
             ),
             .init(
                 title: "Полиглот",
                 description: "Выучи 500 слов",
                 icon: "globe.europe.africa.fill",
                 color: .green,
-                unlocked: totalLearnedWords >= 500
+                unlocked: totalLearnedWords >= 500,
+                progress: min(Double(totalLearnedWords) / 500.0, 1.0),
+                progressLabel: "\(totalLearnedWords) / 500 слов"
             ),
             .init(
                 title: "Чемпион",
                 description: "Набери 1000 XP",
                 icon: "trophy.fill",
                 color: .yellow,
-                unlocked: userXP >= 1000
+                unlocked: userXP >= 1000,
+                progress: min(Double(userXP) / 1000.0, 1.0),
+                progressLabel: "\(userXP) / 1000 XP"
             ),
         ]
     }
