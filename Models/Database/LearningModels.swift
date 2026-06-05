@@ -62,9 +62,9 @@ final class VocabItem {
     var example: String
     var category: String
     /// Порядок внутри категории по частотности (1 = самое частое)
-    var rank: Int
+    var rank: Int = 0
     /// Ключевые флексии: {"1sg":"czytam","3sg":"czyta","past":"czytał","imp":"czytaj"}
-    var inflections: String
+    var inflections: String = "{}"
     
     // Педагогическая стратегия: фаза обучения (single-word -> cloze-test)
     var isClozeUnlocked: Bool
