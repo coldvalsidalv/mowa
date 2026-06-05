@@ -42,13 +42,13 @@ struct CategoryDetailView: View {
             statCell(count: words.filter { $0.fsrsData.state == .new }.count,
                      label: "Новых", color: .secondary)
             Divider().frame(height: 32)
-            statCell(count: words.filter { $0.fsrsData.state == .learning || $0.fsrsData.state == .relearning }.count,
+            statCell(count: words.filter { $0.fsrsData.state == .learning || $0.fsrsData.state == .relearning || ($0.fsrsData.state == .review && $0.fsrsData.stability < 3) }.count,
                      label: "Учу", color: .orange)
             Divider().frame(height: 32)
-            statCell(count: words.filter { $0.fsrsData.stability >= 3 && $0.fsrsData.stability < 21 }.count,
+            statCell(count: words.filter { $0.fsrsData.state == .review && $0.fsrsData.stability >= 3 && $0.fsrsData.stability < 21 }.count,
                      label: "Знаю", color: .blue)
             Divider().frame(height: 32)
-            statCell(count: words.filter { $0.fsrsData.stability >= 21 }.count,
+            statCell(count: words.filter { $0.fsrsData.state == .review && $0.fsrsData.stability >= 21 }.count,
                      label: "Выучено", color: .green)
         }
         .frame(maxWidth: .infinity)

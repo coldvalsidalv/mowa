@@ -16,19 +16,20 @@ struct RootView: View {
 
 struct ContentView: View {
     @State private var selectedTab = 0
+    @State private var triggerLessonsEditMode = false
     // Подписка на смену языка — перерисовывает TabView с новыми строками
     @StateObject private var languageManager = LanguageManager.shared
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView()
+            HomeView(selectedTab: $selectedTab, triggerLessonsEditMode: $triggerLessonsEditMode)
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text(L("tab.home"))
                 }
                 .tag(0)
 
-            LessonsView()
+            LessonsView(triggerEditMode: $triggerLessonsEditMode)
                 .tabItem {
                     Image(systemName: "book.closed.fill")
                     Text(L("tab.learn"))

@@ -4,18 +4,21 @@ import Combine
 
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
-    
+
     // Реактивная привязка к базе данных. UI будет обновляться автоматически при изменении VocabItem.
     @Query private var allWords: [VocabItem]
-    
+
     @StateObject private var viewModel = HomeViewModel()
-    
+
     @AppStorage(StorageKeys.dayStreak) private var dayStreak: Int = 0
     @AppStorage(StorageKeys.userName) private var userName: String = ""
     @AppStorage(StorageKeys.homeCategories) private var storage: CategoryStorage = CategoryStorage()
-    
+
     @State private var showStreakSheet = false
     @State private var recommendedCategory: String? = nil
+
+    @Binding var selectedTab: Int
+    @Binding var triggerLessonsEditMode: Bool
     
     let gridRows = [
         GridItem(.fixed(160), spacing: 16),
@@ -182,7 +185,10 @@ struct HomeView: View {
             Text("Темы").font(.title3).bold().padding(.horizontal)
             
             if storage.items.isEmpty {
-                NavigationLink(destination: LessonsView()) {
+                Button {
+                    triggerLessonsEditMode = true
+                    selectedTab = 1
+                } label: {
                     HStack {
                         Image(systemName: "plus.circle.fill").font(.largeTitle).foregroundColor(.blue)
                         Text("Добавьте темы для изучения").font(.headline).foregroundColor(.primary)

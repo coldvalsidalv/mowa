@@ -6,9 +6,11 @@ struct LessonsView: View {
     @StateObject private var viewModel = LessonsViewModel()
     @Query private var allWords: [VocabItem]
     @State private var selectedTab: Int
+    @Binding var triggerEditMode: Bool
 
-    init(initialTab: Int = 0) {
+    init(initialTab: Int = 0, triggerEditMode: Binding<Bool> = .constant(false)) {
         _selectedTab = State(initialValue: initialTab)
+        _triggerEditMode = triggerEditMode
     }
     
     let gridColumns = [
@@ -65,9 +67,24 @@ struct LessonsView: View {
             .onAppear {
                 viewModel.updateCategories(from: allWords)
                 viewModel.loadGrammar()
+                if triggerEditMode {
+                    selectedTab = 0
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        viewModel.isEditMode = true
+                    }
+                    triggerEditMode = false
+                }
             }
             .onChange(of: allWords.count) { _, _ in
                 viewModel.updateCategories(from: allWords)
+            }
+            .onChange(of: triggerEditMode) { _, newValue in
+                guard newValue else { return }
+                selectedTab = 0
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    viewModel.isEditMode = true
+                }
+                triggerEditMode = false
             }
         }
     }

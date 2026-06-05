@@ -49,19 +49,25 @@ final class LessonsViewModel: ObservableObject {
         }
     }
     
-    /// Загружает грамматику async — вызывается из onAppear
+    /// Загружает грамматику: сначала из бандла (мгновенно), потом обновляет из API в фоне
     func loadGrammar() {
+        let bundleLessons = DataManager.shared.loadGrammar()
+        updateGrammar(from: bundleLessons)
         Task {
-            let rawLessons = await DataManager.shared.loadGrammarAsync()
-            updateGrammar(from: rawLessons)
+            do {
+                let apiLessons = try await APIClient.shared.fetchAllGrammarLessons()
+                if !apiLessons.isEmpty {
+                    updateGrammar(from: apiLessons)
+                }
+            } catch {}
         }
     }
 
-    /// Обновляет категории слов — вызывается реактивно через @Query
+    /// Обновляет категории слов — O(n) через Dictionary grouping
     func updateCategories(from words: [VocabItem]) {
-        let uniqueCategories = Array(Set(words.map { $0.category })).sorted()
-        self.categories = uniqueCategories.map { category in
-            let categoryWords = words.filter { $0.category == category }
+        let grouped = Dictionary(grouping: words, by: \.category)
+        self.categories = grouped.keys.sorted().map { category in
+            let categoryWords = grouped[category]!
             let learned = categoryWords.filter { $0.fsrsData.state != .new }.count
             let theme = Self.getTheme(for: category)
             return CategoryStat(
