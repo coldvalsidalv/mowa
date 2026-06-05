@@ -34,7 +34,7 @@ struct ProfileView: View {
                 
                 // MARK: Прогресс слов
                 Section("Прогресс слов") {
-                    let total = viewModel.wordsLearning + viewModel.wordsKnown + viewModel.wordsMastered
+                    let total = viewModel.wordsNew + viewModel.wordsLearning + viewModel.wordsKnown + viewModel.wordsMastered
                     if total == 0 {
                         Text("Начни учить слова — здесь появится твой прогресс")
                             .font(.subheadline)
@@ -52,18 +52,23 @@ struct ProfileView: View {
 
                         GeometryReader { geo in
                             HStack(spacing: 2) {
+                                let w = geo.size.width
+                                let t = CGFloat(total)
                                 if viewModel.wordsLearning > 0 {
                                     RoundedRectangle(cornerRadius: 3).fill(Color.orange)
-                                        .frame(width: geo.size.width * CGFloat(viewModel.wordsLearning) / CGFloat(total))
+                                        .frame(width: w * CGFloat(viewModel.wordsLearning) / t)
                                 }
                                 if viewModel.wordsKnown > 0 {
                                     RoundedRectangle(cornerRadius: 3).fill(Color.blue)
-                                        .frame(width: geo.size.width * CGFloat(viewModel.wordsKnown) / CGFloat(total))
+                                        .frame(width: w * CGFloat(viewModel.wordsKnown) / t)
                                 }
                                 if viewModel.wordsMastered > 0 {
                                     RoundedRectangle(cornerRadius: 3).fill(Color.green)
-                                        .frame(maxWidth: .infinity)
+                                        .frame(width: w * CGFloat(viewModel.wordsMastered) / t)
                                 }
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(Color.secondary.opacity(0.25))
+                                    .frame(maxWidth: .infinity)
                             }
                         }
                         .frame(height: 6)
