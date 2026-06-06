@@ -6,7 +6,9 @@ import Combine
 final class ProfileViewModel: ObservableObject {
     @AppStorage(StorageKeys.userName) var userName: String = ""
     @AppStorage(StorageKeys.userEmail) var userEmail: String = ""
-    @AppStorage(StorageKeys.totalLearnedWords) var totalLearnedWords: Int = 0
+    /// Source of truth — БД. Заполняется loadStats(context:).
+    /// Порог «знаю»: stability ≥ 3 дня (см. CLAUDE.md).
+    @Published var totalLearnedWords: Int = 0
     @AppStorage(StorageKeys.dayStreak) var dayStreak: Int = 0
     @AppStorage(StorageKeys.dailyGoal) var dailyGoal: Int = 10
     @AppStorage(StorageKeys.userXP) var userXP: Int = 0
@@ -197,6 +199,18 @@ final class ProfileViewModel: ObservableObject {
         currentLeague.title
     }
 
+    // MARK: - Stats from DB
+
+    /// Считает выученные слова (stability ≥ 3 дня) напрямую из БД.
+    /// Вызывать в .onAppear: после сессий счётчик обновится сам.
+    func loadStats(context: ModelContext) {
+        let threshold = 3.0
+        let descriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate { $0.fsrsData.stability >= threshold }
+        )
+        totalLearnedWords = (try? context.fetchCount(descriptor)) ?? 0
+    }
+
     // MARK: - Activity from ReviewLog
 
     func loadActivity(context: ModelContext) {
@@ -251,10 +265,11 @@ final class ProfileViewModel: ObservableObject {
 
     func resetAllProgress() {
         userXP = 0
-        totalLearnedWords = 0
         dayStreak = 0
         UserDefaults.standard.removeObject(forKey: StorageKeys.completedGrammarLessons)
         UserDefaults.standard.removeObject(forKey: StorageKeys.completedChallengeIDs)
+        // totalLearnedWords отражает БД и обновится из loadStats при следующем onAppear.
+        // Сброс прогресса FSRS-карточек намеренно не делаем — это разрушительная операция.
     }
 
     func deleteAccount() {

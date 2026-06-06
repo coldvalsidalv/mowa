@@ -12,7 +12,6 @@ enum StorageKeys {
     static let completedChallengeIDs = "completedChallengeIDs"
     static let userName = "userName"
     static let userEmail = "userEmail"
-    static let totalLearnedWords = "totalLearnedWords"
     static let dailyGoal = "dailyGoal"
     static let isDarkMode = "isDarkMode"
     static let useSystemTheme = "useSystemTheme"

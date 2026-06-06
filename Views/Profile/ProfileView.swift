@@ -160,9 +160,11 @@ struct ProfileView: View {
             }
             .onAppear {
                 viewModel.loadActivity(context: modelContext)
+                viewModel.loadStats(context: modelContext)
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 viewModel.loadActivity(context: modelContext)
+                viewModel.loadStats(context: modelContext)
             }
             .alert("Сбросить прогресс?", isPresented: $viewModel.showResetAlert) {
                 Button("Отмена", role: .cancel) { }

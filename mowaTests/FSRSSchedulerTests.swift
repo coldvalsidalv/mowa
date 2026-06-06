@@ -19,47 +19,49 @@ final class FSRSSchedulerTests: XCTestCase {
     // MARK: - Новые карточки
 
     func test_newCard_again_goesToLearning() {
-        let card = makeNewCard()
-        let result = scheduler.schedule(card: card, rating: .again, now: now)
+        let result = scheduler.schedule(card: makeNewCard(), rating: .again, now: now)
         XCTAssertEqual(result.state, .learning)
     }
 
     func test_newCard_good_goesToReview() {
-        let card = makeNewCard()
-        let result = scheduler.schedule(card: card, rating: .good, now: now)
+        let result = scheduler.schedule(card: makeNewCard(), rating: .good, now: now)
         XCTAssertEqual(result.state, .review)
     }
 
     func test_newCard_easy_goesToReview() {
-        let card = makeNewCard()
-        let result = scheduler.schedule(card: card, rating: .easy, now: now)
+        let result = scheduler.schedule(card: makeNewCard(), rating: .easy, now: now)
         XCTAssertEqual(result.state, .review)
     }
 
     func test_newCard_hard_goesToReview() {
-        let card = makeNewCard()
-        let result = scheduler.schedule(card: card, rating: .hard, now: now)
+        let result = scheduler.schedule(card: makeNewCard(), rating: .hard, now: now)
         XCTAssertEqual(result.state, .review)
     }
 
     func test_newCard_repsIncrement() {
-        let card = makeNewCard()
-        let result = scheduler.schedule(card: card, rating: .good, now: now)
+        let result = scheduler.schedule(card: makeNewCard(), rating: .good, now: now)
         XCTAssertEqual(result.reps, 1)
     }
 
     func test_newCard_lastReviewSet() {
-        let card = makeNewCard()
-        let result = scheduler.schedule(card: card, rating: .good, now: now)
+        let result = scheduler.schedule(card: makeNewCard(), rating: .good, now: now)
         XCTAssertEqual(result.lastReview, now)
+    }
+
+    func test_scheduler_doesNotMutateInput() {
+        let card = makeReviewCard()
+        let originalStability = card.stability
+        let originalDifficulty = card.difficulty
+        _ = scheduler.schedule(card: card, rating: .again, now: now)
+        XCTAssertEqual(card.stability, originalStability, "Snapshot должен оставаться неизменным")
+        XCTAssertEqual(card.difficulty, originalDifficulty)
     }
 
     // MARK: - Stability при новых карточках
 
     func test_newCard_stabilityPositive() {
         for rating in [FSRSRating.again, .hard, .good, .easy] {
-            let card = makeNewCard()
-            let result = scheduler.schedule(card: card, rating: rating, now: now)
+            let result = scheduler.schedule(card: makeNewCard(), rating: rating, now: now)
             XCTAssertGreaterThan(result.stability, 0, "stability должна быть > 0 для рейтинга \(rating)")
         }
     }
@@ -80,8 +82,7 @@ final class FSRSSchedulerTests: XCTestCase {
 
     func test_newCard_difficultyInRange() {
         for rating in [FSRSRating.again, .hard, .good, .easy] {
-            let card = makeNewCard()
-            let result = scheduler.schedule(card: card, rating: rating, now: now)
+            let result = scheduler.schedule(card: makeNewCard(), rating: rating, now: now)
             XCTAssertGreaterThanOrEqual(result.difficulty, 1.0, "difficulty должна быть >= 1 для рейтинга \(rating)")
             XCTAssertLessThanOrEqual(result.difficulty, 10.0, "difficulty должна быть <= 10 для рейтинга \(rating)")
         }
@@ -96,59 +97,48 @@ final class FSRSSchedulerTests: XCTestCase {
     // MARK: - Review карточки
 
     func test_reviewCard_again_goesToRelearning() {
-        let card = makeReviewCard()
-        let result = scheduler.schedule(card: card, rating: .again, now: now)
+        let result = scheduler.schedule(card: makeReviewCard(), rating: .again, now: now)
         XCTAssertEqual(result.state, .relearning)
     }
 
     func test_reviewCard_again_incrementsLapses() {
         let card = makeReviewCard()
-        let initialLapses = card.lapses
         let result = scheduler.schedule(card: card, rating: .again, now: now)
-        XCTAssertEqual(result.lapses, initialLapses + 1)
+        XCTAssertEqual(result.lapses, card.lapses + 1)
     }
 
     func test_reviewCard_good_staysInReview() {
-        let card = makeReviewCard()
-        let result = scheduler.schedule(card: card, rating: .good, now: now)
+        let result = scheduler.schedule(card: makeReviewCard(), rating: .good, now: now)
         XCTAssertEqual(result.state, .review)
     }
 
     func test_reviewCard_good_increasesStability() {
         let card = makeReviewCard()
-        let originalStability = card.stability  // snapshot — FSRSCardData передаётся по ссылке
-        _ = scheduler.schedule(card: card, rating: .good, now: now)
-        XCTAssertGreaterThan(card.stability, originalStability)
+        let result = scheduler.schedule(card: card, rating: .good, now: now)
+        XCTAssertGreaterThan(result.stability, card.stability)
     }
 
     func test_reviewCard_again_decreasesStability() {
         let card = makeReviewCard()
-        let originalStability = card.stability
-        _ = scheduler.schedule(card: card, rating: .again, now: now)
-        XCTAssertLessThan(card.stability, originalStability)
+        let result = scheduler.schedule(card: card, rating: .again, now: now)
+        XCTAssertLessThan(result.stability, card.stability)
     }
 
     func test_reviewCard_easyGreaterStabilityThanGood() {
-        let easyCard = makeReviewCard()
-        _ = scheduler.schedule(card: easyCard, rating: .easy, now: now)
-
-        let goodCard = makeReviewCard()
-        _ = scheduler.schedule(card: goodCard, rating: .good, now: now)
-
-        XCTAssertGreaterThan(easyCard.stability, goodCard.stability)
+        let easy = scheduler.schedule(card: makeReviewCard(), rating: .easy, now: now)
+        let good = scheduler.schedule(card: makeReviewCard(), rating: .good, now: now)
+        XCTAssertGreaterThan(easy.stability, good.stability)
     }
 
     // MARK: - Интервалы
 
     func test_interval_minimumOneDay() {
-        let card = makeNewCard()
-        let result = scheduler.schedule(card: card, rating: .again, now: now)
+        let result = scheduler.schedule(card: makeNewCard(), rating: .again, now: now)
         XCTAssertGreaterThanOrEqual(result.scheduledDays, 1)
     }
 
     func test_interval_dueInFuture() {
-        let card = makeNewCard()
-        let result = scheduler.schedule(card: card, rating: .good, now: now)
+        let result = scheduler.schedule(card: makeNewCard(), rating: .good, now: now)
         XCTAssertGreaterThan(result.due, now)
     }
 
@@ -159,15 +149,15 @@ final class FSRSSchedulerTests: XCTestCase {
     }
 
     func test_interval_growsWithRepeatedGoodRatings() {
-        let card = makeNewCard()
+        var card = makeNewCard()
         var prevInterval = 0
         var reviewDate = now!
 
         for i in 0..<5 {
-            _ = scheduler.schedule(card: card, rating: .good, now: reviewDate)
+            card = scheduler.schedule(card: card, rating: .good, now: reviewDate)
             XCTAssertGreaterThan(card.scheduledDays, prevInterval,
                                  "Интервал должен расти с каждым повторением (итерация \(i))")
-            reviewDate = card.due  // следующий review в дату следующего показа
+            reviewDate = card.due
             prevInterval = card.scheduledDays
         }
     }
@@ -225,19 +215,20 @@ final class FSRSSchedulerTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeNewCard() -> FSRSCardData {
-        FSRSCardData()
+    private func makeNewCard() -> FSRSCardSnapshot {
+        FSRSCardData().snapshot()
     }
 
-    private func makeReviewCard() -> FSRSCardData {
-        let card = FSRSCardData()
-        card.state = .review
-        card.difficulty = 5.0
-        card.stability = 10.0
-        card.reps = 3
-        card.lastReview = now.addingTimeInterval(-10 * 86400) // 10 дней назад
-        card.due = now
-        card.scheduledDays = 10
-        return card
+    private func makeReviewCard() -> FSRSCardSnapshot {
+        FSRSCardSnapshot(
+            state: .review,
+            difficulty: 5.0,
+            stability: 10.0,
+            reps: 3,
+            lapses: 0,
+            lastReview: now.addingTimeInterval(-10 * 86400), // 10 дней назад
+            due: now,
+            scheduledDays: 10
+        )
     }
 }

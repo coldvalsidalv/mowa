@@ -38,7 +38,7 @@ final class FSRSCardData {
     var lastReview: Date?
     var due: Date
     var scheduledDays: Int
-    
+
     init() {
         self.state = .new
         self.difficulty = 0.0
@@ -47,6 +47,46 @@ final class FSRSCardData {
         self.lapses = 0
         self.due = Date()
         self.scheduledDays = 0
+    }
+}
+
+/// Иммутабельный снимок FSRSCardData для расчётов.
+/// FSRSCardData — @Model (ссылочный тип), что делает scheduler-функцию
+/// случайно мутирующей. Снимок изолирует чистую математику от ORM.
+struct FSRSCardSnapshot {
+    var state: FSRSState
+    var difficulty: Double
+    var stability: Double
+    var reps: Int
+    var lapses: Int
+    var lastReview: Date?
+    var due: Date
+    var scheduledDays: Int
+}
+
+extension FSRSCardData {
+    func snapshot() -> FSRSCardSnapshot {
+        FSRSCardSnapshot(
+            state: state,
+            difficulty: difficulty,
+            stability: stability,
+            reps: reps,
+            lapses: lapses,
+            lastReview: lastReview,
+            due: due,
+            scheduledDays: scheduledDays
+        )
+    }
+
+    func apply(_ s: FSRSCardSnapshot) {
+        state = s.state
+        difficulty = s.difficulty
+        stability = s.stability
+        reps = s.reps
+        lapses = s.lapses
+        lastReview = s.lastReview
+        due = s.due
+        scheduledDays = s.scheduledDays
     }
 }
 

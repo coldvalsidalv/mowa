@@ -1,60 +1,58 @@
 import Foundation
 
-/// Математическое ядро FSRS на основе модели DSR (Difficulty, Stability, Retrievability)
-/// Не содержит перечислений FSRSRating и FSRSState, так как они вынесены в LearningModels.swift
+/// Математическое ядро FSRS на основе модели DSR (Difficulty, Stability, Retrievability).
+/// Чистая функция над снимком — не мутирует входы и не зависит от SwiftData.
+/// Версия алгоритма: FSRS-4.5 (decay/factor зафиксированы). v5 — отдельная миграция.
 final class FSRSScheduler {
-    // Стандартные оптимизированные веса FSRS v4/v5 (17 параметров)
+    // Стандартные оптимизированные веса FSRS v4 (17 параметров).
+    // TODO (Фаза 3): подтягивать персональные веса с бэкенда после оптимизации
+    // по ReviewLog (gradient descent по log-loss).
     private let w: [Double] = [
         0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01,
         1.49, 0.14, 0.94, 2.18, 0.05, 0.34, 1.26, 0.29, 2.61
     ]
 
-    // Целевой уровень удержания (90% - оптимальный баланс между забыванием и частотой повторений)
-    private let targetRetrievability = 0.90
+    /// UTC-календарь — устойчив к смене таймзоны устройства и к DST.
+    private let utcCalendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar
+    }()
 
-    /// Расчет следующего состояния карточки на основе оценки пользователя
-    func schedule(card: FSRSCardData, rating: FSRSRating, now: Date) -> FSRSCardData {
-        // FSRSCardData — SwiftData @Model (ссылочный тип).
-        // Сохраняем нужные значения ДО мутации чтобы вычисления были корректными.
-        let oldLastReview = card.lastReview
-        let oldStability  = card.stability
-        let oldDifficulty = card.difficulty
-        let oldState      = card.state
-
-        let next = card
+    /// Чистая функция: возвращает новый снимок без мутации входа.
+    func schedule(card: FSRSCardSnapshot, rating: FSRSRating, now: Date) -> FSRSCardSnapshot {
+        var next = card
         next.lastReview = now
         next.reps += 1
 
-        switch oldState {
+        switch card.state {
         case .new:
             next.difficulty = initDifficulty(rating: rating)
             next.stability  = initStability(rating: rating)
             next.state      = (rating == .again) ? .learning : .review
 
         case .learning, .relearning:
-            next.difficulty = nextDifficulty(d: oldDifficulty, rating: rating)
+            next.difficulty = nextDifficulty(d: card.difficulty, rating: rating)
             next.stability  = initStability(rating: rating)
-            next.state      = (rating == .again) ? oldState : .review
+            next.state      = (rating == .again) ? card.state : .review
 
         case .review:
-            next.difficulty = nextDifficulty(d: oldDifficulty, rating: rating)
-            // Используем oldLastReview — до перезаписи, иначе elapsedDays = 0 всегда
-            let elapsedDays    = max(0, now.timeIntervalSince(oldLastReview ?? now) / 86400.0)
-            let retrievability = currentRetrievability(s: oldStability, t: elapsedDays)
+            next.difficulty = nextDifficulty(d: card.difficulty, rating: rating)
+            let elapsedDays    = max(0, now.timeIntervalSince(card.lastReview ?? now) / 86400.0)
+            let retrievability = currentRetrievability(s: card.stability, t: elapsedDays)
 
             if rating == .again {
                 next.lapses    += 1
-                next.stability  = nextForgetStability(d: next.difficulty, s: oldStability, r: retrievability)
+                next.stability  = nextForgetStability(d: next.difficulty, s: card.stability, r: retrievability)
                 next.state      = .relearning
             } else {
-                next.stability  = nextRecallStability(d: next.difficulty, s: oldStability, r: retrievability, rating: rating)
+                next.stability  = nextRecallStability(d: next.difficulty, s: card.stability, r: retrievability, rating: rating)
             }
         }
 
-        // Расчет интервала до следующего показа
         let nextIntervalDays = nextInterval(s: next.stability)
         next.scheduledDays = nextIntervalDays
-        next.due = Calendar.current.date(byAdding: .day, value: nextIntervalDays, to: now)!
+        next.due = utcCalendar.date(byAdding: .day, value: nextIntervalDays, to: now)!
 
         return next
     }
@@ -100,7 +98,8 @@ final class FSRSScheduler {
 
     private func nextInterval(s: Double) -> Int {
         let factor = 19.0 / 81.0
-        let interval = (s / factor) * (pow(targetRetrievability, -2.0) - 1.0)
+        let retention = VerbumConfig.fsrsDesiredRetention
+        let interval = (s / factor) * (pow(retention, -2.0) - 1.0)
         return max(1, Int(round(interval)))
     }
 }

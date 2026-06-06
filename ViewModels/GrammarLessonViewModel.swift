@@ -86,15 +86,8 @@ final class GrammarLessonViewModel: ObservableObject {
         }
 
         // Применить FSRS
-        let updated = scheduler.schedule(card: grammarProgress.fsrsData, rating: rating, now: Date())
-        grammarProgress.fsrsData.difficulty    = updated.difficulty
-        grammarProgress.fsrsData.stability     = updated.stability
-        grammarProgress.fsrsData.state         = updated.state
-        grammarProgress.fsrsData.lapses        = updated.lapses
-        grammarProgress.fsrsData.reps          = updated.reps
-        grammarProgress.fsrsData.due           = updated.due
-        grammarProgress.fsrsData.lastReview    = updated.lastReview
-        grammarProgress.fsrsData.scheduledDays = updated.scheduledDays
+        let updated = scheduler.schedule(card: grammarProgress.fsrsData.snapshot(), rating: rating, now: Date())
+        grammarProgress.fsrsData.apply(updated)
         grammarProgress.lastScore = score
 
         // XP
