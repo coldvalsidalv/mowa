@@ -37,7 +37,8 @@ final class FSRSCardData {
     var lapses: Int
     var lastReview: Date?
     var due: Date
-    var scheduledDays: Int
+    /// Текущий learning/relearning step. nil для .new и .review.
+    var step: Int?
 
     init() {
         self.state = .new
@@ -46,7 +47,7 @@ final class FSRSCardData {
         self.reps = 0
         self.lapses = 0
         self.due = Date()
-        self.scheduledDays = 0
+        self.step = nil
     }
 }
 
@@ -61,7 +62,7 @@ struct FSRSCardSnapshot {
     var lapses: Int
     var lastReview: Date?
     var due: Date
-    var scheduledDays: Int
+    var step: Int?
 }
 
 extension FSRSCardData {
@@ -74,7 +75,7 @@ extension FSRSCardData {
             lapses: lapses,
             lastReview: lastReview,
             due: due,
-            scheduledDays: scheduledDays
+            step: step
         )
     }
 
@@ -86,7 +87,7 @@ extension FSRSCardData {
         lapses = s.lapses
         lastReview = s.lastReview
         due = s.due
-        scheduledDays = s.scheduledDays
+        step = s.step
     }
 }
 
