@@ -6,13 +6,16 @@ struct RootView: View {
     @AppStorage(StorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
     @AppStorage(StorageKeys.isDarkMode) private var isDarkMode = false
     @AppStorage(StorageKeys.useSystemTheme) private var useSystemTheme = true
+    @ObservedObject private var auth = AuthManager.shared
 
     var body: some View {
         Group {
-            if hasCompletedOnboarding {
-                ContentView()
-            } else {
+            if !hasCompletedOnboarding {
                 OnboardingView()
+            } else if !auth.isAuthenticated {
+                AuthView()
+            } else {
+                ContentView()
             }
         }
         .preferredColorScheme(useSystemTheme ? nil : (isDarkMode ? .dark : .light))
