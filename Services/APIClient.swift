@@ -127,16 +127,28 @@ final class APIClient {
 
     // MARK: - Generic POST
 
+    /// Внутренний POST с автоматической подстановкой auth-токена и retry на 401.
+    /// При 401 пытается обновить токен через AuthManager, повторяет запрос один раз.
+    /// Если refresh не удался — signOut() и пробрасывает 401.
     private func post<T: Decodable>(path: String, body: [String: Any]) async throws -> T {
+        try await postOnce(path: path, body: body, isRetry: false)
+    }
+
+    private func postOnce<T: Decodable>(path: String, body: [String: Any], isRetry: Bool) async throws -> T {
         guard let url = URL(string: VerbumConfig.baseURL + path) else {
             throw APIError.invalidURL
         }
         var request = URLRequest(url: url, timeoutInterval: 15)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        if !VerbumConfig.contentReadToken.isEmpty {
+
+        // Auth-токен пользователя приоритетнее статического contentReadToken.
+        if let token = AuthManager.shared.currentAccessToken() {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else if !VerbumConfig.contentReadToken.isEmpty {
             request.setValue("Bearer \(VerbumConfig.contentReadToken)", forHTTPHeaderField: "Authorization")
         }
+
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
         let (data, response): (Data, URLResponse)
@@ -146,7 +158,22 @@ final class APIClient {
             throw APIError.networkError(error)
         }
 
-        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+        guard let http = response as? HTTPURLResponse else {
+            throw APIError.serverError(0)
+        }
+
+        if http.statusCode == 401 && !isRetry {
+            // Пробуем рефреш токена и повторяем запрос один раз.
+            do {
+                try await AuthManager.shared.refresh()
+                return try await postOnce(path: path, body: body, isRetry: true)
+            } catch {
+                await AuthManager.shared.signOut()
+                throw APIError.serverError(401)
+            }
+        }
+
+        if !(200...299).contains(http.statusCode) {
             throw APIError.serverError(http.statusCode)
         }
 
