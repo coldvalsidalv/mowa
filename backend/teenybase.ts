@@ -1,4 +1,4 @@
-import { DatabaseSettings, TableAuthExtensionData, TableRulesExtensionData } from 'teenybase'
+import { DatabaseSettings, TableAuthExtensionData, TableRulesExtensionData, sql } from 'teenybase'
 import { baseFields, authFields, createdTrigger, updatedTrigger } from 'teenybase/scaffolds/fields'
 
 export default {
@@ -58,6 +58,51 @@ export default {
           createRule: 'auth.role == "admin"',
           updateRule: 'auth.role == "admin"',
           deleteRule: 'auth.role == "admin"',
+        } as TableRulesExtensionData,
+      ],
+    },
+
+    // ─── REVIEW LOGS ─────────────────────────────────────────────────────────
+    // Иммутабельные записи каждого ответа в SRS-сессии. Источник данных
+    // для будущего FSRS-оптимизатора (Фаза 3b). По одному ряду на review,
+    // дедупликация через unique (user_id, card_id, review_date).
+    {
+      name: 'review_logs',
+      autoSetUid: true,
+      fields: [
+        ...baseFields,
+        { name: 'user_id', type: 'relation', sqlType: 'text', notNull: true,
+          foreignKey: { table: 'users', column: 'id' } },
+        // card_id — Teenybase UUID карточки из vocabulary, НЕ локальный SwiftData id.
+        // Клиент пропускает логи карточек без remoteId (offline-fallback bundle).
+        { name: 'card_id', type: 'text', sqlType: 'text', notNull: true },
+        // 1=Again, 2=Hard, 3=Good, 4=Easy (FSRSRating).
+        { name: 'rating', type: 'integer', sqlType: 'integer', notNull: true,
+          check: sql`rating IN (1, 2, 3, 4)` },
+        // UTC datetime ответа.
+        { name: 'review_date', type: 'date', sqlType: 'datetime', notNull: true },
+        // Сколько мс юзер думал перед ответом — для аналитики.
+        { name: 'review_duration_ms', type: 'integer', sqlType: 'integer', default: { q: '0' } },
+      ],
+      // Только createdTrigger — логи иммутабельны, поле updated не нужно.
+      triggers: [createdTrigger],
+      indexes: [
+        // Идемпотентность повторных синков: один и тот же ответ нельзя записать дважды.
+        { name: 'review_logs_user_card_date_unique',
+          fields: ['user_id', 'card_id', 'review_date'], unique: true },
+        // Хронологический скан логов юзера — нужен оптимизатору.
+        { name: 'review_logs_user_date',
+          fields: ['user_id', 'review_date'] },
+      ],
+      extensions: [
+        {
+          name: 'rules',
+          listRule: 'auth.uid == user_id',
+          viewRule: 'auth.uid == user_id',
+          // Клиент обязан слать user_id == свой auth.uid.
+          createRule: 'auth.uid != null & new.user_id == auth.uid',
+          updateRule: 'false',   // иммутабельны
+          deleteRule: 'false',
         } as TableRulesExtensionData,
       ],
     },

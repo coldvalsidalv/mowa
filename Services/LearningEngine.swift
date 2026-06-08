@@ -151,6 +151,11 @@ final class LearningEngine: ObservableObject {
         } catch {
             print("❌ LearningEngine: failed to save context — \(error)")
         }
+
+        // Конец сессии — отправляем накопленные ReviewLog'и на бэкенд.
+        if sessionQueue.isEmpty {
+            ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
+        }
     }
 
     private func updateProgress() {

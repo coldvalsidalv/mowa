@@ -25,6 +25,8 @@ struct RootView: View {
 struct ContentView: View {
     @State private var selectedTab = 0
     @State private var triggerLessonsEditMode = false
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.modelContext) private var modelContext
     // Подписка на смену языка — перерисовывает TabView с новыми строками
     @StateObject private var languageManager = LanguageManager.shared
 
@@ -61,6 +63,14 @@ struct ContentView: View {
         .tint(.purple)
         // Перерисовываем при смене языка
         .id(languageManager.currentLanguage)
+        .onAppear {
+            ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
+            }
+        }
     }
 }
 
