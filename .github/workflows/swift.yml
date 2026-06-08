@@ -40,7 +40,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            2>&1 | grep -E "error:|warning:|BUILD (SUCCEEDED|FAILED)" | tail -30
+            2>&1 | grep -A 5 -E "error:|warning:|BUILD (SUCCEEDED|FAILED)" | tail -50
 
       - name: Test
         run: |
@@ -51,4 +51,4 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            2>&1 | grep -E "error:|Test (Suite|Case|Passed|Failed)|BUILD (SUCCEEDED|FAILED)" | tail -50
+            2>&1 | grep -A 5 -E "error:|Test (Suite|Case|Passed|Failed)|BUILD (SUCCEEDED|FAILED)" | tail -80
