@@ -5,12 +5,14 @@ struct CategoryDetailView: View {
     let category: String
     @Environment(\.modelContext) private var modelContext
 
-    @Query private var allWords: [VocabItem]
+    @Query private var words: [VocabItem]
 
-    private var words: [VocabItem] {
-        allWords
-            .filter { $0.category == category }
-            .sorted { $0.rank < $1.rank }
+    init(category: String) {
+        self.category = category
+        _words = Query(
+            filter: #Predicate<VocabItem> { $0.category == category },
+            sort: [SortDescriptor(\.rank)]
+        )
     }
 
     var body: some View {

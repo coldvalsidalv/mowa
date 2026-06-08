@@ -47,27 +47,40 @@ final class VocabSyncService {
     }
 
     private func upsert(words: [RemoteWord], isFirstSync: Bool, context: ModelContext) throws {
-        let allItems = try context.fetch(FetchDescriptor<VocabItem>())
-        let existing = Dictionary(uniqueKeysWithValues: allItems.compactMap { item in
-            item.remoteId.map { ($0, item) }
-        })
-
         var inserted = 0, updated = 0
-        for word in words {
-            if let item = existing[word.id] {
-                item.apply(word)
-                updated += 1
-            } else {
-                context.insert(VocabItem(remote: word))
-                inserted += 1
-            }
-        }
 
         if isFirstSync {
+            // First sync: load all existing items once to handle stale bundle entries.
+            let allItems = try context.fetch(FetchDescriptor<VocabItem>())
+            let existing = Dictionary(uniqueKeysWithValues: allItems.compactMap { item in
+                item.remoteId.map { ($0, item) }
+            })
+            for word in words {
+                if let item = existing[word.id] {
+                    item.apply(word)
+                    updated += 1
+                } else {
+                    context.insert(VocabItem(remote: word))
+                    inserted += 1
+                }
+            }
             let stale = allItems.filter { $0.remoteId == nil }
             stale.forEach { context.delete($0) }
             if !stale.isEmpty {
                 print("🗑️ VocabSyncService: removed \(stale.count) stale bundle items")
+            }
+        } else {
+            // Delta sync: words is a small changed set — look up each one individually.
+            for word in words {
+                let remoteId = word.id
+                let desc = FetchDescriptor<VocabItem>(predicate: #Predicate { $0.remoteId == remoteId })
+                if let item = (try? context.fetch(desc))?.first {
+                    item.apply(word)
+                    updated += 1
+                } else {
+                    context.insert(VocabItem(remote: word))
+                    inserted += 1
+                }
             }
         }
 
