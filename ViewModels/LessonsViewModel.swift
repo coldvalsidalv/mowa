@@ -51,15 +51,15 @@ final class LessonsViewModel: ObservableObject {
     
     /// Загружает грамматику: парс бандла на фоновом потоке, API обновляет в фоне
     func loadGrammar() {
-        Task {
-            let bundleLessons = await Task.detached(priority: .userInitiated) {
-                DataManager.shared.loadGrammar()
-            }.value
-            updateGrammar(from: bundleLessons)
+        Task.detached(priority: .userInitiated) { [weak self] in
+            let bundleLessons = DataManager.shared.loadGrammar()
+            await self?.updateGrammar(from: bundleLessons)
 
             do {
                 let apiLessons = try await APIClient.shared.fetchAllGrammarLessons()
-                if !apiLessons.isEmpty { updateGrammar(from: apiLessons) }
+                if !apiLessons.isEmpty {
+                    await self?.updateGrammar(from: apiLessons)
+                }
             } catch {}
         }
     }

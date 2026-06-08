@@ -27,6 +27,11 @@ final class ProfileViewModel: ObservableObject {
     /// Кэш достижений. Пересчитывается через recomputeAchievements() — вызывается
     /// из loadStats/loadActivity/resetAllProgress. Раньше был computed property,
     /// что пересоздавало 15 структур на каждый body re-render.
+    ///
+    /// ⚠️ КОНТРАКТ: если ты добавляешь новый код-путь, который мутирует
+    /// totalLearnedWords / userXP / dayStreak / completedGrammarLessons —
+    /// обязан вызвать recomputeAchievements() сразу после. Иначе UI
+    /// показывает stale ачивки до следующего .onAppear.
     @Published var achievements: [Achievement] = []
 
     init() {
