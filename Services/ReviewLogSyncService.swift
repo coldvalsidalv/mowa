@@ -40,11 +40,16 @@ final class ReviewLogSyncService {
         guard let logs = try? context.fetch(descriptor), !logs.isEmpty else { return }
 
         // 2. Построить map cardId(local UUID) → remoteId(Teenybase UUID).
-        // Всего ~500 vocab items — fetch всех дешевле, чем строить SwiftData-предикат с Set.
-        let items = (try? context.fetch(FetchDescriptor<VocabItem>())) ?? []
-        let remoteMap: [UUID: String] = Dictionary(uniqueKeysWithValues: items.compactMap { item in
-            item.remoteId.map { (item.id, $0) }
-        })
+        // Fetching only the cards referenced in this batch (typically 10-50), not all 5000.
+        let batchCardIds = Set(logs.map { $0.cardId })
+        var remoteMap: [UUID: String] = [:]
+        for cardId in batchCardIds {
+            let id = cardId
+            let desc = FetchDescriptor<VocabItem>(predicate: #Predicate { $0.id == id })
+            if let item = (try? context.fetch(desc))?.first, let remoteId = item.remoteId {
+                remoteMap[cardId] = remoteId
+            }
+        }
 
         // 3. Слать по одному; при первой ошибке — стоп, cursor НЕ продвигаем дальше точки сбоя.
         var lastSuccess = lastSynced

@@ -5,10 +5,8 @@ import Combine
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
 
-    // Реактивная привязка к базе данных. UI будет обновляться автоматически при изменении VocabItem.
-    @Query private var allWords: [VocabItem]
-
     @StateObject private var viewModel = HomeViewModel()
+    @State private var categoryStats: [String: (total: Int, learned: Int)] = [:]
 
     @AppStorage(StorageKeys.dayStreak) private var dayStreak: Int = 0
     @AppStorage(StorageKeys.userName) private var userName: String = ""
@@ -63,6 +61,10 @@ struct HomeView: View {
             .onAppear {
                 VocabSyncService.shared.syncIfNeeded(context: modelContext)
                 viewModel.refreshStats(context: modelContext)
+                loadCategoryStats()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .vocabularyDidChange)) { _ in
+                loadCategoryStats()
             }
         }
     }
@@ -203,10 +205,9 @@ struct HomeView: View {
                     LazyHGrid(rows: gridRows, spacing: 16) {
                         ForEach(storage.items, id: \.self) { category in
                             let theme = getTheme(for: category)
-                            let categoryWords = allWords.filter { $0.category == category }
-                            let total = categoryWords.count
-                            // Расчет прогресса на основе состояния FSRS, а не удаленного safeBox
-                            let learned = categoryWords.filter { $0.fsrsData.state != .new }.count
+                            let stats = categoryStats[category]
+                            let total = stats?.total ?? 0
+                            let learned = stats?.learned ?? 0
                             let progress = total > 0 ? Double(learned) / Double(total) : 0.0
                             let countText = total > 0 ? "\(learned)/\(total)" : "Слова"
                             let isCompleted = total > 0 && progress >= 1.0
@@ -251,23 +252,36 @@ struct HomeView: View {
         }
     }
 
+    private func loadCategoryStats() {
+        var stats: [String: (total: Int, learned: Int)] = [:]
+        for category in storage.items {
+            let cat = category
+            let totalDesc = FetchDescriptor<VocabItem>(predicate: #Predicate { $0.category == cat })
+            let learnedDesc = FetchDescriptor<VocabItem>(predicate: #Predicate { $0.category == cat && $0.fsrsData.reps > 0 })
+            let total = (try? modelContext.fetchCount(totalDesc)) ?? 0
+            let learned = (try? modelContext.fetchCount(learnedDesc)) ?? 0
+            stats[cat] = (total: total, learned: learned)
+        }
+        categoryStats = stats
+    }
+
     private func getBestCategory() -> String? {
         var bestCategory: String? = nil
         var highestProgress: Double = -1.0
-        
+
         for category in storage.items {
-            let categoryWords = allWords.filter { $0.category == category }
-            guard !categoryWords.isEmpty else { continue }
-            
-            let learned = categoryWords.filter { $0.fsrsData.state != .new }.count
-            let progress = Double(learned) / Double(categoryWords.count)
-            
+            let stats = categoryStats[category]
+            let total = stats?.total ?? 0
+            guard total > 0 else { continue }
+            let learned = stats?.learned ?? 0
+            let progress = Double(learned) / Double(total)
+
             if progress < 1.0 && progress > highestProgress {
                 highestProgress = progress
                 bestCategory = category
             }
         }
-        
+
         return bestCategory ?? storage.items.first
     }
 }

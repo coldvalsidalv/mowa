@@ -37,25 +37,30 @@ final class QuizViewModel: ObservableObject {
     /// Инициализация сессии: выборка слов из SwiftData и генерация дистракторов.
     /// Требует передачи контекста для доступа к локальной БД.
     func startSession(context: ModelContext) {
-        let descriptor = FetchDescriptor<VocabItem>()
-        let allWords = (try? context.fetch(descriptor)) ?? []
-        
-        guard allWords.count >= 4 else {
+        let totalCount = (try? context.fetchCount(FetchDescriptor<VocabItem>())) ?? 0
+        guard totalCount >= 4 else {
             print("❌ Недостаточно слов в базе для запуска викторины (минимум 4)")
             return
         }
-        
-        let shuffled = allWords.shuffled().prefix(10)
-        self.questions = shuffled.map { word in
+
+        var descriptor = FetchDescriptor<VocabItem>()
+        let poolSize = min(50, totalCount)
+        descriptor.fetchOffset = totalCount > poolSize ? Int.random(in: 0...(totalCount - poolSize)) : 0
+        descriptor.fetchLimit = poolSize
+        let pool = (try? context.fetch(descriptor)) ?? []
+
+        guard pool.count >= 4 else { return }
+
+        let questionWords = Array(pool.shuffled().prefix(10))
+        self.questions = questionWords.map { word in
             var options = [word.translation]
-            
-            // Выбираем 3 случайных неправильных ответа
-            let distractors = allWords.filter { $0.id != word.id }
+
+            let distractors = pool.filter { $0.id != word.id }
                 .shuffled()
                 .prefix(3)
                 .map { $0.translation }
             options.append(contentsOf: distractors)
-            
+
             return QuizQuestion(word: word, options: options.shuffled())
         }
         
