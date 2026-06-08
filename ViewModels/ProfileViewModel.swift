@@ -24,15 +24,22 @@ final class ProfileViewModel: ObservableObject {
     // Активность за 7 дней — заполняется из ReviewLog через loadActivity()
     @Published var activityData: [ActivityData] = []
 
+    /// Кэш достижений. Пересчитывается через recomputeAchievements() — вызывается
+    /// из loadStats/loadActivity/resetAllProgress. Раньше был computed property,
+    /// что пересоздавало 15 структур на каждый body re-render.
+    @Published var achievements: [Achievement] = []
+
+    init() {
+        recomputeAchievements()
+    }
+
     var completedGrammarCount: Int {
         (UserDefaults.standard.stringArray(forKey: StorageKeys.completedGrammarLessons) ?? []).count
     }
 
-
-    // Достижения — вычисляются на основе реального прогресса
-    var achievements: [Achievement] {
+    func recomputeAchievements() {
         let grammar = completedGrammarCount
-        return [
+        achievements = [
             // ── Словарный запас ──────────────────────────────────────────
             .init(
                 title: "Первое слово",
@@ -209,6 +216,7 @@ final class ProfileViewModel: ObservableObject {
             predicate: #Predicate { $0.fsrsData.stability >= threshold }
         )
         totalLearnedWords = (try? context.fetchCount(descriptor)) ?? 0
+        recomputeAchievements()
     }
 
     // MARK: - Activity from ReviewLog
@@ -270,6 +278,7 @@ final class ProfileViewModel: ObservableObject {
         UserDefaults.standard.removeObject(forKey: StorageKeys.completedChallengeIDs)
         // totalLearnedWords отражает БД и обновится из loadStats при следующем onAppear.
         // Сброс прогресса FSRS-карточек намеренно не делаем — это разрушительная операция.
+        recomputeAchievements()
     }
 
     func deleteAccount() {

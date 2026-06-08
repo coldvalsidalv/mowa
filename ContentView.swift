@@ -1,4 +1,6 @@
 import SwiftUI
+import SwiftData
+import Charts
 
 // MARK: - Root: онбординг или основной экран
 
@@ -31,6 +33,17 @@ struct ContentView: View {
     @StateObject private var languageManager = LanguageManager.shared
 
     var body: some View {
+        ZStack {
+            // Прогрев Charts: первая инициализация фреймворка тяжёлая (~200–500 ms),
+            // если делать её при открытии ProfileView. Кладём невидимый Chart в корне,
+            // чтобы SwiftUI инициализировал фреймворк один раз при старте приложения.
+            ChartsWarmup()
+
+            tabs
+        }
+    }
+
+    private var tabs: some View {
         TabView(selection: $selectedTab) {
             HomeView(selectedTab: $selectedTab, triggerLessonsEditMode: $triggerLessonsEditMode)
                 .tabItem {
@@ -66,11 +79,51 @@ struct ContentView: View {
         .onAppear {
             ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
             FSRSParamStore.shared.refreshIfNeeded()
+            warmUpSwiftData()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
                 FSRSParamStore.shared.refreshIfNeeded()
+            }
+        }
+    }
+}
+
+extension ContentView {
+    /// Прогревает SwiftData store на фоне: первое обращение к @Query из LessonsView
+    /// материализует 500 VocabItem + связанную FSRSData и фризит main thread.
+    /// Делаем тот же fetch заранее на background ModelContext.
+    private func warmUpSwiftData() {
+        let container = modelContext.container
+        Task.detached(priority: .utility) {
+            let bg = ModelContext(container)
+            var descriptor = FetchDescriptor<VocabItem>()
+            // Подтягиваем fsrsData вместе со словами — иначе LessonsView потом
+            // фолтит 500 relationship'ов на main thread при первом открытии.
+            descriptor.relationshipKeyPathsForPrefetching = [\.fsrsData]
+            _ = try? bg.fetch(descriptor)
+        }
+    }
+}
+
+/// Скрытый Chart для one-time прогрева Charts framework при старте.
+/// Без этого первое открытие ProfileView лагает на ~200–500 ms.
+private struct ChartsWarmup: View {
+    @State private var done = false
+
+    var body: some View {
+        Group {
+            if !done {
+                Chart {
+                    BarMark(x: .value("x", "0"), y: .value("y", 1))
+                }
+                .frame(width: 1, height: 1)
+                .opacity(0)
+                .allowsHitTesting(false)
+                .onAppear {
+                    DispatchQueue.main.async { done = true }
+                }
             }
         }
     }
