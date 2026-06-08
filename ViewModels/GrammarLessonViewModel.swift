@@ -5,7 +5,7 @@ import Combine
 final class GrammarLessonViewModel: ObservableObject {
     let lesson: GrammarLesson
     private var context: ModelContext?
-    private let scheduler = FSRSScheduler()
+    private let scheduler: FSRSScheduler
 
     @Published var currentStepIndex = 0
     @Published var selectedAnswer: String?
@@ -17,6 +17,13 @@ final class GrammarLessonViewModel: ObservableObject {
 
     init(lesson: GrammarLesson) {
         self.lesson = lesson
+        let p = FSRSParamStore.shared.current
+        self.scheduler = FSRSScheduler(
+            parameters: p.parameters,
+            desiredRetention: p.desiredRetention,
+            learningSteps: p.learningSteps,
+            relearningSteps: p.relearningSteps
+        )
     }
 
     /// Вызывается из GrammarLessonView.onAppear — передаёт контекст SwiftData
