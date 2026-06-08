@@ -49,10 +49,14 @@ final class LessonsViewModel: ObservableObject {
         }
     }
     
-    /// Загружает грамматику: бандл синхронно (мгновенно), API обновляет в фоне
+    /// Загружает грамматику: парс бандла на фоновом потоке, API обновляет в фоне
     func loadGrammar() {
-        updateGrammar(from: DataManager.shared.loadGrammar())
         Task {
+            let bundleLessons = await Task.detached(priority: .userInitiated) {
+                DataManager.shared.loadGrammar()
+            }.value
+            updateGrammar(from: bundleLessons)
+
             do {
                 let apiLessons = try await APIClient.shared.fetchAllGrammarLessons()
                 if !apiLessons.isEmpty { updateGrammar(from: apiLessons) }
@@ -60,12 +64,27 @@ final class LessonsViewModel: ObservableObject {
         }
     }
 
-    /// Обновляет категории слов — O(n) через Dictionary grouping
-    func updateCategories(from words: [VocabItem]) {
+    /// Загружает категории на background ModelContext, чтобы не материализовать
+    /// 500 VocabItem на main thread (раньше @Query в LessonsView давал ~1s фриз).
+    func loadCategories(container: ModelContainer) {
+        Task.detached(priority: .userInitiated) {
+            var descriptor = FetchDescriptor<VocabItem>()
+            descriptor.relationshipKeyPathsForPrefetching = [\.fsrsData]
+            let bg = ModelContext(container)
+            let words = (try? bg.fetch(descriptor)) ?? []
+            let stats = Self.computeCategories(from: words)
+            await MainActor.run { [weak self] in
+                self?.categories = stats
+            }
+        }
+    }
+
+    /// Чистая функция, считается на background — никаких обращений к UI.
+    nonisolated private static func computeCategories(from words: [VocabItem]) -> [CategoryStat] {
         let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
         let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
         let grouped = Dictionary(grouping: words, by: \.category)
-        self.categories = grouped.keys.sorted().map { category in
+        return grouped.keys.sorted().map { category in
             let items = grouped[category]!
             let learned = items.filter { $0.fsrsData.state != .new }.count
             let hash = abs(category.hashValue)

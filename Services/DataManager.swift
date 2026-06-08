@@ -12,9 +12,9 @@ struct BundleWord: Decodable, Sendable {
     let inflections: [String: String]
 }
 
-final class DataManager {
-    static let shared = DataManager()
-    private init() {}
+final class DataManager: Sendable {
+    nonisolated static let shared = DataManager()
+    nonisolated private init() {}
 
     // MARK: - Vocabulary (offline fallback для VocabSyncService)
 
@@ -30,7 +30,7 @@ final class DataManager {
 
     // MARK: - Grammar
 
-    func loadGrammar() -> [GrammarLesson] {
+    nonisolated func loadGrammar() -> [GrammarLesson] {
         guard let url = Bundle.main.url(forResource: "grammar", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let lessons = try? JSONDecoder().decode([GrammarLesson].self, from: data) else {

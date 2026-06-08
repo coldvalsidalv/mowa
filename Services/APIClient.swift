@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Remote DTOs (чистые контейнеры для JSON-декодинга, без логики)
 
-struct TeenyListResponse<T: Decodable>: Decodable, @unchecked Sendable {
+nonisolated struct TeenyListResponse<T: Decodable>: Decodable, @unchecked Sendable {
     let items: [T]
     let total: Int
 }
@@ -136,7 +136,7 @@ final class APIClient {
                         pageBody["offset"] = (page - 1) * pageSize
                         let resp: TeenyListResponse<RemoteWord> = try await self.post(
                             path: "/api/v1/table/vocabulary/list", body: pageBody)
-                        return await resp.items
+                        return resp.items
                     }
                 }
                 for try await batch in group { all.append(contentsOf: batch) }
@@ -240,7 +240,7 @@ final class APIClient {
                 try await AuthManager.shared.refresh()
                 return try await postOnce(path: path, body: body, isRetry: true)
             } catch {
-                await AuthManager.shared.signOut()
+                AuthManager.shared.signOut()
                 throw APIError.serverError(401)
             }
         }

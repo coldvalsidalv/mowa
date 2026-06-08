@@ -4,7 +4,6 @@ import SwiftData
 struct LessonsView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = LessonsViewModel()
-    @Query private var allWords: [VocabItem]
     @State private var selectedTab: Int
     @Binding var triggerEditMode: Bool
 
@@ -65,7 +64,7 @@ struct LessonsView: View {
                 }
             }
             .onAppear {
-                viewModel.updateCategories(from: allWords)
+                viewModel.loadCategories(container: modelContext.container)
                 viewModel.loadGrammar()
                 if triggerEditMode {
                     selectedTab = 0
@@ -74,9 +73,6 @@ struct LessonsView: View {
                     }
                     triggerEditMode = false
                 }
-            }
-            .onChange(of: allWords.count) { _, _ in
-                viewModel.updateCategories(from: allWords)
             }
             .onChange(of: triggerEditMode) { _, newValue in
                 guard newValue else { return }
