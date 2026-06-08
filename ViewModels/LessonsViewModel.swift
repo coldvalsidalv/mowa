@@ -80,7 +80,8 @@ final class LessonsViewModel: ObservableObject {
     }
 
     /// Чистая функция, считается на background — никаких обращений к UI.
-    nonisolated private static func computeCategories(from words: [VocabItem]) -> [CategoryStat] {
+    /// Internal вместо private — чтобы покрыть тестами без хрупкой async-инфраструктуры.
+    nonisolated static func computeCategories(from words: [VocabItem]) -> [CategoryStat] {
         let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
         let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
         let grouped = Dictionary(grouping: words, by: \.category)

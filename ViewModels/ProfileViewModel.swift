@@ -38,8 +38,23 @@ final class ProfileViewModel: ObservableObject {
     }
 
     func recomputeAchievements() {
-        let grammar = completedGrammarCount
-        achievements = [
+        achievements = Self.makeAchievements(
+            totalLearnedWords: totalLearnedWords,
+            dayStreak: dayStreak,
+            userXP: userXP,
+            grammar: completedGrammarCount
+        )
+    }
+
+    /// Чистая фабрика достижений — без instance-state, тестируема без создания
+    /// ProfileViewModel (что под Swift 6 isolated deinit крашит XCTest).
+    nonisolated static func makeAchievements(
+        totalLearnedWords: Int,
+        dayStreak: Int,
+        userXP: Int,
+        grammar: Int
+    ) -> [Achievement] {
+        [
             // ── Словарный запас ──────────────────────────────────────────
             .init(
                 title: "Первое слово",
