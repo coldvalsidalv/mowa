@@ -65,10 +65,12 @@ struct ContentView: View {
         .id(languageManager.currentLanguage)
         .onAppear {
             ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
+            FSRSParamStore.shared.refreshIfNeeded()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
+                FSRSParamStore.shared.refreshIfNeeded()
             }
         }
     }

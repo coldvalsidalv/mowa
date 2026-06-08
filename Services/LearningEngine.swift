@@ -17,7 +17,10 @@ enum ReviewTier {
 @MainActor
 final class LearningEngine: ObservableObject {
     private let modelContext: ModelContext
-    private let scheduler = FSRSScheduler()
+    /// Снимок FSRS-параметров на момент создания engine (т.е. начала сессии).
+    /// Hot-reload в середине сессии намеренно не делаем — оптимизатор перезаписывает
+    /// параметры асинхронно, в середине сессии менять мат-модель опасно.
+    private let scheduler: FSRSScheduler
 
     @Published var sessionQueue: [VocabItem] = []
     @Published var sessionProgress: CGFloat = 0.0
@@ -28,6 +31,13 @@ final class LearningEngine: ObservableObject {
 
     init(context: ModelContext) {
         self.modelContext = context
+        let p = FSRSParamStore.shared.current
+        self.scheduler = FSRSScheduler(
+            parameters: p.parameters,
+            desiredRetention: p.desiredRetention,
+            learningSteps: p.learningSteps,
+            relearningSteps: p.relearningSteps
+        )
     }
 
     // MARK: - Session builders

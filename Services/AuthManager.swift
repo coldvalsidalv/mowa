@@ -121,6 +121,8 @@ final class AuthManager: ObservableObject {
         KeychainHelper.delete(KeychainKeys.userId)
         isAuthenticated = false
         currentEmail = nil
+        // Сбросить FSRS-параметры — они привязаны к юзеру.
+        FSRSParamStore.shared.reset()
     }
 
     /// Используется APIClient'ом для подстановки в Authorization-заголовок.

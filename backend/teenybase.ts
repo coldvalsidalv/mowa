@@ -107,6 +107,45 @@ export default {
       ],
     },
 
+    // ─── FSRS PARAMS ─────────────────────────────────────────────────────────
+    // Персональные веса FSRS-6 для конкретного юзера. Заполняются периодически
+    // оптимизатором (Фаза 3b) по накопленным review_logs. Один ряд на юзера.
+    // Клиент тянет на старте; nil/missing → использует дефолты v6.
+    {
+      name: 'fsrs_params',
+      autoSetUid: true,
+      fields: [
+        ...baseFields,
+        { name: 'user_id', type: 'relation', sqlType: 'text', notNull: true, unique: true,
+          foreignKey: { table: 'users', column: 'id' } },
+        // 21 double — FSRS-6 веса. Валидируем shape на клиенте.
+        { name: 'parameters', type: 'json', sqlType: 'json', notNull: true,
+          check: sql`json_valid(parameters)` },
+        // 0.80–0.95. На бэке не клампим — клиент знает свои пределы.
+        { name: 'desired_retention', type: 'number', sqlType: 'real', notNull: true },
+        // [секунд, ...] — learning steps. Дефолт клиента [60, 600].
+        { name: 'learning_steps', type: 'json', sqlType: 'json', notNull: true,
+          check: sql`json_valid(learning_steps)` },
+        // [секунд, ...] — relearning steps. Дефолт клиента [600].
+        { name: 'relearning_steps', type: 'json', sqlType: 'json', notNull: true,
+          check: sql`json_valid(relearning_steps)` },
+      ],
+      triggers: [createdTrigger, updatedTrigger],
+      extensions: [
+        {
+          name: 'rules',
+          // Чтение — только своего.
+          listRule: 'auth.uid == user_id',
+          viewRule: 'auth.uid == user_id',
+          // Запись — только admin / optimizer service (через ADMIN_SERVICE_TOKEN).
+          // Юзер не может править свои веса сам — иначе оптимизация теряет смысл.
+          createRule: 'auth.role == "admin"',
+          updateRule: 'auth.role == "admin"',
+          deleteRule: 'auth.role == "admin"',
+        } as TableRulesExtensionData,
+      ],
+    },
+
     // ─── GRAMMAR LESSONS ─────────────────────────────────────────────────────
     {
       name: 'grammar_lessons',
