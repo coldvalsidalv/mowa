@@ -74,6 +74,11 @@ struct LessonsView: View {
                     triggerEditMode = false
                 }
             }
+            // Восстанавливаем live-обновление после удаления @Query: когда
+            // VocabSyncService подгрузит новые слова — перечитываем категории.
+            .onReceive(NotificationCenter.default.publisher(for: .vocabularyDidChange)) { _ in
+                viewModel.loadCategories(container: modelContext.container)
+            }
             .onChange(of: triggerEditMode) { _, newValue in
                 guard newValue else { return }
                 selectedTab = 0

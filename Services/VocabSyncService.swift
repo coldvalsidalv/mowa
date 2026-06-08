@@ -73,6 +73,12 @@ final class VocabSyncService {
 
         try context.save()
         print("✅ VocabSyncService: inserted \(inserted), updated \(updated)")
+
+        // Сигналим UI пересчитать категории. LessonsView убрал @Query
+        // ради перфа на main thread, поэтому live-обновление теперь через notification.
+        if inserted > 0 || updated > 0 {
+            NotificationCenter.default.post(name: .vocabularyDidChange, object: nil)
+        }
     }
 
     private func fallbackToBundle(context: ModelContext) {
@@ -128,4 +134,10 @@ private extension VocabItem {
         rank = word.rank ?? rank
         inflections = word.inflections ?? inflections
     }
+}
+
+extension Notification.Name {
+    /// Постится после успешного VocabSyncService.upsert (когда что-то изменилось).
+    /// LessonsView подписан и перезагружает категории.
+    static let vocabularyDidChange = Notification.Name("vocabularyDidChange")
 }

@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftData
 import Charts
 
 // MARK: - Root: онбординг или основной экран
@@ -79,30 +78,12 @@ struct ContentView: View {
         .onAppear {
             ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
             FSRSParamStore.shared.refreshIfNeeded()
-            warmUpSwiftData()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
                 FSRSParamStore.shared.refreshIfNeeded()
             }
-        }
-    }
-}
-
-extension ContentView {
-    /// Прогревает SwiftData store на фоне: первое обращение к @Query из LessonsView
-    /// материализует 500 VocabItem + связанную FSRSData и фризит main thread.
-    /// Делаем тот же fetch заранее на background ModelContext.
-    private func warmUpSwiftData() {
-        let container = modelContext.container
-        Task.detached(priority: .utility) {
-            let bg = ModelContext(container)
-            var descriptor = FetchDescriptor<VocabItem>()
-            // Подтягиваем fsrsData вместе со словами — иначе LessonsView потом
-            // фолтит 500 relationship'ов на main thread при первом открытии.
-            descriptor.relationshipKeyPathsForPrefetching = [\.fsrsData]
-            _ = try? bg.fetch(descriptor)
         }
     }
 }
