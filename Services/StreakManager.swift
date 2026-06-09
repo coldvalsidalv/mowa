@@ -28,7 +28,13 @@ final class StreakManager: ObservableObject {
         
         processCalendarLogic()
     }
-    
+
+    /// Пересчёт смены дня. iOS держит приложение в памяти днями, поэтому
+    /// init-логики недостаточно — вызывается также на scenePhase == .active.
+    func refreshDayRollover() {
+        processCalendarLogic()
+    }
+
     private func processCalendarLogic() {
         let lastPracticeTime = defaults.double(forKey: StorageKeys.lastPracticeDate)
         
