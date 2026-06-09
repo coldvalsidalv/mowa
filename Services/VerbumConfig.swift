@@ -10,7 +10,7 @@ enum VerbumConfig {
     static let baseURL = "http://127.0.0.1:8787"
     // static let baseURL = "https://<your-tunnel>.trycloudflare.com"
     #else
-    #warning("Release build: подставь реальный прод-URL бэкенда вместо placeholder")
+    #warning("Release build: replace the placeholder with the real production backend URL")
     static let baseURL = "https://verbum-backend.YOUR_ACCOUNT.workers.dev"
     #endif
 

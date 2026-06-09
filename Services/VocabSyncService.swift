@@ -20,8 +20,8 @@ final class VocabSyncService {
     // MARK: - Internal
 
     private func sync(context: ModelContext) async {
-        // HomeView.onAppear дёргает sync на каждое переключение таба —
-        // без guard'а конкурентные full sync вставляют дубликаты.
+        // HomeView.onAppear triggers sync on every tab switch — without this
+        // guard, concurrent full syncs insert duplicates.
         guard !isSyncing else { return }
         isSyncing = true
         defer { isSyncing = false }
@@ -63,9 +63,9 @@ final class VocabSyncService {
                 item.remoteId.map { ($0, item) }
             })
 
-            // Bundle-слова (remoteId == nil) матчим по polish, чтобы не потерять
-            // fsrsData-прогресс юзера, начавшего offline. Неоднозначные polish
-            // (омонимы) не матчим — пойдут через insert/delete.
+            // Match bundle items (remoteId == nil) by polish so a user who started
+            // offline keeps their fsrsData progress. Ambiguous polish values
+            // (homonyms) are not matched — they go through insert/delete.
             let bundleItems = allItems.filter { $0.remoteId == nil }
             var byPolish: [String: VocabItem] = [:]
             for (polish, group) in Dictionary(grouping: bundleItems, by: \.polish) where group.count == 1 {
@@ -85,7 +85,7 @@ final class VocabSyncService {
                     inserted += 1
                 }
             }
-            // Adopted items получили remoteId выше и сюда не попадают.
+            // Adopted items got a remoteId above and are not affected here.
             let stale = allItems.filter { $0.remoteId == nil }
             stale.forEach { context.delete($0) }
             if !stale.isEmpty {
@@ -117,8 +117,8 @@ final class VocabSyncService {
     }
 
     private func fallbackToBundle(context: ModelContext) {
-        // Seed только в пустую базу: sync вызывается на каждый onAppear HomeView,
-        // и без этой проверки каждый offline-вызов вставлял бы бандл заново.
+        // Seed only into an empty database: sync runs on every HomeView.onAppear,
+        // and without this check each offline call would insert the bundle again.
         let existingCount = (try? context.fetchCount(FetchDescriptor<VocabItem>())) ?? 0
         guard existingCount == 0 else { return }
 

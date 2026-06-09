@@ -89,8 +89,8 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
 
 // MARK: - API ДЛЯ БИЗНЕС-ЛОГИКИ
 extension NotificationManager {
-    /// Ежедневное напоминание в выбранное юзером время (Профиль → Уведомления).
-    /// Перезаписывает предыдущее расписание (одинаковый identifier).
+    /// Daily reminder at the user-chosen time (Profile → Notifications).
+    /// Overwrites the previous schedule (same identifier).
     func scheduleDailyReminder(at time: Date) {
         let comps = Calendar.current.dateComponents([.hour, .minute], from: time)
         scheduleDailyNotification(

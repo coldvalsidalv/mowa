@@ -155,9 +155,9 @@ final class ReviewLog {
     var rating: FSRSRating
     var reviewDate: Date
     var reviewDurationMs: Int
-    /// Teenybase id юзера, под которым сделан ответ. Без него при смене аккаунта
-    /// на одном устройстве логи юзера A синкались бы на сервер под user_id юзера B.
-    /// Optional ради lightweight-миграции старых записей.
+    /// Teenybase id of the user who made the answer. Without it, switching
+    /// accounts on one device would sync user A's logs to the server under
+    /// user B's user_id. Optional for lightweight migration of old records.
     var userId: String?
 
     init(cardId: UUID, rating: FSRSRating, reviewDate: Date, duration: Int, userId: String? = nil) {

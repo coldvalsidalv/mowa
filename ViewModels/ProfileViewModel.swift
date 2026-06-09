@@ -320,11 +320,11 @@ final class ProfileViewModel: ObservableObject {
         recomputeAchievements()
     }
 
-    /// Удаляет аккаунт на бэкенде, затем разлогинивает и чистит локальный профиль.
-    /// При ошибке сети ничего не чистим — юзер остаётся залогинен и видит alert.
+    /// Deletes the account on the backend, then signs out and clears the local profile.
+    /// On a network error nothing is cleared — the user stays signed in and sees an alert.
     func deleteAccount() async {
         guard let userId = KeychainHelper.load(KeychainKeys.userId) else {
-            // Сессии нет — удалять на сервере нечего, просто чистим локально.
+            // No session — nothing to delete on the server, just clear locally.
             AuthManager.shared.signOut()
             clearLocalProfile()
             return

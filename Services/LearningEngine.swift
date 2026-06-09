@@ -58,8 +58,8 @@ final class LearningEngine: ObservableObject {
         }
 
         var newDescriptor = FetchDescriptor<VocabItem>(
-            // Новые карточки — по частотности (rank 1 = самое частое слово),
-            // иначе SwiftData возвращает произвольный порядок.
+            // New cards by frequency (rank 1 = most frequent word),
+            // otherwise SwiftData returns arbitrary order.
             sortBy: [SortDescriptor(\.rank, order: .forward)]
         )
         if let cat = category {

@@ -1,16 +1,16 @@
 import Foundation
 
 extension String {
-    /// Детерминированный FNV-1a хеш для выбора цвета/иконки категории.
-    /// `hashValue` использовать нельзя: Swift рандомизирует seed на каждый запуск
-    /// процесса, и категории перекрашивались бы при каждом старте приложения.
+    /// Deterministic FNV-1a hash for picking a category color/icon.
+    /// `hashValue` cannot be used here: Swift randomizes the seed on every
+    /// process launch, so categories would get recolored on each app start.
     var stableHash: Int {
         var hash: UInt64 = 0xcbf29ce484222325
         for byte in utf8 {
             hash ^= UInt64(byte)
             hash = hash &* 0x100000001b3
         }
-        // Маска до неотрицательного Int — индексация массивов без abs (abs(Int.min) трапается).
+        // Mask to a non-negative Int — array indexing without abs (abs(Int.min) traps).
         return Int(hash & 0x7fffffffffffffff)
     }
 }

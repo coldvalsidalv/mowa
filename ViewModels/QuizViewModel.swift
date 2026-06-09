@@ -53,8 +53,8 @@ final class QuizViewModel: ObservableObject {
 
         let questionWords = Array(pool.shuffled().prefix(10))
         self.questions = questionWords.map { word in
-            // Дистракторы сравниваем по тексту перевода, а не по id:
-            // синонимы с одинаковым переводом давали бы два «правильных» варианта.
+            // Compare distractors by translation text, not by id: synonyms with
+            // identical translations would produce two "correct" options.
             var options = [word.translation]
             var seen: Set<String> = [word.translation]
             for candidate in pool.shuffled() {

@@ -32,9 +32,10 @@ final class ReviewLogSyncService {
         let cursorKey = "reviewLogSyncCursor_\(userId)"
         let lastSynced = (UserDefaults.standard.object(forKey: cursorKey) as? Date) ?? .distantPast
 
-        // 1. Вытащить логи текущего юзера новее cursor'а, отсортированные по времени.
-        // Фильтр по userId обязателен: после смены аккаунта cursor нового юзера
-        // = distantPast, и без фильтра вся история прошлого юзера ушла бы под чужим user_id.
+        // 1. Fetch the current user's logs newer than the cursor, sorted by time.
+        // The userId filter is mandatory: after an account switch the new user's
+        // cursor is distantPast, and without the filter the previous user's entire
+        // history would be uploaded under the wrong user_id.
         let descriptor = FetchDescriptor<ReviewLog>(
             predicate: #Predicate { $0.reviewDate > lastSynced && $0.userId == userId },
             sortBy: [SortDescriptor(\.reviewDate, order: .forward)]

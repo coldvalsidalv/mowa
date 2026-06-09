@@ -8,8 +8,8 @@ nonisolated struct TeenyListResponse<T: Decodable>: Decodable, @unchecked Sendab
 }
 
 /// Заглушка для endpoint'ов, ответ которых нам не нужен парсить.
-/// Кастомный init принимает любой JSON (объект, массив, скаляр) —
-/// синтезированный падал бы на не-объектах.
+/// Custom init accepts any JSON (object, array, scalar) — the synthesized
+/// one would fail on non-objects.
 struct TeenyEmpty: Decodable, Sendable {
     init(from decoder: Decoder) throws {}
 }
@@ -187,17 +187,17 @@ final class APIClient {
             let _: TeenyEmpty = try await post(path: "/api/v1/table/review_logs/insert", body: body)
         } catch APIError.serverError(let code, let message)
             where code == 409 || (code == 400 && message?.localizedCaseInsensitiveContains("unique") == true) {
-            // Unique constraint (user_id, card_id, review_date) — повторный синк того же
-            // лога, трактуем как success. Любые другие ошибки (401, валидация и т.д.)
-            // пробрасываем: caller не должен продвигать cursor, иначе лог потерян навсегда.
+            // Unique constraint (user_id, card_id, review_date) — re-sync of the same
+            // log, treated as success. Any other error (401, validation, etc.) is
+            // rethrown: the caller must not advance the cursor, or the log is lost forever.
         }
     }
 
     // MARK: - Account
 
-    /// Удаляет запись юзера на бэкенде (правило таблицы: auth.uid == id,
-    /// т.е. юзер может удалить только себя). App Store 5.1.1(v) требует
-    /// возможность удаления аккаунта прямо из приложения.
+    /// Deletes the user record on the backend (table rule: auth.uid == id,
+    /// i.e. a user can only delete themselves). App Store 5.1.1(v) requires
+    /// in-app account deletion.
     func deleteAccount(userId: String) async throws {
         let body: [String: Any] = ["where": "id == \"\(userId)\""]
         let _: TeenyEmpty = try await post(path: "/api/v1/table/users/delete", body: body)
