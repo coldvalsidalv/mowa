@@ -8,7 +8,11 @@ nonisolated struct TeenyListResponse<T: Decodable>: Decodable, @unchecked Sendab
 }
 
 /// Заглушка для endpoint'ов, ответ которых нам не нужен парсить.
-struct TeenyEmpty: Decodable, Sendable {}
+/// Кастомный init принимает любой JSON (объект, массив, скаляр) —
+/// синтезированный падал бы на не-объектах.
+struct TeenyEmpty: Decodable, Sendable {
+    init(from decoder: Decoder) throws {}
+}
 
 /// Сырой DTO с бэкенда. JSON-столбцы приходят как строки (как inflections в RemoteWord) —
 /// парсим в toParams().
@@ -90,7 +94,7 @@ enum APIError: Error {
     case invalidURL
     case networkError(Error)
     case decodingError(Error)
-    case serverError(Int)
+    case serverError(Int, message: String?)
 }
 
 // MARK: - APIClient
@@ -181,10 +185,22 @@ final class APIClient {
         ]
         do {
             let _: TeenyEmpty = try await post(path: "/api/v1/table/review_logs/insert", body: body)
-        } catch APIError.serverError(let code) where (400...409).contains(code) {
-            // 400/409 на insert — почти всегда unique constraint (повторный синк того же лога).
-            // Иммутабельные логи + клиентский cursor → идемпотентно.
+        } catch APIError.serverError(let code, let message)
+            where code == 409 || (code == 400 && message?.localizedCaseInsensitiveContains("unique") == true) {
+            // Unique constraint (user_id, card_id, review_date) — повторный синк того же
+            // лога, трактуем как success. Любые другие ошибки (401, валидация и т.д.)
+            // пробрасываем: caller не должен продвигать cursor, иначе лог потерян навсегда.
         }
+    }
+
+    // MARK: - Account
+
+    /// Удаляет запись юзера на бэкенде (правило таблицы: auth.uid == id,
+    /// т.е. юзер может удалить только себя). App Store 5.1.1(v) требует
+    /// возможность удаления аккаунта прямо из приложения.
+    func deleteAccount(userId: String) async throws {
+        let body: [String: Any] = ["where": "id == \"\(userId)\""]
+        let _: TeenyEmpty = try await post(path: "/api/v1/table/users/delete", body: body)
     }
 
     // MARK: - Grammar
@@ -231,7 +247,7 @@ final class APIClient {
         }
 
         guard let http = response as? HTTPURLResponse else {
-            throw APIError.serverError(0)
+            throw APIError.serverError(0, message: nil)
         }
 
         if http.statusCode == 401 && !isRetry {
@@ -241,12 +257,14 @@ final class APIClient {
                 return try await postOnce(path: path, body: body, isRetry: true)
             } catch {
                 AuthManager.shared.signOut()
-                throw APIError.serverError(401)
+                throw APIError.serverError(401, message: nil)
             }
         }
 
         if !(200...299).contains(http.statusCode) {
-            throw APIError.serverError(http.statusCode)
+            let message = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])
+                .flatMap { $0["message"] as? String }
+            throw APIError.serverError(http.statusCode, message: message)
         }
 
         do {

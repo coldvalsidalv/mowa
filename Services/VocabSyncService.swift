@@ -9,6 +9,7 @@ final class VocabSyncService {
     private init() {}
 
     private let lastSyncKey = "vocabLastSyncedAt"
+    private var isSyncing = false
 
     // MARK: - Public
 
@@ -19,6 +20,12 @@ final class VocabSyncService {
     // MARK: - Internal
 
     private func sync(context: ModelContext) async {
+        // HomeView.onAppear дёргает sync на каждое переключение таба —
+        // без guard'а конкурентные full sync вставляют дубликаты.
+        guard !isSyncing else { return }
+        isSyncing = true
+        defer { isSyncing = false }
+
         let lastSync = UserDefaults.standard.object(forKey: lastSyncKey) as? Date
         let isFirstSync = lastSync == nil
         let syncStarted = Date()
@@ -55,8 +62,22 @@ final class VocabSyncService {
             let existing = Dictionary(uniqueKeysWithValues: allItems.compactMap { item in
                 item.remoteId.map { ($0, item) }
             })
+
+            // Bundle-слова (remoteId == nil) матчим по polish, чтобы не потерять
+            // fsrsData-прогресс юзера, начавшего offline. Неоднозначные polish
+            // (омонимы) не матчим — пойдут через insert/delete.
+            let bundleItems = allItems.filter { $0.remoteId == nil }
+            var byPolish: [String: VocabItem] = [:]
+            for (polish, group) in Dictionary(grouping: bundleItems, by: \.polish) where group.count == 1 {
+                byPolish[polish] = group[0]
+            }
+
             for word in words {
                 if let item = existing[word.id] {
+                    item.apply(word)
+                    updated += 1
+                } else if let item = byPolish.removeValue(forKey: word.polish) {
+                    item.remoteId = word.id
                     item.apply(word)
                     updated += 1
                 } else {
@@ -64,6 +85,7 @@ final class VocabSyncService {
                     inserted += 1
                 }
             }
+            // Adopted items получили remoteId выше и сюда не попадают.
             let stale = allItems.filter { $0.remoteId == nil }
             stale.forEach { context.delete($0) }
             if !stale.isEmpty {
@@ -95,6 +117,11 @@ final class VocabSyncService {
     }
 
     private func fallbackToBundle(context: ModelContext) {
+        // Seed только в пустую базу: sync вызывается на каждый onAppear HomeView,
+        // и без этой проверки каждый offline-вызов вставлял бы бандл заново.
+        let existingCount = (try? context.fetchCount(FetchDescriptor<VocabItem>())) ?? 0
+        guard existingCount == 0 else { return }
+
         let words = DataManager.shared.loadWordsFromBundle()
         guard !words.isEmpty else {
             print("❌ VocabSyncService: bundle is empty")

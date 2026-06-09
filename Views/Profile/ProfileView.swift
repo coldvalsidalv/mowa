@@ -137,6 +137,13 @@ struct ProfileView: View {
                     }
                 }
 
+                Section("Аккаунт") {
+                    Button("Выйти из аккаунта") { AuthManager.shared.signOut() }
+                    Button(role: .destructive) { viewModel.showDeleteAccountAlert = true } label: {
+                        Text("Удалить аккаунт")
+                    }
+                }
+
                 Section {
                     HStack {
                         Spacer()
@@ -169,6 +176,22 @@ struct ProfileView: View {
             .alert("Сбросить прогресс?", isPresented: $viewModel.showResetAlert) {
                 Button("Отмена", role: .cancel) { }
                 Button("Сбросить", role: .destructive) { viewModel.resetAllProgress() }
+            }
+            .alert("Удалить аккаунт?", isPresented: $viewModel.showDeleteAccountAlert) {
+                Button("Отмена", role: .cancel) { }
+                Button("Удалить", role: .destructive) {
+                    Task { await viewModel.deleteAccount() }
+                }
+            } message: {
+                Text("Аккаунт и доступ к данным на сервере будут удалены безвозвратно.")
+            }
+            .alert("Ошибка", isPresented: Binding(
+                get: { viewModel.accountDeletionError != nil },
+                set: { if !$0 { viewModel.accountDeletionError = nil } }
+            )) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(viewModel.accountDeletionError ?? "")
             }
         }
     }

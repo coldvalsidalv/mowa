@@ -81,6 +81,7 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
+                StreakManager.shared.refreshDayRollover()
                 ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
                 FSRSParamStore.shared.refreshIfNeeded()
             }

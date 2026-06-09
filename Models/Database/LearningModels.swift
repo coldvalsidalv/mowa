@@ -155,11 +155,16 @@ final class ReviewLog {
     var rating: FSRSRating
     var reviewDate: Date
     var reviewDurationMs: Int
-    
-    init(cardId: UUID, rating: FSRSRating, reviewDate: Date, duration: Int) {
+    /// Teenybase id юзера, под которым сделан ответ. Без него при смене аккаунта
+    /// на одном устройстве логи юзера A синкались бы на сервер под user_id юзера B.
+    /// Optional ради lightweight-миграции старых записей.
+    var userId: String?
+
+    init(cardId: UUID, rating: FSRSRating, reviewDate: Date, duration: Int, userId: String? = nil) {
         self.cardId = cardId
         self.rating = rating
         self.reviewDate = reviewDate
         self.reviewDurationMs = duration
+        self.userId = userId
     }
 }

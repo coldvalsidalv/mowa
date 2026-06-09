@@ -97,6 +97,14 @@ final class GrammarLessonViewModel: ObservableObject {
         grammarProgress.fsrsData.apply(updated)
         grammarProgress.lastScore = score
 
+        // Пометить урок завершённым — это читают LessonsViewModel (прогресс уровней)
+        // и ProfileViewModel (ачивки).
+        var completed = UserDefaults.standard.stringArray(forKey: StorageKeys.completedGrammarLessons) ?? []
+        if !completed.contains(lesson.id) {
+            completed.append(lesson.id)
+            UserDefaults.standard.set(completed, forKey: StorageKeys.completedGrammarLessons)
+        }
+
         // XP
         let currentXP = UserDefaults.standard.integer(forKey: StorageKeys.userXP)
         UserDefaults.standard.set(currentXP + 50 + (correctAnswersCount * 5), forKey: StorageKeys.userXP)

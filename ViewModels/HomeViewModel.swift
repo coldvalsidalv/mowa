@@ -69,7 +69,11 @@ final class HomeViewModel: ObservableObject {
     /// Вызывается из .onAppear в HomeView.
     func refreshStats(context: ModelContext) {
         checkAndResetDailyStateIfNeeded()
-        
+
+        // XP пишут также QuizViewModel и GrammarLessonViewModel напрямую в UserDefaults —
+        // перечитываем, иначе лига и счёт на главном отстают до перезапуска.
+        userXP = UserDefaults.standard.integer(forKey: StorageKeys.userXP)
+
         let startOfDay = calendar.startOfDay(for: Date())
         
         // Запрос всех логов за сегодня
