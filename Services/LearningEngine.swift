@@ -57,7 +57,11 @@ final class LearningEngine: ObservableObject {
             dueCards = dueCards.filter { $0.category == cat }
         }
 
-        var newDescriptor = FetchDescriptor<VocabItem>()
+        var newDescriptor = FetchDescriptor<VocabItem>(
+            // Новые карточки — по частотности (rank 1 = самое частое слово),
+            // иначе SwiftData возвращает произвольный порядок.
+            sortBy: [SortDescriptor(\.rank, order: .forward)]
+        )
         if let cat = category {
             newDescriptor.predicate = #Predicate { $0.fsrsData.reps == 0 && $0.category == cat }
         } else {
@@ -137,7 +141,8 @@ final class LearningEngine: ObservableObject {
             item.isClozeUnlocked = true
         }
 
-        let log = ReviewLog(cardId: item.id, rating: rating, reviewDate: now, duration: timeSpentMs)
+        let log = ReviewLog(cardId: item.id, rating: rating, reviewDate: now, duration: timeSpentMs,
+                            userId: KeychainHelper.load(KeychainKeys.userId))
         modelContext.insert(log)
 
         sessionQueue.removeAll { $0.id == item.id }
