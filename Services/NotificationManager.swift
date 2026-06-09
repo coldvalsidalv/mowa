@@ -19,7 +19,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     }
     
     // 1. Запрос разрешения
-    func requestAuthorization() {
+    func requestAuthorization(completion: (@Sendable (Bool) -> Void)? = nil) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if let error = error {
                 print("❌ Ошибка авторизации уведомлений: \(error.localizedDescription)")
@@ -27,6 +27,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
                 print("✅ Разрешение на уведомления получено")
             } else {
                 print("⚠️ Пользователь отклонил запрос на уведомления")
+            }
+            if let completion {
+                DispatchQueue.main.async { completion(granted) }
             }
         }
     }
@@ -86,6 +89,19 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
 
 // MARK: - API ДЛЯ БИЗНЕС-ЛОГИКИ
 extension NotificationManager {
+    /// Ежедневное напоминание в выбранное юзером время (Профиль → Уведомления).
+    /// Перезаписывает предыдущее расписание (одинаковый identifier).
+    func scheduleDailyReminder(at time: Date) {
+        let comps = Calendar.current.dateComponents([.hour, .minute], from: time)
+        scheduleDailyNotification(
+            type: .vocabulary,
+            title: "🇵🇱 Время заниматься польским",
+            body: "Несколько минут повторения — и слова не забудутся.",
+            hour: comps.hour ?? 9,
+            minute: comps.minute ?? 0
+        )
+    }
+
     func scheduleVocabularyReview() {
         scheduleNotification(type: .vocabulary, title: "🧠 Время повторить слова", body: "5 слов готовы к повторению. Не дай им забыться!", timeInterval: 86400)
     }

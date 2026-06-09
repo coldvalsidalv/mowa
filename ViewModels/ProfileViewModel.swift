@@ -20,6 +20,8 @@ final class ProfileViewModel: ObservableObject {
     @AppStorage(StorageKeys.notificationTime) var notificationTimeInterval: Double = 32400
 
     @Published var showResetAlert = false
+    @Published var showDeleteAccountAlert = false
+    @Published var accountDeletionError: String?
 
     // Активность за 7 дней — заполняется из ReviewLog через loadActivity()
     @Published var activityData: [ActivityData] = []
@@ -206,7 +208,12 @@ final class ProfileViewModel: ObservableObject {
     var notificationTimeBinding: Binding<Date> {
         Binding(
             get: { Date(timeIntervalSince1970: self.notificationTimeInterval) },
-            set: { self.notificationTimeInterval = $0.timeIntervalSince1970 }
+            set: {
+                self.notificationTimeInterval = $0.timeIntervalSince1970
+                if self.notificationsEnabled {
+                    NotificationManager.shared.scheduleDailyReminder(at: $0)
+                }
+            }
         )
     }
 
@@ -276,19 +283,31 @@ final class ProfileViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     switch settings.authorizationStatus {
                     case .notDetermined:
-                        NotificationManager.shared.requestAuthorization()
+                        NotificationManager.shared.requestAuthorization { granted in
+                            if granted {
+                                self.scheduleDailyReminder()
+                            } else {
+                                self.notificationsEnabled = false
+                            }
+                        }
                     case .denied:
                         self.notificationsEnabled = false
                         if let url = URL(string: UIApplication.openSettingsURLString) {
                             UIApplication.shared.open(url)
                         }
-                    default: break
+                    default:
+                        self.scheduleDailyReminder()
                     }
                 }
             }
         } else {
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         }
+    }
+
+    private func scheduleDailyReminder() {
+        NotificationManager.shared.scheduleDailyReminder(
+            at: Date(timeIntervalSince1970: notificationTimeInterval))
     }
 
     func resetAllProgress() {
@@ -301,7 +320,25 @@ final class ProfileViewModel: ObservableObject {
         recomputeAchievements()
     }
 
-    func deleteAccount() {
+    /// Удаляет аккаунт на бэкенде, затем разлогинивает и чистит локальный профиль.
+    /// При ошибке сети ничего не чистим — юзер остаётся залогинен и видит alert.
+    func deleteAccount() async {
+        guard let userId = KeychainHelper.load(KeychainKeys.userId) else {
+            // Сессии нет — удалять на сервере нечего, просто чистим локально.
+            AuthManager.shared.signOut()
+            clearLocalProfile()
+            return
+        }
+        do {
+            try await APIClient.shared.deleteAccount(userId: userId)
+            AuthManager.shared.signOut()
+            clearLocalProfile()
+        } catch {
+            accountDeletionError = "Не удалось удалить аккаунт. Проверь соединение и попробуй ещё раз."
+        }
+    }
+
+    private func clearLocalProfile() {
         resetAllProgress()
         userName = ""
         userEmail = ""
