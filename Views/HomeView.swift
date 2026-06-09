@@ -234,10 +234,10 @@ struct HomeView: View {
     // MARK: - Утилиты UI и Логика
     
     private func getTheme(for category: String) -> (icon: String, color: Color) {
-        let hash = category.hashValue
+        let hash = category.stableHash
         let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
         let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
-        return (icons[abs(hash) % icons.count], colors[abs(hash) % colors.count])
+        return (icons[hash % icons.count], colors[hash % colors.count])
     }
     
     @ViewBuilder
