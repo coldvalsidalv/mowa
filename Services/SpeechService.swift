@@ -23,7 +23,7 @@ final class SpeechService: NSObject, ObservableObject {
             try audioSession.setCategory(.playback, mode: .default, options: [.duckOthers])
             try audioSession.setActive(true)
         } catch {
-            print("SpeechService: Failed to configure session: \(error)")
+            verbumLog("SpeechService: Failed to configure session: \(error)")
         }
     }
     

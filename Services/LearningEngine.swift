@@ -207,7 +207,7 @@ final class LearningEngine: ObservableObject {
         do {
             try modelContext.save()
         } catch {
-            print("❌ LearningEngine: failed to save context — \(error)")
+            verbumLog("❌ LearningEngine: failed to save context — \(error)")
         }
 
         // Конец сессии — отправляем накопленные ReviewLog'и на бэкенд.

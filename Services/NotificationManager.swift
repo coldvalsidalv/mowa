@@ -22,11 +22,11 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     func requestAuthorization(completion: (@Sendable (Bool) -> Void)? = nil) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if let error = error {
-                print("❌ Ошибка авторизации уведомлений: \(error.localizedDescription)")
+                verbumLog("❌ Ошибка авторизации уведомлений: \(error.localizedDescription)")
             } else if granted {
-                print("✅ Разрешение на уведомления получено")
+                verbumLog("✅ Разрешение на уведомления получено")
             } else {
-                print("⚠️ Пользователь отклонил запрос на уведомления")
+                verbumLog("⚠️ Пользователь отклонил запрос на уведомления")
             }
             if let completion {
                 DispatchQueue.main.async { completion(granted) }
@@ -46,9 +46,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ Ошибка планирования \(type.rawValue): \(error.localizedDescription)")
+                verbumLog("❌ Ошибка планирования \(type.rawValue): \(error.localizedDescription)")
             } else {
-                print("✅ Запланировано уведомление: \(type.rawValue) через \(timeInterval) сек.")
+                verbumLog("✅ Запланировано уведомление: \(type.rawValue) через \(timeInterval) сек.")
             }
         }
     }
@@ -69,9 +69,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ Ошибка планирования \(type.rawValue): \(error.localizedDescription)")
+                verbumLog("❌ Ошибка планирования \(type.rawValue): \(error.localizedDescription)")
             } else {
-                print("✅ Ежедневное уведомление \(type.rawValue) запланировано на \(hour):\(String(format: "%02d", minute))")
+                verbumLog("✅ Ежедневное уведомление \(type.rawValue) запланировано на \(hour):\(String(format: "%02d", minute))")
             }
         }
     }

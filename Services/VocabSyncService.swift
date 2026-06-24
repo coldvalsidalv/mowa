@@ -35,20 +35,20 @@ final class VocabSyncService {
             if let since = lastSync {
                 words = try await APIClient.shared.fetchWordsDelta(since: since)
                 guard !words.isEmpty else { return }
-                print("🔄 VocabSyncService: delta sync — \(words.count) updated words")
+                verbumLog("🔄 VocabSyncService: delta sync — \(words.count) updated words")
             } else {
                 words = try await APIClient.shared.fetchAllWords()
                 guard !words.isEmpty else {
                     fallbackToBundle(context: context)
                     return
                 }
-                print("📥 VocabSyncService: full sync — \(words.count) words")
+                verbumLog("📥 VocabSyncService: full sync — \(words.count) words")
             }
 
             try upsert(words: words, isFirstSync: isFirstSync, context: context)
             UserDefaults.standard.set(syncStarted, forKey: lastSyncKey)
         } catch {
-            print("⚠️ VocabSyncService: API unavailable — \(error)")
+            verbumLog("⚠️ VocabSyncService: API unavailable — \(error)")
             if isFirstSync { fallbackToBundle(context: context) }
         }
     }
@@ -89,7 +89,7 @@ final class VocabSyncService {
             let stale = allItems.filter { $0.remoteId == nil }
             stale.forEach { context.delete($0) }
             if !stale.isEmpty {
-                print("🗑️ VocabSyncService: removed \(stale.count) stale bundle items")
+                verbumLog("🗑️ VocabSyncService: removed \(stale.count) stale bundle items")
             }
         } else {
             // Delta sync: words is a small changed set — look up each one individually.
@@ -107,7 +107,7 @@ final class VocabSyncService {
         }
 
         try context.save()
-        print("✅ VocabSyncService: inserted \(inserted), updated \(updated)")
+        verbumLog("✅ VocabSyncService: inserted \(inserted), updated \(updated)")
 
         // Сигналим UI пересчитать категории. LessonsView убрал @Query
         // ради перфа на main thread, поэтому live-обновление теперь через notification.
@@ -124,14 +124,14 @@ final class VocabSyncService {
 
         let words = DataManager.shared.loadWordsFromBundle()
         guard !words.isEmpty else {
-            print("❌ VocabSyncService: bundle is empty")
+            verbumLog("❌ VocabSyncService: bundle is empty")
             return
         }
         for word in words {
             context.insert(VocabItem(bundle: word))
         }
         try? context.save()
-        print("📦 VocabSyncService: seeded \(words.count) words from bundle (offline fallback)")
+        verbumLog("📦 VocabSyncService: seeded \(words.count) words from bundle (offline fallback)")
     }
 }
 

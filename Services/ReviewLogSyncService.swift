@@ -77,7 +77,7 @@ final class ReviewLogSyncService {
                 if log.reviewDate > lastSuccess { lastSuccess = log.reviewDate }
             } catch {
                 failed += 1
-                print("⚠️ ReviewLogSync: failed at log \(log.cardId) @ \(log.reviewDate) — \(error)")
+                verbumLog("⚠️ ReviewLogSync: failed at log \(log.cardId) @ \(log.reviewDate) — \(error)")
                 break // следующий триггер продолжит с того же cursor'а
             }
         }
@@ -86,7 +86,7 @@ final class ReviewLogSyncService {
             UserDefaults.standard.set(lastSuccess, forKey: cursorKey)
         }
         if sent + skipped + failed > 0 {
-            print("📤 ReviewLogSync: sent=\(sent), skipped=\(skipped), failed=\(failed)")
+            verbumLog("📤 ReviewLogSync: sent=\(sent), skipped=\(skipped), failed=\(failed)")
         }
     }
 }

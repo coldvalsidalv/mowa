@@ -318,7 +318,7 @@ private func remoteToExamSession(_ r: RemoteExamSession) -> ExamSession? {
 private func remoteToGrammarLesson(_ r: RemoteGrammarLesson) -> GrammarLesson? {
     guard let data = r.steps.data(using: .utf8),
           let steps = try? JSONDecoder().decode([GrammarStep].self, from: data) else {
-        print("❌ APIClient: failed to decode steps for lesson \(r.lesson_id)")
+        verbumLog("❌ APIClient: failed to decode steps for lesson \(r.lesson_id)")
         return nil
     }
     return GrammarLesson(
