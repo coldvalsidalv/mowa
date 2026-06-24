@@ -21,6 +21,11 @@ struct ExamCard: View {
         }
         .padding(.horizontal)
         .onAppear(perform: refreshRemaining)
+        // Словарь сидится асинхронно (VocabSyncService) — на первом запуске
+        // onAppear считает остаток до сидинга. Пересчитываем по сигналу.
+        .onReceive(NotificationCenter.default.publisher(for: .vocabularyDidChange)) { _ in
+            refreshRemaining()
+        }
     }
 
     // MARK: - States
