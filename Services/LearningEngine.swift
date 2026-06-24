@@ -76,29 +76,31 @@ final class LearningEngine: ObservableObject {
         self.againRetryCount.removeAll()
     }
 
-    /// Экзаменационная сессия: due + новые слова целевого уровня CEFR ("A2"/"B1"/"B2").
-    /// cefrLevel — computed из category, поэтому фильтруем в Swift после fetch
-    /// (нельзя в #Predicate). fetchLimit не используем — иначе limit съедят слова
-    /// чужого уровня и нужных наберётся меньше.
+    /// Экзаменационная сессия: due + новые слова целевого уровня CEFR ("B1"/"B2").
+    /// Фильтруем по префиксу category в самом #Predicate ("B1 " матчит "B1 · 4"),
+    /// что позволяет вернуть fetchLimit на новых и не материализовать весь словарь.
     func buildSession(level: String, newCardsLimit: Int = 20) {
         let now = Date()
+        let prefix = level + " "
 
         let dueDescriptor = FetchDescriptor<VocabItem>(
-            predicate: #Predicate { $0.fsrsData.due <= now && $0.fsrsData.reps > 0 },
+            predicate: #Predicate {
+                $0.fsrsData.due <= now && $0.fsrsData.reps > 0 && $0.category.starts(with: prefix)
+            },
             sortBy: [SortDescriptor(\.fsrsData.due, order: .forward)]
         )
-        let dueCards = ((try? modelContext.fetch(dueDescriptor)) ?? [])
-            .filter { $0.cefrLevel == level }
+        let dueCards = (try? modelContext.fetch(dueDescriptor)) ?? []
 
-        let newDescriptor = FetchDescriptor<VocabItem>(
-            predicate: #Predicate { $0.fsrsData.reps == 0 },
+        var newDescriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate {
+                $0.fsrsData.reps == 0 && $0.category.starts(with: prefix)
+            },
             sortBy: [SortDescriptor(\.rank, order: .forward)]
         )
-        let newCards = ((try? modelContext.fetch(newDescriptor)) ?? [])
-            .filter { $0.cefrLevel == level }
-            .prefix(newCardsLimit)
+        newDescriptor.fetchLimit = newCardsLimit
+        let newCards = (try? modelContext.fetch(newDescriptor)) ?? []
 
-        self.sessionQueue = dueCards + Array(newCards)
+        self.sessionQueue = dueCards + newCards
         self.totalInSession = sessionQueue.count
         self.sessionProgress = 0.0
         self.againRetryCount.removeAll()
@@ -158,13 +160,16 @@ final class LearningEngine: ObservableObject {
     }
 
     /// Сколько новых (ещё не показанных) слов осталось на целевом уровне.
-    /// Нужно для дневного плана подготовки к экзамену.
+    /// Нужно для дневного плана подготовки к экзамену. fetchCount + префиксный
+    /// предикат — без материализации словаря в память.
     func countRemainingNew(level: String) -> Int {
+        let prefix = level + " "
         let descriptor = FetchDescriptor<VocabItem>(
-            predicate: #Predicate { $0.fsrsData.reps == 0 }
+            predicate: #Predicate {
+                $0.fsrsData.reps == 0 && $0.category.starts(with: prefix)
+            }
         )
-        let all = (try? modelContext.fetch(descriptor)) ?? []
-        return all.filter { $0.cefrLevel == level }.count
+        return (try? modelContext.fetchCount(descriptor)) ?? 0
     }
 
     // MARK: - Answer processing
