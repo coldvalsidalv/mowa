@@ -196,10 +196,7 @@ struct ExamSetupSheet: View {
     @ViewBuilder
     private var officialSessionsSection: some View {
         Section {
-            if level == .a2 {
-                Text("A2 не сдаётся как госэкзамен. Для гражданства/ВНЖ нужен B1 — выбери цель B1 или поставь свою дату ниже.")
-                    .font(.footnote).foregroundColor(.secondary)
-            } else if upcomingForLevel.isEmpty {
+            if upcomingForLevel.isEmpty {
                 Text("Нет ближайших официальных сессий \(level.title). Поставь свою дату ниже.")
                     .font(.footnote).foregroundColor(.secondary)
             } else {
