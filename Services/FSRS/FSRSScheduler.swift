@@ -14,7 +14,6 @@ final class FSRSScheduler {
     // MARK: - Defaults (FSRS-6, py-fsrs v6.3.1)
 
     /// 21 параметр модели. w[20] = adaptive decay.
-    /// TODO (Фаза 3b): подтягивать персональные параметры с бэкенда.
     static let defaultParameters: [Double] = [
         0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001,
         1.8722, 0.1666, 0.796, 1.4835, 0.0614, 0.2629, 1.6483, 0.6014,

@@ -22,7 +22,7 @@ final class DataManager: Sendable {
         guard let url = Bundle.main.url(forResource: "words", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let words = try? JSONDecoder().decode([BundleWord].self, from: data) else {
-            print("❌ DataManager: failed to read words.json from bundle")
+            verbumLog("❌ DataManager: failed to read words.json from bundle")
             return []
         }
         return words
@@ -34,7 +34,7 @@ final class DataManager: Sendable {
         guard let url = Bundle.main.url(forResource: "grammar", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let lessons = try? JSONDecoder().decode([GrammarLesson].self, from: data) else {
-            print("❌ DataManager: failed to read grammar.json from bundle")
+            verbumLog("❌ DataManager: failed to read grammar.json from bundle")
             return []
         }
         return lessons
@@ -45,7 +45,7 @@ final class DataManager: Sendable {
             let lessons = try await APIClient.shared.fetchAllGrammarLessons()
             if !lessons.isEmpty { return lessons }
         } catch {
-            print("⚠️ DataManager: grammar API unavailable — \(error)")
+            verbumLog("⚠️ DataManager: grammar API unavailable — \(error)")
         }
         return loadGrammar()
     }
@@ -56,7 +56,7 @@ final class DataManager: Sendable {
         guard let url = Bundle.main.url(forResource: "exam_sessions", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let raw = try? JSONDecoder().decode([BundleExamSession].self, from: data) else {
-            print("❌ DataManager: failed to read exam_sessions.json from bundle")
+            verbumLog("❌ DataManager: failed to read exam_sessions.json from bundle")
             return []
         }
         return raw.compactMap(ExamSessionParser.from)
@@ -68,7 +68,7 @@ final class DataManager: Sendable {
             let sessions = try await APIClient.shared.fetchAllExamSessions()
             if !sessions.isEmpty { return sessions }
         } catch {
-            print("⚠️ DataManager: exam sessions API unavailable — \(error)")
+            verbumLog("⚠️ DataManager: exam sessions API unavailable — \(error)")
         }
         return loadExamSessions()
     }

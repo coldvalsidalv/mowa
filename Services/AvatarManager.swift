@@ -41,7 +41,7 @@ final class AvatarManager: ObservableObject {
                     self.avatar = UIImage(data: jpegData)
                 }
             } catch {
-                print("Ошибка сохранения аватара: \(error)")
+                verbumLog("Ошибка сохранения аватара: \(error)")
             }
         }
     }

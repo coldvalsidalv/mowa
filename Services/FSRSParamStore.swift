@@ -55,7 +55,7 @@ final class FSRSParamStore: ObservableObject {
     /// безопаснее остаться на старых, чем сломать математику.
     func update(_ params: FSRSParams) {
         guard params.isValid else {
-            print("⚠️ FSRSParamStore: rejecting invalid params \(params)")
+            verbumLog("⚠️ FSRSParamStore: rejecting invalid params \(params)")
             return
         }
         current = params
@@ -84,11 +84,11 @@ final class FSRSParamStore: ObservableObject {
         do {
             if let params = try await APIClient.shared.fetchFsrsParams(userId: userId) {
                 update(params)
-                print("✅ FSRSParamStore: applied personal params")
+                verbumLog("✅ FSRSParamStore: applied personal params")
             }
             // params == nil — оптимизатор ещё не отработал, остаёмся на дефолтах/кэше
         } catch {
-            print("⚠️ FSRSParamStore: fetch failed — \(error)")
+            verbumLog("⚠️ FSRSParamStore: fetch failed — \(error)")
         }
     }
 }

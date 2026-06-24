@@ -7,7 +7,7 @@ enum VerbumConfig {
     // Для теста на физическом девайсе: подними cloudflared/ngrok туннель и
     // временно подставь https URL во вторую строку. НЕ коммить tunnel URL —
     // он ephemeral. См. CLAUDE.md → "Тестирование на физическом девайсе".
-    static let baseURL = "http://127.0.0.1:8787"
+    static let baseURL = "http://127.0.0.1:8787" // codeql[swift/cleartext-transmission]
     // static let baseURL = "https://<your-tunnel>.trycloudflare.com"
     #else
     #warning("Release build: подставь реальный прод-URL бэкенда вместо placeholder")
