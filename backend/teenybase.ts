@@ -172,5 +172,32 @@ export default {
         } as TableRulesExtensionData,
       ],
     },
+
+    // ─── EXAM SESSIONS ───────────────────────────────────────────────────────
+    // Официальные даты госэкзамена. Обновляются вручную раз в год (API у
+    // Państwowa Komisja нет). Клиент тянет по /list, фоллбэк — bundle JSON.
+    {
+      name: 'exam_sessions',
+      autoSetUid: true,
+      fields: [
+        ...baseFields,
+        { name: 'session_id', type: 'text', sqlType: 'text', notNull: true },
+        { name: 'start_date', type: 'text', sqlType: 'text', notNull: true },
+        { name: 'end_date',   type: 'text', sqlType: 'text', notNull: true },
+        // Уровни для взрослых на сессии, JSON-массив: ["B1","B2"]
+        { name: 'levels',     type: 'json', sqlType: 'json', notNull: true },
+      ],
+      triggers: [createdTrigger, updatedTrigger],
+      extensions: [
+        {
+          name: 'rules',
+          listRule: 'true',
+          viewRule: 'true',
+          createRule: 'auth.role == "admin"',
+          updateRule: 'auth.role == "admin"',
+          deleteRule: 'auth.role == "admin"',
+        } as TableRulesExtensionData,
+      ],
+    },
   ],
 } satisfies DatabaseSettings

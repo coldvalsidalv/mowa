@@ -76,6 +76,36 @@ final class LearningEngine: ObservableObject {
         self.againRetryCount.removeAll()
     }
 
+    /// Экзаменационная сессия: due + новые слова целевого уровня CEFR ("B1"/"B2").
+    /// Фильтруем по префиксу category в самом #Predicate ("B1 " матчит "B1 · 4"),
+    /// что позволяет вернуть fetchLimit на новых и не материализовать весь словарь.
+    func buildSession(level: String, newCardsLimit: Int = 20) {
+        let now = Date()
+        let prefix = level + " "
+
+        let dueDescriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate {
+                $0.fsrsData.due <= now && $0.fsrsData.reps > 0 && $0.category.starts(with: prefix)
+            },
+            sortBy: [SortDescriptor(\.fsrsData.due, order: .forward)]
+        )
+        let dueCards = (try? modelContext.fetch(dueDescriptor)) ?? []
+
+        var newDescriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate {
+                $0.fsrsData.reps == 0 && $0.category.starts(with: prefix)
+            },
+            sortBy: [SortDescriptor(\.rank, order: .forward)]
+        )
+        newDescriptor.fetchLimit = newCardsLimit
+        let newCards = (try? modelContext.fetch(newDescriptor)) ?? []
+
+        self.sessionQueue = dueCards + newCards
+        self.totalInSession = sessionQueue.count
+        self.sessionProgress = 0.0
+        self.againRetryCount.removeAll()
+    }
+
     /// Сессия повторения по FSRS-уровню (weak/medium/strong/all)
     func buildReviewSession(tier: ReviewTier) {
         let now = Date()
@@ -126,6 +156,19 @@ final class LearningEngine: ObservableObject {
             } ?? #Predicate { $0.fsrsData.reps == 0 }
         )
         descriptor.fetchLimit = 500
+        return (try? modelContext.fetchCount(descriptor)) ?? 0
+    }
+
+    /// Сколько новых (ещё не показанных) слов осталось на целевом уровне.
+    /// Нужно для дневного плана подготовки к экзамену. fetchCount + префиксный
+    /// предикат — без материализации словаря в память.
+    func countRemainingNew(level: String) -> Int {
+        let prefix = level + " "
+        let descriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate {
+                $0.fsrsData.reps == 0 && $0.category.starts(with: prefix)
+            }
+        )
         return (try? modelContext.fetchCount(descriptor)) ?? 0
     }
 

@@ -88,6 +88,15 @@ struct RemoteGrammarLesson: Decodable, Sendable {
     let steps: String
 }
 
+/// Teenybase возвращает json-поля как строки (как steps у грамматики),
+/// поэтому levels декодируем строкой и парсим вручную.
+struct RemoteExamSession: Decodable, Sendable {
+    let session_id: String
+    let start_date: String
+    let end_date: String
+    let levels: String
+}
+
 // MARK: - Error
 
 enum APIError: Error {
@@ -213,6 +222,16 @@ final class APIClient {
         return resp.items.compactMap { remoteToGrammarLesson($0) }
     }
 
+    // MARK: - Exam sessions
+
+    func fetchAllExamSessions() async throws -> [ExamSession] {
+        let resp: TeenyListResponse<RemoteExamSession> = try await post(
+            path: "/api/v1/table/exam_sessions/list",
+            body: ["limit": 100, "sort": "start_date"]
+        )
+        return resp.items.compactMap { remoteToExamSession($0) }
+    }
+
     // MARK: - Generic POST
 
     /// Внутренний POST с автоматической подстановкой auth-токена и retry на 401.
@@ -285,6 +304,15 @@ extension ISO8601DateFormatter {
         formatter.timeZone = TimeZone(identifier: "UTC")
         return formatter
     }()
+}
+
+private func remoteToExamSession(_ r: RemoteExamSession) -> ExamSession? {
+    let levels = (r.levels.data(using: .utf8))
+        .flatMap { try? JSONDecoder().decode([String].self, from: $0) } ?? []
+    let bundle = BundleExamSession(
+        session_id: r.session_id, start_date: r.start_date, end_date: r.end_date, levels: levels
+    )
+    return ExamSessionParser.from(bundle)
 }
 
 private func remoteToGrammarLesson(_ r: RemoteGrammarLesson) -> GrammarLesson? {

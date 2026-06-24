@@ -49,4 +49,27 @@ final class DataManager: Sendable {
         }
         return loadGrammar()
     }
+
+    // MARK: - Exam sessions
+
+    nonisolated func loadExamSessions() -> [ExamSession] {
+        guard let url = Bundle.main.url(forResource: "exam_sessions", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let raw = try? JSONDecoder().decode([BundleExamSession].self, from: data) else {
+            print("❌ DataManager: failed to read exam_sessions.json from bundle")
+            return []
+        }
+        return raw.compactMap(ExamSessionParser.from)
+    }
+
+    /// API-first с фоллбэком на бандл (даты экзаменов синхронизируются с бэкенда).
+    func loadExamSessionsAsync() async -> [ExamSession] {
+        do {
+            let sessions = try await APIClient.shared.fetchAllExamSessions()
+            if !sessions.isEmpty { return sessions }
+        } catch {
+            print("⚠️ DataManager: exam sessions API unavailable — \(error)")
+        }
+        return loadExamSessions()
+    }
 }
