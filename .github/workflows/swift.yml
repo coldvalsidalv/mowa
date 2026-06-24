@@ -6,13 +6,14 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   lint:
     name: SwiftLint
     runs-on: macos-26
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
@@ -25,6 +26,8 @@ jobs:
   test:
     name: Build & Test
     runs-on: macos-26
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
@@ -33,7 +36,7 @@ jobs:
           xcodebuild test \
             -project mowa.xcodeproj \
             -scheme Verbum \
-            -destination 'platform=iOS Simulator,name=Any iOS Simulator Device' \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
