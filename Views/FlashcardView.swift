@@ -19,6 +19,13 @@ struct FlashcardView: View {
         ))
     }
 
+    /// Экзаменационный режим — слова целевого уровня CEFR
+    init(level: String, context: ModelContext) {
+        self.categories = []
+        self.isReviewMode = false
+        _viewModel = StateObject(wrappedValue: FlashcardViewModel(level: level, context: context))
+    }
+
     /// Инициализация через ReviewTier для экрана повторения
     init(tier: ReviewTier, context: ModelContext) {
         self.categories = []

@@ -6,7 +6,11 @@ struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
 
     @StateObject private var viewModel = HomeViewModel()
+    @StateObject private var examPlan = ExamPlanStore()
     @State private var categoryStats: [String: (total: Int, learned: Int)] = [:]
+
+    @State private var showExamSetup = false
+    @State private var startExamLevel: ExamLevel? = nil
 
     @AppStorage(StorageKeys.dayStreak) private var dayStreak: Int = 0
     @AppStorage(StorageKeys.userName) private var userName: String = ""
@@ -28,7 +32,13 @@ struct HomeView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
                     headerView
-                    
+
+                    ExamCard(
+                        store: examPlan,
+                        onSetup: { showExamSetup = true },
+                        onStart: { startExamLevel = $0 }
+                    )
+
                     DailyGoalCard(
                         progress: viewModel.dailyGoalProgress,
                         isCompleted: viewModel.isDailyGoalCompleted,
@@ -57,6 +67,12 @@ struct HomeView: View {
             }
             .navigationDestination(item: $recommendedCategory) { category in
                 FlashcardView(categories: [category], isReviewMode: false, context: modelContext)
+            }
+            .navigationDestination(item: $startExamLevel) { level in
+                FlashcardView(level: level.rawValue, context: modelContext)
+            }
+            .sheet(isPresented: $showExamSetup) {
+                ExamSetupSheet(store: examPlan)
             }
             .onAppear {
                 VocabSyncService.shared.syncIfNeeded(context: modelContext)

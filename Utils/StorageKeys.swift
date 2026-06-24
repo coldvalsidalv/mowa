@@ -19,4 +19,8 @@ enum StorageKeys {
     static let notificationsEnabled = "notificationsEnabled"
     static let notificationTime = "notificationTime"
     static let hasCompletedOnboarding = "hasCompletedOnboarding"
+
+    // Подготовка к экзамену (Фаза 0)
+    static let examTargetLevel = "examTargetLevel"
+    static let examDate = "examDate"
 }

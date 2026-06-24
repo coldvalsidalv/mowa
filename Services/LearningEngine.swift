@@ -76,6 +76,34 @@ final class LearningEngine: ObservableObject {
         self.againRetryCount.removeAll()
     }
 
+    /// Экзаменационная сессия: due + новые слова целевого уровня CEFR ("A2"/"B1"/"B2").
+    /// cefrLevel — computed из category, поэтому фильтруем в Swift после fetch
+    /// (нельзя в #Predicate). fetchLimit не используем — иначе limit съедят слова
+    /// чужого уровня и нужных наберётся меньше.
+    func buildSession(level: String, newCardsLimit: Int = 20) {
+        let now = Date()
+
+        let dueDescriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate { $0.fsrsData.due <= now && $0.fsrsData.reps > 0 },
+            sortBy: [SortDescriptor(\.fsrsData.due, order: .forward)]
+        )
+        let dueCards = ((try? modelContext.fetch(dueDescriptor)) ?? [])
+            .filter { $0.cefrLevel == level }
+
+        let newDescriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate { $0.fsrsData.reps == 0 },
+            sortBy: [SortDescriptor(\.rank, order: .forward)]
+        )
+        let newCards = ((try? modelContext.fetch(newDescriptor)) ?? [])
+            .filter { $0.cefrLevel == level }
+            .prefix(newCardsLimit)
+
+        self.sessionQueue = dueCards + Array(newCards)
+        self.totalInSession = sessionQueue.count
+        self.sessionProgress = 0.0
+        self.againRetryCount.removeAll()
+    }
+
     /// Сессия повторения по FSRS-уровню (weak/medium/strong/all)
     func buildReviewSession(tier: ReviewTier) {
         let now = Date()
@@ -127,6 +155,16 @@ final class LearningEngine: ObservableObject {
         )
         descriptor.fetchLimit = 500
         return (try? modelContext.fetchCount(descriptor)) ?? 0
+    }
+
+    /// Сколько новых (ещё не показанных) слов осталось на целевом уровне.
+    /// Нужно для дневного плана подготовки к экзамену.
+    func countRemainingNew(level: String) -> Int {
+        let descriptor = FetchDescriptor<VocabItem>(
+            predicate: #Predicate { $0.fsrsData.reps == 0 }
+        )
+        let all = (try? modelContext.fetch(descriptor)) ?? []
+        return all.filter { $0.cefrLevel == level }.count
     }
 
     // MARK: - Answer processing
