@@ -1,8 +1,8 @@
-import SwiftUI
 import Combine
+import Foundation
 
-/// Целевой уровень госэкзамена. Привязан к префиксу VocabItem.category ("B1 · 4").
-/// Целевой уровень госэкзамена. Только B1/B2 — A2 как госэкзамен не сдаётся.
+/// Целевой уровень госэкзамена (B1/B2). Выводится из префикса VocabItem.category
+/// ("B1 · 4"); A2 как госэкзамен не сдаётся.
 enum ExamLevel: String, CaseIterable, Identifiable {
     case b1 = "B1"
     case b2 = "B2"
