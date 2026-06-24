@@ -1,0 +1,7 @@
+[
+  { "session_id": "2026-02", "start_date": "2026-02-14", "end_date": "2026-02-15", "levels": ["B1", "B2"] },
+  { "session_id": "2026-04", "start_date": "2026-04-25", "end_date": "2026-04-26", "levels": ["B1", "B2"] },
+  { "session_id": "2026-06", "start_date": "2026-06-27", "end_date": "2026-06-28", "levels": ["B1", "B2"] },
+  { "session_id": "2026-10", "start_date": "2026-10-17", "end_date": "2026-10-18", "levels": ["B1"] },
+  { "session_id": "2026-12", "start_date": "2026-12-05", "end_date": "2026-12-06", "levels": ["B1"] }
+]

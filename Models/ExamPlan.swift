@@ -20,6 +20,42 @@ extension VocabItem {
     }
 }
 
+/// Официальная сессия госэкзамена. Даты публикует Państwowa Komisja раз в год;
+/// официального API нет — датасет поддерживается вручную (бэкенд + bundle-фоллбэк).
+struct ExamSession: Identifiable, Hashable, Sendable {
+    let id: String            // session_id, напр. "2026-10"
+    let startDate: Date       // первый день сессии (суббота)
+    let endDate: Date         // второй день (воскресенье)
+    let levels: [String]      // уровни для взрослых на этой сессии: ["B1","B2"]
+
+    func offers(_ level: ExamLevel) -> Bool { levels.contains(level.rawValue) }
+}
+
+/// DTO из bundle (levels — нативный массив).
+struct BundleExamSession: Decodable, Sendable {
+    let session_id: String
+    let start_date: String
+    let end_date: String
+    let levels: [String]
+}
+
+enum ExamSessionParser {
+    /// "yyyy-MM-dd" -> Date (локальная полночь, согласовано с daysLeft).
+    static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        f.calendar = Calendar(identifier: .gregorian)
+        f.locale = Locale(identifier: "en_US_POSIX")
+        return f
+    }()
+
+    static func from(_ b: BundleExamSession) -> ExamSession? {
+        guard let start = dateFormatter.date(from: b.start_date),
+              let end = dateFormatter.date(from: b.end_date) else { return nil }
+        return ExamSession(id: b.session_id, startDate: start, endDate: end, levels: b.levels)
+    }
+}
+
 /// Хранит цель подготовки к экзамену (уровень + дата). UserDefaults-backed,
 /// без изменений модели/БД. Обратный отсчёт и дневной план считаются поверх.
 @MainActor
@@ -55,15 +91,4 @@ final class ExamPlanStore: ObservableObject {
         let to = cal.startOfDay(for: examDate)
         return cal.dateComponents([.day], from: from, to: to).day
     }
-
-    /// Официальные сессии госэкзамена B1 в 2026 — подсказки для пикера даты.
-    static let officialDates: [Date] = {
-        var cal = Calendar(identifier: .gregorian)
-        let comps = [
-            DateComponents(year: 2026, month: 6, day: 27),
-            DateComponents(year: 2026, month: 10, day: 17),
-            DateComponents(year: 2026, month: 12, day: 5),
-        ]
-        return comps.compactMap { cal.date(from: $0) }
-    }()
 }

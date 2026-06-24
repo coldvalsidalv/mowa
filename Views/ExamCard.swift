@@ -132,11 +132,20 @@ struct ExamSetupSheet: View {
 
     @State private var level: ExamLevel
     @State private var date: Date
+    @State private var sessions: [ExamSession] = []
 
     init(store: ExamPlanStore) {
         self.store = store
         _level = State(initialValue: store.targetLevel ?? .b1)
-        _date = State(initialValue: store.examDate ?? ExamPlanStore.officialDates.first ?? Date())
+        _date = State(initialValue: store.examDate ?? Date())
+    }
+
+    /// Будущие официальные сессии, на которых сдаётся выбранный уровень.
+    private var upcomingForLevel: [ExamSession] {
+        let today = Calendar.current.startOfDay(for: Date())
+        return sessions
+            .filter { $0.offers(level) && $0.startDate >= today }
+            .sorted { $0.startDate < $1.startDate }
     }
 
     var body: some View {
@@ -149,25 +158,11 @@ struct ExamSetupSheet: View {
                     .pickerStyle(.segmented)
                 }
 
-                Section("Дата экзамена") {
-                    DatePicker("Дата", selection: $date, in: Date()..., displayedComponents: .date)
-                        .datePickerStyle(.compact)
-                }
+                officialSessionsSection
 
-                Section("Официальные сессии 2026") {
-                    ForEach(ExamPlanStore.officialDates, id: \.self) { d in
-                        Button {
-                            date = d
-                        } label: {
-                            HStack {
-                                Text(d.formatted(date: .long, time: .omitted)).foregroundColor(.primary)
-                                Spacer()
-                                if Calendar.current.isDate(d, inSameDayAs: date) {
-                                    Image(systemName: "checkmark").foregroundColor(.indigo)
-                                }
-                            }
-                        }
-                    }
+                Section("Другая дата") {
+                    DatePicker("Своя дата", selection: $date, in: Date()..., displayedComponents: .date)
+                        .datePickerStyle(.compact)
                 }
 
                 if store.isConfigured {
@@ -182,6 +177,7 @@ struct ExamSetupSheet: View {
             }
             .navigationTitle("План экзамена")
             .navigationBarTitleDisplayMode(.inline)
+            .task { sessions = await DataManager.shared.loadExamSessionsAsync() }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Отмена") { dismiss() }
@@ -195,5 +191,50 @@ struct ExamSetupSheet: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private var officialSessionsSection: some View {
+        Section {
+            if level == .a2 {
+                Text("A2 не сдаётся как госэкзамен. Для гражданства/ВНЖ нужен B1 — выбери цель B1 или поставь свою дату ниже.")
+                    .font(.footnote).foregroundColor(.secondary)
+            } else if upcomingForLevel.isEmpty {
+                Text("Нет ближайших официальных сессий \(level.title). Поставь свою дату ниже.")
+                    .font(.footnote).foregroundColor(.secondary)
+            } else {
+                ForEach(upcomingForLevel) { session in
+                    Button {
+                        date = session.startDate
+                    } label: {
+                        HStack {
+                            Text(Self.rangeText(session)).foregroundColor(.primary)
+                            Spacer()
+                            if Calendar.current.isDate(session.startDate, inSameDayAs: date) {
+                                Image(systemName: "checkmark").foregroundColor(.indigo)
+                            }
+                        }
+                    }
+                }
+            }
+        } header: {
+            Text("Официальные сессии")
+        } footer: {
+            Text("Даты — государственный экзамен сертификатовый (certyfikatpolski.pl). Запись открывается ~за 2 месяца, уточняй в центре.")
+        }
+    }
+
+    /// "27–28 июня 2026"
+    private static func rangeText(_ s: ExamSession) -> String {
+        let cal = Calendar.current
+        let df = DateFormatter()
+        df.locale = Locale(identifier: "ru_RU")
+        let endStr: String = {
+            df.dateFormat = "d MMMM yyyy"
+            return df.string(from: s.endDate)
+        }()
+        let startDay = cal.component(.day, from: s.startDate)
+        // Сессия всегда в одном месяце (сб–вс) — показываем "27–28 <месяц> <год>".
+        return "\(startDay)–\(endStr)"
     }
 }
