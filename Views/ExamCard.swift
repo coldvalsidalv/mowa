@@ -177,7 +177,14 @@ struct ExamSetupSheet: View {
             }
             .navigationTitle("План экзамена")
             .navigationBarTitleDisplayMode(.inline)
-            .task { sessions = await DataManager.shared.loadExamSessionsAsync() }
+            .task {
+                sessions = await DataManager.shared.loadExamSessionsAsync()
+                // Без явной даты дефолтим на ближайшую официальную сессию, иначе
+                // "Сохранить" без выбора даты записал бы сегодня (daysLeft == 0).
+                if store.examDate == nil, let first = upcomingForLevel.first {
+                    date = first.startDate
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Отмена") { dismiss() }
@@ -221,16 +228,19 @@ struct ExamSetupSheet: View {
         }
     }
 
-    /// "27–28 июня 2026"
+    private static let rangeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "d MMMM yyyy"
+        return f
+    }()
+
+    /// "27–28 июня 2026". Локаль следует за языком приложения (рантайм-свизл),
+    /// а не за локалью устройства.
     private static func rangeText(_ s: ExamSession) -> String {
-        let cal = Calendar.current
-        let df = DateFormatter()
-        df.locale = Locale(identifier: "ru_RU")
-        let endStr: String = {
-            df.dateFormat = "d MMMM yyyy"
-            return df.string(from: s.endDate)
-        }()
-        let startDay = cal.component(.day, from: s.startDate)
+        let f = rangeFormatter
+        f.locale = Locale(identifier: LanguageManager.shared.currentLanguage)
+        let endStr = f.string(from: s.endDate)
+        let startDay = Calendar.current.component(.day, from: s.startDate)
         // Сессия всегда в одном месяце (сб–вс) — показываем "27–28 <месяц> <год>".
         return "\(startDay)–\(endStr)"
     }
