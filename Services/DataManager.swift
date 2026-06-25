@@ -50,6 +50,18 @@ final class DataManager: Sendable {
         return loadGrammar()
     }
 
+    // MARK: - Writing tasks
+
+    nonisolated func loadWritingTasks() -> [WritingTask] {
+        guard let url = Bundle.main.url(forResource: "writing_tasks", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let tasks = try? JSONDecoder().decode([WritingTask].self, from: data) else {
+            print("❌ DataManager: failed to read writing_tasks.json from bundle")
+            return []
+        }
+        return tasks
+    }
+
     // MARK: - Exam sessions
 
     nonisolated func loadExamSessions() -> [ExamSession] {

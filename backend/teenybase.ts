@@ -199,5 +199,32 @@ export default {
         } as TableRulesExtensionData,
       ],
     },
+
+    // ─── WRITING ATTEMPTS ────────────────────────────────────────────────────
+    // One row per graded essay. Serves the per-user daily rate limit (budget
+    // guard for the paid LLM endpoint) and doubles as server-side history.
+    // Written by the worker via raw D1; clients don't read it directly.
+    {
+      name: 'writing_attempts',
+      autoSetUid: true,
+      fields: [
+        ...baseFields,
+        { name: 'user_id',         type: 'text', sqlType: 'text', notNull: true },
+        { name: 'task_id',         type: 'text', sqlType: 'text', notNull: true },
+        { name: 'overall_percent', type: 'number', sqlType: 'integer', default: { q: '0' } },
+        { name: 'passed',          type: 'number', sqlType: 'integer', default: { q: '0' } },
+      ],
+      triggers: [createdTrigger, updatedTrigger],
+      extensions: [
+        {
+          name: 'rules',
+          listRule: 'auth.role == "admin"',
+          viewRule: 'auth.role == "admin"',
+          createRule: 'auth.role == "admin"',
+          updateRule: 'auth.role == "admin"',
+          deleteRule: 'auth.role == "admin"',
+        } as TableRulesExtensionData,
+      ],
+    },
   ],
 } satisfies DatabaseSettings

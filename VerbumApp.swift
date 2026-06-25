@@ -21,7 +21,7 @@ struct VerbumApp: App {
             RootView()
         }
         // Инициализация локальной базы данных (SwiftData)
-        .modelContainer(for: [VocabItem.self, ReviewLog.self, GrammarProgress.self])
+        .modelContainer(for: [VocabItem.self, ReviewLog.self, GrammarProgress.self, WritingAttempt.self])
         .onChange(of: scenePhase) { oldPhase, newPhase in
             // ... логика уведомлений
         }
