@@ -93,23 +93,22 @@ function userPrompt(body: GradeBody): string {
 export async function gradeWriting(c: any): Promise<Response> {
   const env = c.env
 
-  // Auth (MVP): decode the teenybase user token, check it's a users-table token
-  // and not expired.
-  // TODO(harden before prod): verify the SIGNATURE. teenybase signs with its own
-  // JWTTokenHelper + secretResolver($JWT_SECRET_USERS), not raw @tsndr, so reuse
-  // db.jwt.decodeAuth here. Until then a forged token could reach the LLM — gate
-  // this with the per-user rate limit (Phase 2.2) and signature verification.
+  // Auth: verify the teenybase user-token SIGNATURE. teenybase signs auth tokens
+  // with the concatenation of the top-level secret and the table secret
+  // (JWTTokenHelper: sign(claims, resolveValue(this.secret) + tableSecret)), so
+  // the verification key is JWT_SECRET + JWT_SECRET_USERS. jwt.verify also rejects
+  // expired tokens; we additionally require the users-table audience.
   const auth = c.req.header('Authorization') ?? ''
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : ''
   let userId = ''
   try {
-    const payload: any = token ? jwt.decode(token)?.payload : null
-    const now = Math.floor(Date.now() / 1000)
-    if (payload?.cid === 'users' && typeof payload.exp === 'number' && payload.exp > now) {
-      userId = String(payload.id ?? '')
+    const secret = (env.JWT_SECRET ?? '') + (env.JWT_SECRET_USERS ?? '')
+    const decoded: any = token && secret ? await jwt.verify(token, secret) : null
+    if (decoded?.payload?.cid === 'users') {
+      userId = String(decoded.payload.id ?? '')
     }
   } catch {
-    userId = ''
+    userId = '' // malformed/invalid signature → unauthorized
   }
   if (!userId) {
     return c.json({ code: 401, message: 'Unauthorized' }, 401)
