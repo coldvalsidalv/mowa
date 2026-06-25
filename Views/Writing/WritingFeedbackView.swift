@@ -56,13 +56,14 @@ struct WritingFeedbackView: View {
     }
 
     private func scoreRow(_ title: String, _ value: Int) -> some View {
-        HStack(spacing: 12) {
+        let clamped = min(max(value, 0), 5)
+        return HStack(spacing: 12) {
             Text(title).font(.subheadline).frame(width: 160, alignment: .leading)
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule().fill(Color.gray.opacity(0.15)).frame(height: 8)
-                    Capsule().fill(color(for: value))
-                        .frame(width: geo.size.width * CGFloat(value) / 5, height: 8)
+                    Capsule().fill(color(for: clamped))
+                        .frame(width: geo.size.width * CGFloat(clamped) / 5, height: 8)
                 }
             }
             .frame(height: 8)
@@ -81,7 +82,8 @@ struct WritingFeedbackView: View {
     private var errorsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Ошибки (\(feedback.errors.count))").font(.headline)
-            ForEach(feedback.errors) { err in
+            ForEach(feedback.errors.indices, id: \.self) { i in
+                let err = feedback.errors[i]
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
                         Text(err.fragment).strikethrough().foregroundColor(.red)

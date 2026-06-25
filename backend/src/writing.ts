@@ -1,8 +1,8 @@
 import jwt from '@tsndr/cloudflare-worker-jwt'
 
 // Phase 2 MVP: grade a Polish B1 writing task with an LLM and return structured
-// feedback. Provider/model are env-swappable (default Gemini 3.1 Flash-Lite);
-// route the call through Cloudflare AI Gateway later without touching callers.
+// feedback. Provider/model are env-swappable (default gen-3 Flash via
+// GEMINI_MODEL); route through Cloudflare AI Gateway later without touching callers.
 
 // gen-3 Flash chosen over Flash-Lite after eval: ~2x error recall on Polish B1
 // essays for a few extra tenths of a cent per grade (immaterial vs revenue).
@@ -45,6 +45,7 @@ const FEEDBACK_SCHEMA = {
 }
 
 type GradeBody = {
+  task_id?: string
   task: {
     type?: string
     prompt: string
@@ -143,8 +144,7 @@ export async function gradeWriting(c: any): Promise<Response> {
   if (!apiKey) {
     return c.json({ code: 500, message: 'GEMINI_API_KEY not configured' }, 500)
   }
-  // body.model is a testing/A-B override; falls back to the configured default.
-  const model = (body as any).model || env.GEMINI_MODEL || DEFAULT_MODEL
+  const model = env.GEMINI_MODEL || DEFAULT_MODEL
 
   const geminiBody = {
     systemInstruction: { parts: [{ text: systemInstruction(body.feedback_lang ?? 'ru') }] },
@@ -190,7 +190,7 @@ export async function gradeWriting(c: any): Promise<Response> {
       .bind(
         crypto.randomUUID(),
         userId,
-        String((body as any).task_id ?? body.task?.type ?? ''),
+        String(body.task_id ?? body.task?.type ?? ''),
         Number(feedback?.overall_percent ?? 0),
         feedback?.passed_estimate ? 1 : 0,
       )

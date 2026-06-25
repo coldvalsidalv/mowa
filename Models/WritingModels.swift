@@ -32,12 +32,11 @@ struct WritingFeedback: Codable, Sendable {
         let zakres: Int
         let poprawnosc: Int
     }
-    struct WError: Codable, Sendable, Identifiable {
+    struct WError: Codable, Sendable {
         let fragment: String
         let correction: String
         let type: String
         let explanation: String
-        var id: String { fragment + correction }
     }
 
     let scores: Scores
