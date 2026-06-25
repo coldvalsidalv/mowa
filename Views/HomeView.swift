@@ -50,6 +50,7 @@ struct HomeView: View {
                     
                     challengesView
                     reviewLinkView
+                    writingLinkView
                     quickPracticeView
                     yourLessonsView
                 }
@@ -182,6 +183,26 @@ struct HomeView: View {
         .padding(.horizontal)
     }
     
+    private var writingLinkView: some View {
+        NavigationLink(destination: WritingTaskListView()) {
+            HStack {
+                ZStack {
+                    Circle().fill(Color.indigo.opacity(0.1)).frame(width: 50, height: 50)
+                    Image(systemName: "square.and.pencil").font(.title2).foregroundColor(.indigo)
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Письмо B1").font(.headline).foregroundColor(.primary)
+                    Text("Проверка эссе по критериям экзамена").font(.caption).foregroundColor(.gray)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").foregroundColor(.gray.opacity(0.4))
+            }
+            .padding().background(Color(UIColor.secondarySystemGroupedBackground))
+            .cornerRadius(20).shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        }
+        .padding(.horizontal)
+    }
+
     private var quickPracticeView: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Быстрая тренировка").font(.title3).bold().padding(.horizontal)

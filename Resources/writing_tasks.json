@@ -1,0 +1,44 @@
+[
+  {
+    "task_id": "b1_email_urlop",
+    "type": "email",
+    "level": "B1",
+    "prompt": "Napisz e-mail do kolegi z pracy, który zastąpi Cię podczas Twojego urlopu.",
+    "required_points": [
+      "poinformuj, kiedy będziesz na urlopie",
+      "wyjaśnij, jakie obowiązki musi przejąć",
+      "powiedz, gdzie znajdzie potrzebne dokumenty",
+      "podziękuj i zaproponuj rewanż"
+    ],
+    "min_words": 80,
+    "max_words": 130
+  },
+  {
+    "task_id": "b1_email_mieszkanie",
+    "type": "email",
+    "level": "B1",
+    "prompt": "Wynajmujesz mieszkanie. Napisz e-mail do właściciela w sprawie usterki.",
+    "required_points": [
+      "opisz, co się zepsuło i kiedy",
+      "wyjaśnij, jak to utrudnia Ci życie",
+      "poproś o szybką naprawę i podaj termin",
+      "zapytaj, kto pokryje koszty"
+    ],
+    "min_words": 80,
+    "max_words": 130
+  },
+  {
+    "task_id": "b1_email_kurs",
+    "type": "email",
+    "level": "B1",
+    "prompt": "Zapisałeś/aś się na kurs języka polskiego, ale nie możesz przyjść na pierwsze zajęcia. Napisz e-mail do szkoły.",
+    "required_points": [
+      "przeproś i wyjaśnij powód nieobecności",
+      "zapytaj, czy możesz odrobić zajęcia",
+      "poproś o materiały z pierwszej lekcji",
+      "potwierdź, że przyjdziesz na kolejne zajęcia"
+    ],
+    "min_words": 80,
+    "max_words": 130
+  }
+]
