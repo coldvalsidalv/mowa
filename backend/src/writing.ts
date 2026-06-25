@@ -114,6 +114,21 @@ export async function gradeWriting(c: any): Promise<Response> {
     return c.json({ code: 401, message: 'Unauthorized' }, 401)
   }
 
+  // Per-user daily rate limit — budget guard for the paid LLM endpoint.
+  const dailyLimit = Number(env.WRITING_DAILY_LIMIT ?? 10)
+  try {
+    const row: any = await env.PRIMARY_DB
+      .prepare("SELECT COUNT(*) AS n FROM writing_attempts WHERE user_id = ? AND created >= datetime('now','start of day')")
+      .bind(userId)
+      .first()
+    if (row && Number(row.n) >= dailyLimit) {
+      return c.json({ code: 429, message: 'Дневной лимит проверок исчерпан. Попробуй завтра.' }, 429)
+    }
+  } catch (e) {
+    // Storage hiccup shouldn't hard-block grading; log and continue.
+    console.log('writing rate-limit check failed:', e)
+  }
+
   let body: GradeBody
   try {
     body = await c.req.json()
@@ -161,11 +176,27 @@ export async function gradeWriting(c: any): Promise<Response> {
     return c.json({ code: 502, message: 'Empty LLM response' }, 502)
   }
 
-  let feedback: unknown
+  let feedback: any
   try {
     feedback = JSON.parse(jsonText)
   } catch {
     return c.json({ code: 502, message: 'LLM returned non-JSON' }, 502)
+  }
+
+  // Record the successful grade (rate-limit counter + history). Best-effort.
+  try {
+    await env.PRIMARY_DB
+      .prepare('INSERT INTO writing_attempts (id, user_id, task_id, overall_percent, passed) VALUES (?, ?, ?, ?, ?)')
+      .bind(
+        crypto.randomUUID(),
+        userId,
+        String((body as any).task_id ?? body.task?.type ?? ''),
+        Number(feedback?.overall_percent ?? 0),
+        feedback?.passed_estimate ? 1 : 0,
+      )
+      .run()
+  } catch (e) {
+    console.log('writing attempt insert failed:', e)
   }
 
   return c.json(feedback, 200)

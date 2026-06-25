@@ -236,6 +236,7 @@ final class APIClient {
 
     func gradeWriting(task: WritingTask, text: String, lang: String) async throws -> WritingFeedback {
         let body: [String: Any] = [
+            "task_id": task.taskId,
             "task": [
                 "type": task.type,
                 "prompt": task.prompt,
