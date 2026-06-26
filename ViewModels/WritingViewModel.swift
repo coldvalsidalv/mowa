@@ -38,8 +38,13 @@ final class WritingViewModel: ObservableObject {
         wordCount >= task.minWords && wordCount <= task.maxWords
     }
 
+    /// Block submitting a text whose length is clearly off — it would just be
+    /// penalised on wykonanie_zadania and waste a grading call. Allow the exam's
+    /// ±10% tolerance around the required range.
     var canSubmit: Bool {
-        wordCount >= 10 && phase != .submitting
+        let lower = Int(Double(task.minWords) * 0.9)
+        let upper = Int((Double(task.maxWords) * 1.1).rounded())
+        return wordCount >= lower && wordCount <= upper && phase != .submitting
     }
 
     func submit() async {
@@ -56,6 +61,9 @@ final class WritingViewModel: ObservableObject {
     }
 
     private func persist(_ feedback: WritingFeedback) {
+        // NOTE: feedbackJSON is the current WritingFeedback schema. Records written
+        // before the official-criteria rename (realizacja/spojnosc/…) hold old keys
+        // and will fail to decode — guard/migrate before adding a history-detail view.
         let json = (try? JSONEncoder().encode(feedback))
             .flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
         let attempt = WritingAttempt(taskId: task.taskId, userText: text, feedback: feedback, feedbackJSON: json)
