@@ -4,9 +4,10 @@ import jwt from '@tsndr/cloudflare-worker-jwt'
 // feedback. Provider/model are env-swappable (default gen-3 Flash via
 // GEMINI_MODEL); route through Cloudflare AI Gateway later without touching callers.
 
-// gen-3 Flash chosen over Flash-Lite after eval: ~2x error recall on Polish B1
-// essays for a few extra tenths of a cent per grade (immaterial vs revenue).
-const DEFAULT_MODEL = 'gemini-3-flash-preview'
+// gemini-2.5-flash-lite after eval: with the "report every error" prompt it
+// matches gen-3 Flash on recall (~12 errors) while being ~6x faster (~5s vs ~34s)
+// and the cheapest tier. Latency matters: the client times out on slow models.
+const DEFAULT_MODEL = 'gemini-2.5-flash-lite'
 
 // Gemini responseSchema (OpenAPI subset, uppercase types) — guarantees parseable JSON.
 const FEEDBACK_SCHEMA = {

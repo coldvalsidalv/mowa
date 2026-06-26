@@ -247,7 +247,8 @@ final class APIClient {
             "text": text,
             "feedback_lang": lang,
         ]
-        return try await post(path: "/api/v1/writing/grade", body: body)
+        // LLM grading is slow (several seconds); the default 15s timeout is too tight.
+        return try await post(path: "/api/v1/writing/grade", body: body, timeout: 60)
     }
 
     // MARK: - Generic POST
@@ -255,15 +256,15 @@ final class APIClient {
     /// Внутренний POST с автоматической подстановкой auth-токена и retry на 401.
     /// При 401 пытается обновить токен через AuthManager, повторяет запрос один раз.
     /// Если refresh не удался — signOut() и пробрасывает 401.
-    private func post<T: Decodable>(path: String, body: [String: Any]) async throws -> T {
-        try await postOnce(path: path, body: body, isRetry: false)
+    private func post<T: Decodable>(path: String, body: [String: Any], timeout: TimeInterval = 15) async throws -> T {
+        try await postOnce(path: path, body: body, isRetry: false, timeout: timeout)
     }
 
-    private func postOnce<T: Decodable>(path: String, body: [String: Any], isRetry: Bool) async throws -> T {
+    private func postOnce<T: Decodable>(path: String, body: [String: Any], isRetry: Bool, timeout: TimeInterval = 15) async throws -> T {
         guard let url = URL(string: VerbumConfig.baseURL + path) else {
             throw APIError.invalidURL
         }
-        var request = URLRequest(url: url, timeoutInterval: 15)
+        var request = URLRequest(url: url, timeoutInterval: timeout)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -291,7 +292,7 @@ final class APIClient {
             // Пробуем рефреш токена и повторяем запрос один раз.
             do {
                 try await AuthManager.shared.refresh()
-                return try await postOnce(path: path, body: body, isRetry: true)
+                return try await postOnce(path: path, body: body, isRetry: true, timeout: timeout)
             } catch {
                 AuthManager.shared.signOut()
                 throw APIError.serverError(401, message: nil)
