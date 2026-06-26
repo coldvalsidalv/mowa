@@ -7,8 +7,9 @@ TASK = {
     "type": "email",
     "prompt": "Napisz e-mail do kolegi z pracy, ktory zastapi Cie podczas Twojego urlopu.",
     "required_points": ["kiedy bedziesz na urlopie", "jakie obowiazki przejac", "gdzie sa dokumenty", "podziekuj i zaproponuj rewans"],
-    "min_words": 80, "max_words": 130,
+    "min_words": 60, "max_words": 120,
 }
+CRIT = ["wykonanie_zadania", "poprawnosc_gramatyczna", "slownictwo", "styl", "ortografia_interpunkcja"]
 
 # Gold-set: expected ordering weak(E3) < heavy(E1) < medium(E4) < strong(E2)
 ESSAYS = {
@@ -18,7 +19,7 @@ ESSAYS = {
     "E3_offtask": "Cześć! Dzisiaj jest bardzo ładna pogoda. Lubię pić kawę rano i czytać dobre książki. Mój kot ma na imię Felix i jest czarny. Do widzenia!",
 }
 
-MODELS = ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite"]
+MODELS = ["gemini-2.5-flash-lite"]
 
 
 def login():
@@ -51,12 +52,13 @@ def grade(tok, model, text):
 tok = login()
 for model in MODELS:
     print(f"\n=== {model} ===")
-    print(f"{'essay':28} {'real':>4} {'spoj':>4} {'zakr':>4} {'popr':>4} {'overall':>7} {'pass':>5} {'errs':>4} {'time':>5}")
+    print(f"{'essay':28} {'wyk':>4} {'gram':>4} {'slow':>4} {'styl':>4} {'ort':>4} {'overall':>7} {'pass':>5} {'errs':>4} {'time':>5}")
     for name, text in ESSAYS.items():
         try:
             d, dt = grade(tok, model, text)
             s = d.get("scores", {})
-            print(f"{name:28} {s.get('realizacja'):>4} {s.get('spojnosc'):>4} {s.get('zakres'):>4} {s.get('poprawnosc'):>4} {d.get('overall_percent'):>6}% {str(d.get('passed_estimate')):>5} {len(d.get('errors',[])):>4} {dt:>4.1f}s")
+            cells = " ".join(f"{s.get(c):>4}" for c in CRIT)
+            print(f"{name:28} {cells} {d.get('overall_percent'):>6}% {str(d.get('passed_estimate')):>5} {len(d.get('errors',[])):>4} {dt:>4.1f}s")
         except Exception as e:
             print(f"{name:28} ERR {str(e)[:60]}")
         time.sleep(2)  # space calls to avoid provider throttling

@@ -26,11 +26,20 @@ struct WritingTask: Codable, Identifiable, Hashable, Sendable {
 // MARK: - LLM feedback (response of /writing/grade)
 
 struct WritingFeedback: Codable, Sendable {
+    /// Официальные критерии B1 Pisanie (Państwowa Komisja), каждый 0–4.
     struct Scores: Codable, Sendable {
-        let realizacja: Int
-        let spojnosc: Int
-        let zakres: Int
-        let poprawnosc: Int
+        let wykonanieZadania: Int
+        let poprawnoscGramatyczna: Int
+        let slownictwo: Int
+        let styl: Int
+        let ortografiaInterpunkcja: Int
+
+        enum CodingKeys: String, CodingKey {
+            case wykonanieZadania = "wykonanie_zadania"
+            case poprawnoscGramatyczna = "poprawnosc_gramatyczna"
+            case slownictwo, styl
+            case ortografiaInterpunkcja = "ortografia_interpunkcja"
+        }
     }
     struct WError: Codable, Sendable {
         let fragment: String
