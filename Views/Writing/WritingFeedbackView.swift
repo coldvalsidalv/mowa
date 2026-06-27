@@ -45,10 +45,11 @@ struct WritingFeedbackView: View {
 
     private var scoresCard: some View {
         VStack(spacing: 10) {
-            scoreRow("Realizacja polecenia", feedback.scores.realizacja)
-            scoreRow("Spójność", feedback.scores.spojnosc)
-            scoreRow("Zakres językowy", feedback.scores.zakres)
-            scoreRow("Poprawność", feedback.scores.poprawnosc)
+            scoreRow("Wykonanie zadania", feedback.scores.wykonanieZadania)
+            scoreRow("Gramatyka", feedback.scores.poprawnoscGramatyczna)
+            scoreRow("Słownictwo", feedback.scores.slownictwo)
+            scoreRow("Styl", feedback.scores.styl)
+            scoreRow("Ortografia/interpunkcja", feedback.scores.ortografiaInterpunkcja)
         }
         .padding()
         .background(Color(UIColor.secondarySystemGroupedBackground))
@@ -56,24 +57,24 @@ struct WritingFeedbackView: View {
     }
 
     private func scoreRow(_ title: String, _ value: Int) -> some View {
-        let clamped = min(max(value, 0), 5)
+        let clamped = min(max(value, 0), 4)
         return HStack(spacing: 12) {
-            Text(title).font(.subheadline).frame(width: 160, alignment: .leading)
+            Text(title).font(.subheadline).frame(width: 170, alignment: .leading)
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule().fill(Color.gray.opacity(0.15)).frame(height: 8)
                     Capsule().fill(color(for: clamped))
-                        .frame(width: geo.size.width * CGFloat(clamped) / 5, height: 8)
+                        .frame(width: geo.size.width * CGFloat(clamped) / 4, height: 8)
                 }
             }
             .frame(height: 8)
-            Text("\(value)/5").font(.caption).fontWeight(.semibold).foregroundColor(.gray)
+            Text("\(value)/4").font(.caption).fontWeight(.semibold).foregroundColor(.gray)
         }
     }
 
     private func color(for value: Int) -> Color {
         switch value {
-        case 4...: return .green
+        case 4: return .green
         case 2..<4: return .orange
         default: return .red
         }

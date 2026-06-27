@@ -1,7 +1,34 @@
 [
   {
+    "task_id": "b1_pozdrowienia",
+    "type": "pozdrowienia",
+    "level": "B1",
+    "prompt": "Proszę napisać pozdrowienia z wakacji do swojego nauczyciela. Napisz, gdzie jesteś, co robisz i jaka jest pogoda.",
+    "required_points": [
+      "gdzie spędzasz wakacje",
+      "co tam robisz",
+      "jaka jest pogoda",
+      "przekaż pozdrowienia"
+    ],
+    "min_words": 25,
+    "max_words": 50
+  },
+  {
+    "task_id": "b1_ogloszenie",
+    "type": "ogłoszenie",
+    "level": "B1",
+    "prompt": "Sprzedajesz swój rower. Napisz ogłoszenie, które zamieścisz w internecie.",
+    "required_points": [
+      "co sprzedajesz i w jakim stanie",
+      "podaj cenę",
+      "napisz, jak się skontaktować"
+    ],
+    "min_words": 25,
+    "max_words": 50
+  },
+  {
     "task_id": "b1_email_urlop",
-    "type": "email",
+    "type": "e-mail",
     "level": "B1",
     "prompt": "Napisz e-mail do kolegi z pracy, który zastąpi Cię podczas Twojego urlopu.",
     "required_points": [
@@ -10,35 +37,21 @@
       "powiedz, gdzie znajdzie potrzebne dokumenty",
       "podziękuj i zaproponuj rewanż"
     ],
-    "min_words": 80,
-    "max_words": 130
+    "min_words": 150,
+    "max_words": 175
   },
   {
-    "task_id": "b1_email_mieszkanie",
-    "type": "email",
+    "task_id": "b1_hobby",
+    "type": "wypowiedź",
     "level": "B1",
-    "prompt": "Wynajmujesz mieszkanie. Napisz e-mail do właściciela w sprawie usterki.",
+    "prompt": "„Każdy ma jakieś zainteresowania” — napisz o swoim hobby.",
     "required_points": [
-      "opisz, co się zepsuło i kiedy",
-      "wyjaśnij, jak to utrudnia Ci życie",
-      "poproś o szybką naprawę i podaj termin",
-      "zapytaj, kto pokryje koszty"
+      "opisz swoje hobby",
+      "wyjaśnij, dlaczego je lubisz",
+      "napisz, kiedy i jak często się nim zajmujesz",
+      "zachęć czytelnika, żeby spróbował"
     ],
-    "min_words": 80,
-    "max_words": 130
-  },
-  {
-    "task_id": "b1_email_kurs",
-    "type": "email",
-    "level": "B1",
-    "prompt": "Zapisałeś/aś się na kurs języka polskiego, ale nie możesz przyjść na pierwsze zajęcia. Napisz e-mail do szkoły.",
-    "required_points": [
-      "przeproś i wyjaśnij powód nieobecności",
-      "zapytaj, czy możesz odrobić zajęcia",
-      "poproś o materiały z pierwszej lekcji",
-      "potwierdź, że przyjdziesz na kolejne zajęcia"
-    ],
-    "min_words": 80,
-    "max_words": 130
+    "min_words": 150,
+    "max_words": 175
   }
 ]
