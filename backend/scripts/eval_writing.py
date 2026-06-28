@@ -51,16 +51,17 @@ def grade(tok, model, text):
     raise last
 
 
-tok = login()
-for model in MODELS:
-    print(f"\n=== {model} ===")
-    print(f"{'essay':28} {'wyk':>4} {'gram':>4} {'slow':>4} {'styl':>4} {'ort':>4} {'overall':>7} {'pass':>5} {'errs':>4} {'time':>5}")
-    for name, text in ESSAYS.items():
-        try:
-            d, dt = grade(tok, model, text)
-            s = d.get("scores", {})
-            cells = " ".join(f"{s.get(c):>4}" for c in CRIT)
-            print(f"{name:28} {cells} {d.get('overall_percent'):>6}% {str(d.get('passed_estimate')):>5} {len(d.get('errors',[])):>4} {dt:>4.1f}s")
-        except Exception as e:
-            print(f"{name:28} ERR {str(e)[:60]}")
-        time.sleep(2)  # space calls to avoid provider throttling
+if __name__ == "__main__":
+    tok = login()
+    for model in MODELS:
+        print(f"\n=== {model} ===")
+        print(f"{'essay':28} {'wyk':>4} {'gram':>4} {'slow':>4} {'styl':>4} {'ort':>4} {'overall':>7} {'pass':>5} {'errs':>4} {'time':>5}")
+        for name, text in ESSAYS.items():
+            try:
+                d, dt = grade(tok, model, text)
+                s = d.get("scores", {})
+                cells = " ".join(f"{s.get(c, '?'):>4}" for c in CRIT)
+                print(f"{name:28} {cells} {d.get('overall_percent', '?'):>6}% {str(d.get('passed_estimate')):>5} {len(d.get('errors',[])):>4} {dt:>4.1f}s")
+            except Exception as e:
+                print(f"{name:28} ERR {str(e)[:60]}")
+            time.sleep(2)  # space calls to avoid provider throttling

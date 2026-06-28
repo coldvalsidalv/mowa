@@ -88,11 +88,16 @@ if __name__ == "__main__":
                 s = d.get("scores", {})
                 missing = [c for c in CRIT if c not in s]
                 if missing:
-                    print(f"  WARN: backend omitted scores for {missing!r} — MAE may be inflated")
-                diffs = [abs(float(s.get(c, 0)) - g[c]) for c in CRIT]
+                    print(f"  WARN: backend omitted scores for {missing!r} — skipping example")
+                    continue
+                overall_pct = d.get("overall_percent")
+                if overall_pct is None:
+                    print(f"  WARN: backend omitted overall_percent — skipping example")
+                    continue
+                diffs = [abs(float(s[c]) - g[c]) for c in CRIT]
                 mae = sum(diffs) / len(diffs)
-                maes.append(mae); overall_errs.append(abs(d.get("overall_percent", 0) - gold_overall))
-                print(f"{ex['id']:16} {gold_overall:>4}% {d.get('overall_percent'):>4}% " + " ".join(f"{x:>5.1f}" for x in diffs) + f"  {mae:>4.2f}")
+                maes.append(mae); overall_errs.append(abs(overall_pct - gold_overall))
+                print(f"{ex['id']:16} {gold_overall:>4}% {overall_pct:>4}% " + " ".join(f"{x:>5.1f}" for x in diffs) + f"  {mae:>4.2f}")
             except Exception as e:
                 print(f"{ex['id']:16} ERR {str(e)[:50]}")
             time.sleep(2)
