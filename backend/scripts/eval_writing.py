@@ -19,7 +19,7 @@ ESSAYS = {
     "E3_offtask": "Cześć! Dzisiaj jest bardzo ładna pogoda. Lubię pić kawę rano i czytać dobre książki. Mój kot ma na imię Felix i jest czarny. Do widzenia!",
 }
 
-MODELS = ["gemini-2.5-flash-lite"]
+MODELS = ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.5-flash"]
 
 
 def login():
@@ -31,7 +31,7 @@ def login():
 
 
 def grade(tok, model, text):
-    body = {"model": model, "task_id": "eval", "task": TASK, "text": text}
+    body = {"model": model, "task_id": "b1_email_urlop", "text": text}
     last = None
     for attempt in range(4):  # retry transient 502/429
         t = time.time()

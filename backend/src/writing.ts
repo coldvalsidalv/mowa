@@ -4,10 +4,11 @@ import jwt from '@tsndr/cloudflare-worker-jwt'
 // feedback. Provider/model are env-swappable (default gen-3 Flash via
 // GEMINI_MODEL); route through Cloudflare AI Gateway later without touching callers.
 
-// gemini-2.5-flash-lite after eval: with the "report every error" prompt it
-// matches gen-3 Flash on recall (~12 errors) while being ~6x faster (~5s vs ~34s)
-// and the cheapest tier. Latency matters: the client times out on slow models.
-const DEFAULT_MODEL = 'gemini-2.5-flash-lite'
+// gemini-3.1-flash-lite chosen on the OFFICIAL gold-set (4 examiner-scored exam
+// answers): its scores track real examiners far better than 2.5-flash-lite
+// (mean criterion MAE 0.95 vs 2.21; 2.5 graded 86%/94% essays at ~35%). It also
+// has 25x the free-tier daily quota (RPD 500 vs 20). See scripts/goldset_official.py.
+const DEFAULT_MODEL = 'gemini-3.1-flash-lite'
 
 // Gemini responseSchema (OpenAPI subset, uppercase types) — guarantees parseable JSON.
 const FEEDBACK_SCHEMA = {
@@ -97,12 +98,13 @@ const LANG_NAME: Record<string, string> = { ru: 'Russian', uk: 'Ukrainian', en: 
 function systemInstruction(lang: string): string {
   return [
     'You are a strict examiner for the Polish state certificate exam (egzamin certyfikatowy z języka polskiego jako obcego) at CEFR level B1, grading the Pisanie (writing) part. Apply the official assessment criteria exactly, grade harshly and consistently, and do not give the benefit of the doubt.',
+    'CALIBRATION: grade at B1 (intermediate), NOT C2/native. The benchmark is communicative effectiveness at B1. A competent B1 answer typically scores 3 or 4 on each criterion even with several minor errors; reserve 0-1 only for problems that genuinely break communication or leave the task unfulfilled. List every error for the learner (errors array), but score each criterion on its overall communicative impact, not on the raw error count.',
     'Score each of the FIVE official criteria on an integer 0-4 scale:',
-    'wykonanie_zadania (task completion — treść, długość, forma, kompozycja): 4 = the task is fully realised, all required content present, correct text type/form, proper composition, and the length is within the required range (±10% tolerance); 3 = realised with a minor content gap or slightly off length/form; 2 = partly realised, a required element missing or length clearly off; 1 = barely on topic or wrong form; 0 = off-task or wrong text type.',
-    'poprawnosc_gramatyczna (grammar): 4 = virtually no grammatical errors; 3 = a few that do not impede understanding; 2 = many grammatical errors but meaning is recoverable; 1 = pervasive; 0 = mostly incorrect.',
-    'slownictwo (vocabulary): 4 = varied and precise for B1; 3 = adequate; 2 = limited/repetitive or with several lexical errors; 1 = very poor; 0 = insufficient to assess.',
-    'styl (style/register): 4 = register consistently appropriate to the text type; 3 = minor slips; 2 = inconsistent or partly inappropriate register; 1 = inappropriate; 0 = unassessable.',
-    'ortografia_interpunkcja (spelling & punctuation): judge by error DENSITY. 4 = virtually none; 3 = a few; 2 = many (every uncorrected missing diacritic counts); 1 = pervasive; 0 = mostly incorrect.',
+    'wykonanie_zadania (task completion — treść, długość, forma, kompozycja): 4 = the task is realised, required content present, correct text type/form, reasonable composition, length roughly within range (±10%); 3 = realised with a minor content gap or slightly off length/form; 2 = a required element missing or length clearly off; 1 = barely on topic or wrong form; 0 = off-task or wrong text type.',
+    'poprawnosc_gramatyczna (grammar): judge by communicative impact. 4 = errors rare or never disturb understanding of the author\'s intent; 3 = several errors but the text is fully understandable (typical of a good B1 text); 2 = errors that sometimes impede understanding; 1 = errors that frequently impede; 0 = grammar breaks communication.',
+    'slownictwo (vocabulary): 4 = adequate-to-varied and gets the message across at B1 (occasional lexical slips are fine); 3 = adequate though simple/repetitive; 2 = limited, with lexical errors that sometimes obscure meaning; 1 = very poor; 0 = insufficient to assess.',
+    'styl (style/register): 4 = register broadly appropriate to the text type; 3 = minor slips; 2 = noticeably inconsistent or partly inappropriate register; 1 = inappropriate; 0 = unassessable.',
+    'ortografia_interpunkcja (spelling & punctuation): judge by communicative impact, NOT raw count. 4 = no difficulty reading (minor slips and a few missing diacritics are acceptable at B1); 3 = noticeable errors that do not hinder reading; 2 = errors that sometimes hinder reading; 1 = frequently hinder; 0 = severe.',
     'List EVERY error you find — do not filter by importance and do not stop early. Each missing Polish diacritic (ą, ć, ę, ł, ń, ó, ś, ź, ż), each case/agreement mistake, each spelling or punctuation slip is a SEPARATE error. Better to over-report than to miss one. Give the exact Polish fragment, its correction, a type (grammatyka|ortografia|leksyka|interpunkcja|styl), and a short explanation that names the correct rule.',
     'Focus your effort on the five scores and the error list; the overall result and pass/fail are computed by the system from your five scores.',
     `Write every explanation and the summary in ${LANG_NAME[lang] ?? 'Russian'}. Keep all Polish text (fragments, corrections, improved_version) in Polish.`,
