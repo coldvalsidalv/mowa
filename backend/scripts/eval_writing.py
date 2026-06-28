@@ -1,6 +1,6 @@
 """Ad-hoc eval harness: run a small gold-set of B1 essays through the grading
 endpoint for several models and print a comparison. Local/dev only."""
-import json, os, time, urllib.request
+import json, time, urllib.request
 
 BASE = "http://127.0.0.1:8787"
 TASK = {
@@ -19,7 +19,9 @@ ESSAYS = {
     "E3_offtask": "Cześć! Dzisiaj jest bardzo ładna pogoda. Lubię pić kawę rano i czytać dobre książki. Mój kot ma na imię Felix i jest czarny. Do widzenia!",
 }
 
-MODELS = ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.5-flash"]
+# The backend ignores body.model — it always uses DEFAULT_MODEL / env.GEMINI_MODEL.
+# To eval a different model, change DEFAULT_MODEL in writing.ts and restart the server.
+MODELS = ["gemini-3.1-flash-lite"]  # label only; matches current DEFAULT_MODEL
 
 
 def login():
@@ -49,16 +51,17 @@ def grade(tok, model, text):
     raise last
 
 
-tok = login()
-for model in MODELS:
-    print(f"\n=== {model} ===")
-    print(f"{'essay':28} {'wyk':>4} {'gram':>4} {'slow':>4} {'styl':>4} {'ort':>4} {'overall':>7} {'pass':>5} {'errs':>4} {'time':>5}")
-    for name, text in ESSAYS.items():
-        try:
-            d, dt = grade(tok, model, text)
-            s = d.get("scores", {})
-            cells = " ".join(f"{s.get(c):>4}" for c in CRIT)
-            print(f"{name:28} {cells} {d.get('overall_percent'):>6}% {str(d.get('passed_estimate')):>5} {len(d.get('errors',[])):>4} {dt:>4.1f}s")
-        except Exception as e:
-            print(f"{name:28} ERR {str(e)[:60]}")
-        time.sleep(2)  # space calls to avoid provider throttling
+if __name__ == "__main__":
+    tok = login()
+    for model in MODELS:
+        print(f"\n=== {model} ===")
+        print(f"{'essay':28} {'wyk':>4} {'gram':>4} {'slow':>4} {'styl':>4} {'ort':>4} {'overall':>7} {'pass':>5} {'errs':>4} {'time':>5}")
+        for name, text in ESSAYS.items():
+            try:
+                d, dt = grade(tok, model, text)
+                s = d.get("scores", {})
+                cells = " ".join(f"{s.get(c, '?'):>4}" for c in CRIT)
+                print(f"{name:28} {cells} {d.get('overall_percent', '?'):>6}% {str(d.get('passed_estimate')):>5} {len(d.get('errors',[])):>4} {dt:>4.1f}s")
+            except Exception as e:
+                print(f"{name:28} ERR {str(e)[:60]}")
+            time.sleep(2)  # space calls to avoid provider throttling
