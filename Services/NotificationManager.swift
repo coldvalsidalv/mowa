@@ -102,27 +102,19 @@ extension NotificationManager {
         )
     }
 
-    func scheduleVocabularyReview() {
-        scheduleNotification(type: .vocabulary, title: "🧠 Время повторить слова", body: "5 слов готовы к повторению. Не дай им забыться!", timeInterval: 86400)
-    }
-    
     func scheduleGrammarReview() {
-        scheduleNotification(type: .grammar, title: "📖 Грамматика ждет", body: "Давай освежим правило Past Simple за 2 минуты?", timeInterval: 172800)
+        scheduleNotification(type: .grammar, title: "📖 Грамматика ждёт", body: "Пара минут на польскую грамматику — и правила встанут на место.", timeInterval: 172800)
     }
-    
+
     func scheduleStreakProtection() {
-        scheduleDailyNotification(type: .streak, title: "🔥 Ой-ой, страйк горит!", body: "Пройди урок до полуночи, чтобы сохранить серию 5 дней!", hour: 20, minute: 00)
+        scheduleDailyNotification(type: .streak, title: "🔥 Не дай стриму угаснуть!", body: "Пройди урок до полуночи, чтобы сохранить свою серию.", hour: 20, minute: 0)
     }
-    
-    func simulateLeagueOvertake() {
-        scheduleNotification(type: .league, title: "🛡️ Вас обошли в лиге!", body: "Marek W. вырвался вперед. Верни себе 3-е место!", timeInterval: 5)
+
+    func scheduleDailyChallengeReminder() {
+        scheduleNotification(type: .challenges, title: "🏆 Ежедневные вызовы ждут", body: "Задания обновлены. Выполни их и заработай XP!", timeInterval: 64800)
     }
-    
-    func scheduleWeeklyChallenges() {
-        scheduleNotification(type: .challenges, title: "🏆 Новые челленджи", body: "Недельные задания обновлены. Заработай х2 XP!", timeInterval: 604800)
-    }
-    
+
     func scheduleNewContent() {
-        scheduleNotification(type: .content, title: "🆕 Доступен новый курс", body: "Открыта тема 'Путешествия'. Поехали?", timeInterval: 259200)
+        scheduleNotification(type: .content, title: "🆕 Новые слова добавлены", body: "В словаре появились новые темы — иди изучай!", timeInterval: 259200)
     }
 }

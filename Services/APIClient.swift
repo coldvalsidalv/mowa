@@ -79,6 +79,13 @@ extension RemoteWord: Decodable {
     }
 }
 
+struct RemoteLeaderboardEntry: Decodable, Sendable {
+    let id: String
+    let user_id: String
+    let display_name: String
+    let xp: Int
+}
+
 struct RemoteGrammarLesson: Decodable, Sendable {
     let lesson_id: String
     let title: String
@@ -230,6 +237,33 @@ final class APIClient {
             body: ["limit": 100, "sort": "start_date"]
         )
         return resp.items.compactMap { remoteToExamSession($0) }
+    }
+
+    // MARK: - Leaderboard
+
+    func fetchLeaderboard() async throws -> [RemoteLeaderboardEntry] {
+        let resp: TeenyListResponse<RemoteLeaderboardEntry> = try await post(
+            path: "/api/v1/table/leaderboard/list",
+            body: ["limit": 25, "sort": "-xp"]
+        )
+        return resp.items
+    }
+
+    /// Upsert: insert → при конфликте unique user_id → update.
+    func upsertLeaderboard(userId: String, displayName: String, xp: Int) async throws {
+        let insertBody: [String: Any] = [
+            "values": ["user_id": userId, "display_name": displayName, "xp": xp]
+        ]
+        do {
+            let _: TeenyEmpty = try await post(path: "/api/v1/table/leaderboard/insert", body: insertBody)
+        } catch APIError.serverError(let code, let message)
+            where code == 409 || (code == 400 && message?.localizedCaseInsensitiveContains("unique") == true) {
+            let updateBody: [String: Any] = [
+                "where": "user_id == \"\(userId)\"",
+                "values": ["display_name": displayName, "xp": xp]
+            ]
+            let _: TeenyEmpty = try await post(path: "/api/v1/table/leaderboard/update", body: updateBody)
+        }
     }
 
     // MARK: - Writing grading (Phase 2)

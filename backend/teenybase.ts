@@ -29,6 +29,34 @@ export default {
       ],
     },
 
+    // ─── LEADERBOARD ─────────────────────────────────────────────────────────
+    // Публичный рейтинг пользователей по XP. Один ряд на юзера (unique user_id).
+    // Клиент делает upsert при каждом старте приложения и начислении XP.
+    {
+      name: 'leaderboard',
+      autoSetUid: true,
+      fields: [
+        ...baseFields,
+        { name: 'user_id',      type: 'text', sqlType: 'text', notNull: true, unique: true },
+        { name: 'display_name', type: 'text', sqlType: 'text', notNull: true },
+        { name: 'xp',           type: 'integer', sqlType: 'integer', notNull: true, default: { q: '0' } },
+      ],
+      triggers: [createdTrigger, updatedTrigger],
+      indexes: [
+        { name: 'leaderboard_xp', fields: ['xp'] },
+      ],
+      extensions: [
+        {
+          name: 'rules',
+          listRule: 'true',
+          viewRule: 'true',
+          createRule: 'auth.uid == user_id',
+          updateRule: 'auth.uid == user_id',
+          deleteRule: 'auth.uid == user_id',
+        } as TableRulesExtensionData,
+      ],
+    },
+
     // ─── VOCABULARY ──────────────────────────────────────────────────────────
     {
       name: 'vocabulary',

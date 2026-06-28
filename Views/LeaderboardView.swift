@@ -8,7 +8,6 @@ struct LeaderboardUser: Identifiable {
     let xp: Int
     let avatarColor: Color
     let isCurrentUser: Bool
-    var avatarURL: String? = nil
     var localImage: UIImage? = nil
 }
 
@@ -18,25 +17,34 @@ struct LeaderboardView: View {
 
     @ObservedObject private var avatarManager = AvatarManager.shared
 
+    @State private var entries: [RemoteLeaderboardEntry] = []
+    @State private var isLoading = false
+    @State private var hasError = false
     @State private var podiumsVisible = false
     @State private var timeRemaining: String = "--h --m"
     @State private var selectedUser: LeaderboardUser? = nil
     @State private var showLeagueMap = false
+    @State private var currentUserId: String? = nil
+    @State private var lastFetchedAt: Date? = nil
 
     let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+
+    private static let avatarColors: [Color] = [.blue, .green, .orange, .purple, .pink, .teal, .indigo]
 
     var currentLeague: UserLeague {
         UserLeague.determineLeague(for: userXP)
     }
 
-    var currentUser: LeaderboardUser {
-        LeaderboardUser(
-            rank: 1,
-            name: userName.isEmpty ? "Вы" : userName,
-            xp: userXP,
-            avatarColor: .blue,
-            isCurrentUser: true,
-            localImage: avatarManager.avatar
+    private func toUser(_ entry: RemoteLeaderboardEntry, rank: Int) -> LeaderboardUser {
+        let color = Self.avatarColors[entry.display_name.stableHash % Self.avatarColors.count]
+        let isCurrent = entry.user_id == currentUserId
+        return LeaderboardUser(
+            rank: rank,
+            name: entry.display_name,
+            xp: entry.xp,
+            avatarColor: color,
+            isCurrentUser: isCurrent,
+            localImage: isCurrent ? avatarManager.avatar : nil
         )
     }
 
@@ -52,35 +60,20 @@ struct LeaderboardView: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         .padding(.horizontal)
+                        .padding(.bottom, 8)
 
-                        // Текущий пользователь на подиуме
-                        HStack(alignment: .bottom, spacing: 16) {
-                            PodiumView(user: currentUser, height: 170, color: .yellow, isVisible: podiumsVisible)
-                                .scaleEffect(1.1)
-                                .onTapGesture { selectedUser = currentUser }
+                        if isLoading {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 60)
+                        } else if hasError {
+                            errorStateView
+                        } else if entries.isEmpty {
+                            emptyStateView
+                        } else {
+                            podiumSection
+                            listSection
                         }
-                        .padding(.horizontal)
-                        .padding(.vertical, 40)
-                        .onAppear { withAnimation(.spring(response: 0.7, dampingFraction: 0.6)) { podiumsVisible = true } }
-
-                        // Empty state — реальные соперники появятся с запуском
-                        VStack(spacing: 16) {
-                            Image(systemName: "person.3.fill")
-                                .font(.system(size: 44))
-                                .foregroundColor(.secondary.opacity(0.4))
-
-                            Text("Соперники появятся скоро")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-
-                            Text("Когда другие пользователи зарегистрируются,\nты сможешь соревноваться с ними здесь.")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 40)
-                        .padding(.horizontal, 32)
                     }
                     .padding(.bottom, 20)
                 }
@@ -94,8 +87,151 @@ struct LeaderboardView: View {
                 LeagueMapView(currentLeague: currentLeague)
                     .presentationDetents([.fraction(0.7)])
             }
-            .onAppear { updateTimeRemaining() }
+            .task { await loadLeaderboard() }
             .onReceive(timer) { _ in updateTimeRemaining() }
+            .onAppear { updateTimeRemaining() }
+        }
+    }
+
+    // MARK: - Sections
+
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "person.3.fill")
+                .font(.system(size: 44))
+                .foregroundColor(.secondary.opacity(0.4))
+            Text("Соперники появятся скоро")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            Text("Когда другие пользователи зарегистрируются,\nты сможешь соревноваться с ними здесь.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+        .padding(.horizontal, 32)
+    }
+
+    private var errorStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "wifi.slash")
+                .font(.system(size: 44))
+                .foregroundColor(.secondary.opacity(0.4))
+            Text("Не удалось загрузить рейтинг")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            Button("Повторить") {
+                Task { await loadLeaderboard(force: true) }
+            }
+            .buttonStyle(.bordered)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+    }
+
+    @ViewBuilder
+    private var podiumSection: some View {
+        if entries.count >= 3 {
+            HStack(alignment: .bottom, spacing: 16) {
+                let silver = toUser(entries[1], rank: 2)
+                let gold   = toUser(entries[0], rank: 1)
+                let bronze = toUser(entries[2], rank: 3)
+
+                PodiumView(user: silver, height: 130, color: Color(red: 0.75, green: 0.75, blue: 0.75), isVisible: podiumsVisible)
+                    .onTapGesture { selectedUser = silver }
+
+                PodiumView(user: gold, height: 170, color: .yellow, isVisible: podiumsVisible)
+                    .scaleEffect(1.1)
+                    .onTapGesture { selectedUser = gold }
+
+                PodiumView(user: bronze, height: 100, color: Color(red: 0.8, green: 0.5, blue: 0.2), isVisible: podiumsVisible)
+                    .onTapGesture { selectedUser = bronze }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 32)
+            .onAppear {
+                withAnimation(.spring(response: 0.7, dampingFraction: 0.6)) { podiumsVisible = true }
+            }
+        } else if entries.count == 2 {
+            let silver = toUser(entries[1], rank: 2)
+            let gold   = toUser(entries[0], rank: 1)
+            HStack(alignment: .bottom, spacing: 16) {
+                PodiumView(user: silver, height: 130, color: Color(red: 0.75, green: 0.75, blue: 0.75), isVisible: podiumsVisible)
+                    .onTapGesture { selectedUser = silver }
+                PodiumView(user: gold, height: 170, color: .yellow, isVisible: podiumsVisible)
+                    .scaleEffect(1.1)
+                    .onTapGesture { selectedUser = gold }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 32)
+            .onAppear {
+                withAnimation(.spring(response: 0.7, dampingFraction: 0.6)) { podiumsVisible = true }
+            }
+        } else if let first = entries.first {
+            let user = toUser(first, rank: 1)
+            HStack(alignment: .bottom, spacing: 16) {
+                PodiumView(user: user, height: 170, color: .yellow, isVisible: podiumsVisible)
+                    .scaleEffect(1.1)
+                    .onTapGesture { selectedUser = user }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 32)
+            .onAppear {
+                withAnimation(.spring(response: 0.7, dampingFraction: 0.6)) { podiumsVisible = true }
+            }
+        }
+    }
+
+    private var listSection: some View {
+        let rest = Array(entries.dropFirst(3))
+
+        return Group {
+            if !rest.isEmpty {
+                VStack(spacing: 0) {
+                    ForEach(Array(rest.enumerated()), id: \.element.id) { idx, entry in
+                        let rank = 3 + idx + 1
+                        let user = toUser(entry, rank: rank)
+                        LeaderboardRow(rank: rank, user: user)
+                            .onTapGesture { selectedUser = user }
+                        if idx < rest.count - 1 {
+                            Divider().padding(.leading, 68)
+                        }
+                    }
+                }
+                .background(Color(UIColor.secondarySystemGroupedBackground))
+                .cornerRadius(16)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+            }
+        }
+    }
+
+    // MARK: - Data
+
+    private func loadLeaderboard(force: Bool = false) async {
+        if !force, let last = lastFetchedAt, Date().timeIntervalSince(last) < 30 { return }
+        currentUserId = KeychainHelper.load(KeychainKeys.userId)
+        isLoading = true
+        defer { isLoading = false }
+        LeaderboardSyncService.shared.syncIfNeeded()
+        do {
+            var fetched = try await APIClient.shared.fetchLeaderboard()
+            // Always show the current user — inject a self-entry if absent from the server's top-N.
+            // This happens on first session before LeaderboardSyncService has pushed XP.
+            if let uid = currentUserId, !uid.isEmpty, userXP > 0, !userName.isEmpty,
+               !fetched.contains(where: { $0.user_id == uid }) {
+                let selfEntry = RemoteLeaderboardEntry(id: uid, user_id: uid,
+                                                       display_name: userName, xp: userXP)
+                let insertIdx = fetched.firstIndex(where: { $0.xp <= userXP }) ?? fetched.count
+                fetched.insert(selfEntry, at: insertIdx)
+            }
+            entries = fetched
+            hasError = false
+            lastFetchedAt = Date()
+        } catch {
+            hasError = entries.isEmpty
+            verbumLog("⚠️ LeaderboardView: \(error)")
         }
     }
 
@@ -114,7 +250,44 @@ struct LeaderboardView: View {
     }
 }
 
+// MARK: - LeaderboardRow
+
+struct LeaderboardRow: View {
+    let rank: Int
+    let user: LeaderboardUser
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text("\(rank)")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(.secondary)
+                .frame(width: 36, alignment: .center)
+
+            AvatarView(urlString: nil, localImage: user.localImage,
+                       name: user.name, color: user.avatarColor, size: 40)
+
+            Text(user.name)
+                .font(.subheadline)
+                .fontWeight(user.isCurrentUser ? .bold : .regular)
+                .foregroundColor(.primary)
+                .lineLimit(1)
+
+            Spacer()
+
+            Text("\(user.xp) XP")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(user.isCurrentUser ? .blue : .secondary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(user.isCurrentUser ? Color.blue.opacity(0.07) : Color.clear)
+    }
+}
+
 // MARK: - AVATAR VIEW
+
 struct AvatarView: View {
     let urlString: String?
     let localImage: UIImage?
@@ -145,6 +318,7 @@ struct AvatarView: View {
 }
 
 // MARK: - RIVAL PROFILE
+
 struct RivalProfileView: View {
     let user: LeaderboardUser
     @Environment(\.dismiss) var dismiss
@@ -152,14 +326,10 @@ struct RivalProfileView: View {
     var body: some View {
         VStack(spacing: 24) {
             Capsule().fill(Color.gray.opacity(0.3)).frame(width: 40, height: 5).padding(.top, 10)
-
-            AvatarView(urlString: user.avatarURL, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 90)
-
+            AvatarView(urlString: nil, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 90)
             Text(user.name).font(.title2).bold()
             Text("\(user.xp) XP").font(.headline).foregroundColor(.secondary)
-
             Spacer()
-
             Button { dismiss() } label: {
                 Text("Закрыть")
                     .font(.headline).foregroundColor(.white).frame(maxWidth: .infinity)
@@ -184,6 +354,7 @@ struct StatColumn: View {
 }
 
 // MARK: - LEAGUE MAP
+
 struct LeagueMapView: View {
     let currentLeague: UserLeague
     @Environment(\.dismiss) var dismiss
@@ -225,6 +396,7 @@ struct LeagueMapView: View {
 }
 
 // MARK: - LEAGUE CARD HEADER
+
 struct LeagueCardHeader: View {
     let currentLeague: UserLeague; let timeRemaining: String
     var body: some View {
@@ -251,11 +423,12 @@ struct LeagueCardHeader: View {
 }
 
 // MARK: - PODIUM VIEW
+
 struct PodiumView: View {
     let user: LeaderboardUser; let height: CGFloat; let color: Color; let isVisible: Bool
     var body: some View {
         VStack {
-            AvatarView(urlString: user.avatarURL, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 55)
+            AvatarView(urlString: nil, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 55)
                 .opacity(isVisible ? 1 : 0)
                 .offset(y: isVisible ? 0 : 20)
                 .animation(.easeOut.delay(0.2), value: isVisible)

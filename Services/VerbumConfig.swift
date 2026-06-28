@@ -10,8 +10,7 @@ enum VerbumConfig {
     static let baseURL = "http://127.0.0.1:8787" // codeql[swift/cleartext-transmission]
     // static let baseURL = "https://<your-tunnel>.trycloudflare.com"
     #else
-    #warning("Release build: подставь реальный прод-URL бэкенда вместо placeholder")
-    static let baseURL = "https://verbum-backend.YOUR_ACCOUNT.workers.dev"
+    static let baseURL = "https://verbum-backend.verbum-mowa.workers.dev"
     #endif
 
     /// Публичный токен для чтения контента (vocabulary, grammar).
