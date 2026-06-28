@@ -110,7 +110,7 @@ extension NotificationManager {
         scheduleDailyNotification(type: .streak, title: "🔥 Не дай стриму угаснуть!", body: "Пройди урок до полуночи, чтобы сохранить свою серию.", hour: 20, minute: 0)
     }
 
-    func scheduleWeeklyChallenges() {
+    func scheduleDailyChallengeReminder() {
         scheduleNotification(type: .challenges, title: "🏆 Ежедневные вызовы ждут", body: "Задания обновлены. Выполни их и заработай XP!", timeInterval: 64800)
     }
 

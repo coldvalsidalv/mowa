@@ -19,22 +19,24 @@ struct LeaderboardView: View {
 
     @State private var entries: [RemoteLeaderboardEntry] = []
     @State private var isLoading = false
+    @State private var hasError = false
     @State private var podiumsVisible = false
     @State private var timeRemaining: String = "--h --m"
     @State private var selectedUser: LeaderboardUser? = nil
     @State private var showLeagueMap = false
+    @State private var currentUserId: String? = nil
+    @State private var lastFetchedAt: Date? = nil
 
     let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
-    private var currentUserId: String? { KeychainHelper.load(KeychainKeys.userId) }
+    private static let avatarColors: [Color] = [.blue, .green, .orange, .purple, .pink, .teal, .indigo]
 
     var currentLeague: UserLeague {
         UserLeague.determineLeague(for: userXP)
     }
 
     private func toUser(_ entry: RemoteLeaderboardEntry, rank: Int) -> LeaderboardUser {
-        let colors: [Color] = [.blue, .green, .orange, .purple, .pink, .teal, .indigo]
-        let color = colors[entry.display_name.stableHash % colors.count]
+        let color = Self.avatarColors[entry.display_name.stableHash % Self.avatarColors.count]
         let isCurrent = entry.user_id == currentUserId
         return LeaderboardUser(
             rank: rank,
@@ -64,6 +66,8 @@ struct LeaderboardView: View {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 60)
+                        } else if hasError {
+                            errorStateView
                         } else if entries.isEmpty {
                             emptyStateView
                         } else {
@@ -109,6 +113,23 @@ struct LeaderboardView: View {
         .padding(.horizontal, 32)
     }
 
+    private var errorStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "wifi.slash")
+                .font(.system(size: 44))
+                .foregroundColor(.secondary.opacity(0.4))
+            Text("Не удалось загрузить рейтинг")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            Button("Повторить") {
+                Task { await loadLeaderboard(force: true) }
+            }
+            .buttonStyle(.bordered)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+    }
+
     @ViewBuilder
     private var podiumSection: some View {
         if entries.count >= 3 {
@@ -132,6 +153,21 @@ struct LeaderboardView: View {
             .onAppear {
                 withAnimation(.spring(response: 0.7, dampingFraction: 0.6)) { podiumsVisible = true }
             }
+        } else if entries.count == 2 {
+            let silver = toUser(entries[1], rank: 2)
+            let gold   = toUser(entries[0], rank: 1)
+            HStack(alignment: .bottom, spacing: 16) {
+                PodiumView(user: silver, height: 130, color: Color(red: 0.75, green: 0.75, blue: 0.75), isVisible: podiumsVisible)
+                    .onTapGesture { selectedUser = silver }
+                PodiumView(user: gold, height: 170, color: .yellow, isVisible: podiumsVisible)
+                    .scaleEffect(1.1)
+                    .onTapGesture { selectedUser = gold }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 32)
+            .onAppear {
+                withAnimation(.spring(response: 0.7, dampingFraction: 0.6)) { podiumsVisible = true }
+            }
         } else if let first = entries.first {
             let user = toUser(first, rank: 1)
             HStack(alignment: .bottom, spacing: 16) {
@@ -148,14 +184,13 @@ struct LeaderboardView: View {
     }
 
     private var listSection: some View {
-        let start = min(3, entries.count)
-        let rest = Array(entries[start...])
+        let rest = Array(entries.dropFirst(3))
 
         return Group {
             if !rest.isEmpty {
                 VStack(spacing: 0) {
                     ForEach(Array(rest.enumerated()), id: \.element.id) { idx, entry in
-                        let rank = start + idx + 1
+                        let rank = 3 + idx + 1
                         let user = toUser(entry, rank: rank)
                         LeaderboardRow(rank: rank, user: user)
                             .onTapGesture { selectedUser = user }
@@ -174,13 +209,28 @@ struct LeaderboardView: View {
 
     // MARK: - Data
 
-    private func loadLeaderboard() async {
+    private func loadLeaderboard(force: Bool = false) async {
+        if !force, let last = lastFetchedAt, Date().timeIntervalSince(last) < 30 { return }
+        currentUserId = KeychainHelper.load(KeychainKeys.userId)
         isLoading = true
         defer { isLoading = false }
         LeaderboardSyncService.shared.syncIfNeeded()
         do {
-            entries = try await APIClient.shared.fetchLeaderboard()
+            var fetched = try await APIClient.shared.fetchLeaderboard()
+            // Always show the current user — inject a self-entry if absent from the server's top-N.
+            // This happens on first session before LeaderboardSyncService has pushed XP.
+            if let uid = currentUserId, !uid.isEmpty, userXP > 0, !userName.isEmpty,
+               !fetched.contains(where: { $0.user_id == uid }) {
+                let selfEntry = RemoteLeaderboardEntry(id: uid, user_id: uid,
+                                                       display_name: userName, xp: userXP)
+                let insertIdx = fetched.firstIndex(where: { $0.xp <= userXP }) ?? fetched.count
+                fetched.insert(selfEntry, at: insertIdx)
+            }
+            entries = fetched
+            hasError = false
+            lastFetchedAt = Date()
         } catch {
+            hasError = entries.isEmpty
             verbumLog("⚠️ LeaderboardView: \(error)")
         }
     }
@@ -206,28 +256,13 @@ struct LeaderboardRow: View {
     let rank: Int
     let user: LeaderboardUser
 
-    private var rankLabel: String {
-        switch rank {
-        case 1: return "🥇"
-        case 2: return "🥈"
-        case 3: return "🥉"
-        default: return "\(rank)"
-        }
-    }
-
     var body: some View {
         HStack(spacing: 12) {
-            Group {
-                if rank <= 3 {
-                    Text(rankLabel).font(.title3)
-                } else {
-                    Text(rankLabel)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .frame(width: 36, alignment: .center)
+            Text("\(rank)")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(.secondary)
+                .frame(width: 36, alignment: .center)
 
             AvatarView(urlString: nil, localImage: user.localImage,
                        name: user.name, color: user.avatarColor, size: 40)

@@ -165,7 +165,7 @@ final class HomeViewModel: ObservableObject {
         saveChallengesState()
 
         if UserDefaults.standard.bool(forKey: StorageKeys.notificationsEnabled) {
-            NotificationManager.shared.scheduleWeeklyChallenges()
+            NotificationManager.shared.scheduleDailyChallengeReminder()
         }
     }
 

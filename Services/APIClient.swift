@@ -246,7 +246,7 @@ final class APIClient {
             path: "/api/v1/table/leaderboard/list",
             body: ["limit": 25, "sort": "-xp"]
         )
-        return resp.items.sorted { $0.xp > $1.xp }
+        return resp.items
     }
 
     /// Upsert: insert → при конфликте unique user_id → update.
