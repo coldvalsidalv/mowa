@@ -8,8 +8,7 @@ enum StorageKeys {
     static let completedGrammarLessons = "completedGrammarLessons"
     static let userXP = "userXP"
     
-    // Добавленные ключи для профиля и челленджей
-    static let completedChallengeIDs = "completedChallengeIDs"
+    // Профиль
     static let userName = "userName"
     static let userEmail = "userEmail"
     static let dailyGoal = "dailyGoal"
@@ -19,6 +18,10 @@ enum StorageKeys {
     static let notificationsEnabled = "notificationsEnabled"
     static let notificationTime = "notificationTime"
     static let hasCompletedOnboarding = "hasCompletedOnboarding"
+
+    // Дейли челленджи
+    static let currentChallenges = "currentChallenges"
+    static let lastChallengeDate = "lastChallengeDate"
 
     // Подготовка к экзамену (Фаза 0)
     static let examTargetLevel = "examTargetLevel"

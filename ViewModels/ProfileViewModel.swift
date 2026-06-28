@@ -302,19 +302,22 @@ final class ProfileViewModel: ObservableObject {
             }
         } else {
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         }
     }
 
     private func scheduleDailyReminder() {
-        NotificationManager.shared.scheduleDailyReminder(
-            at: Date(timeIntervalSince1970: notificationTimeInterval))
+        let time = Date(timeIntervalSince1970: notificationTimeInterval)
+        NotificationManager.shared.scheduleDailyReminder(at: time)
+        NotificationManager.shared.scheduleStreakProtection()
     }
 
     func resetAllProgress() {
         userXP = 0
         dayStreak = 0
         UserDefaults.standard.removeObject(forKey: StorageKeys.completedGrammarLessons)
-        UserDefaults.standard.removeObject(forKey: StorageKeys.completedChallengeIDs)
+        UserDefaults.standard.removeObject(forKey: StorageKeys.currentChallenges)
+        UserDefaults.standard.removeObject(forKey: StorageKeys.lastChallengeDate)
         // totalLearnedWords отражает БД и обновится из loadStats при следующем onAppear.
         // Сброс прогресса FSRS-карточек намеренно не делаем — это разрушительная операция.
         recomputeAchievements()

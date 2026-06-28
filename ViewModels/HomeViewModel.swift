@@ -132,13 +132,12 @@ final class HomeViewModel: ObservableObject {
     
     private func loadDailyState() {
         let todayString = getTodayDateString()
-        self.lastUpdateDate = UserDefaults.standard.string(forKey: "lastChallengeDate") ?? ""
-        
+        self.lastUpdateDate = UserDefaults.standard.string(forKey: StorageKeys.lastChallengeDate) ?? ""
+
         if lastUpdateDate != todayString {
             generateNewDailyChallenges()
         } else {
-            // Загрузка сохраненного прогресса
-            if let data = UserDefaults.standard.data(forKey: "currentChallenges"),
+            if let data = UserDefaults.standard.data(forKey: StorageKeys.currentChallenges),
                let saved = try? JSONDecoder().decode([DailyChallenge].self, from: data) {
                 self.challenges = saved
             } else {
@@ -160,15 +159,19 @@ final class HomeViewModel: ObservableObject {
             DailyChallenge(title: "Грамматика", description: "Пройди 1 урок грамматики", target: 1, reward: 75, type: .grammar),
             DailyChallenge(title: "Идеальная серия", description: "Пройди викторину без ошибок", target: 1, reward: 100, type: .quiz)
         ]
-        
+
         self.lastUpdateDate = getTodayDateString()
-        UserDefaults.standard.set(self.lastUpdateDate, forKey: "lastChallengeDate")
+        UserDefaults.standard.set(self.lastUpdateDate, forKey: StorageKeys.lastChallengeDate)
         saveChallengesState()
+
+        if UserDefaults.standard.bool(forKey: StorageKeys.notificationsEnabled) {
+            NotificationManager.shared.scheduleWeeklyChallenges()
+        }
     }
-    
+
     private func saveChallengesState() {
         if let data = try? JSONEncoder().encode(challenges) {
-            UserDefaults.standard.set(data, forKey: "currentChallenges")
+            UserDefaults.standard.set(data, forKey: StorageKeys.currentChallenges)
         }
     }
     

@@ -2,6 +2,7 @@ name = "verbum-backend"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
 [dev]
 ip = "0.0.0.0"
@@ -10,5 +11,5 @@ port = 8787
 [[d1_databases]]
 binding = "PRIMARY_DB"
 database_name = "verbum"
-database_id = "local"
+database_id = "2ec60272-470d-4b99-a87d-00dc5ea5d1eb"
 migrations_dir = "migrations"

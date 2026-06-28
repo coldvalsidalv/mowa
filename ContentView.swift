@@ -84,6 +84,7 @@ struct ContentView: View {
                 StreakManager.shared.refreshDayRollover()
                 ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
                 FSRSParamStore.shared.refreshIfNeeded()
+                LeaderboardSyncService.shared.syncIfNeeded()
             }
         }
     }

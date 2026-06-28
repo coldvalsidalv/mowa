@@ -109,10 +109,12 @@ final class VocabSyncService {
         try context.save()
         verbumLog("✅ VocabSyncService: inserted \(inserted), updated \(updated)")
 
-        // Сигналим UI пересчитать категории. LessonsView убрал @Query
-        // ради перфа на main thread, поэтому live-обновление теперь через notification.
         if inserted > 0 || updated > 0 {
             NotificationCenter.default.post(name: .vocabularyDidChange, object: nil)
+        }
+
+        if inserted > 0 && UserDefaults.standard.bool(forKey: StorageKeys.notificationsEnabled) {
+            NotificationManager.shared.scheduleNewContent()
         }
     }
 

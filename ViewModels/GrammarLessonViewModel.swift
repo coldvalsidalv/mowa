@@ -117,6 +117,10 @@ final class GrammarLessonViewModel: ObservableObject {
             print("❌ GrammarLessonViewModel: failed to save — \(error)")
         }
 
+        if UserDefaults.standard.bool(forKey: StorageKeys.notificationsEnabled) {
+            NotificationManager.shared.scheduleGrammarReview()
+        }
+
         NotificationCenter.default.post(name: .grammarLessonCompleted, object: nil)
     }
 }
