@@ -1,10 +1,20 @@
 """Official gold-set eval: 4 real B1 Pisanie answers from the Państwowa Komisja
 exam-standards PDF, each scored by two examiners (A+B) on the five criteria.
 We grade each with our endpoint and measure how far the model's scores are from
-the real examiners' (averaged) scores. Local/dev only. To run, temporarily
-re-add the eval overrides in writing.ts (body.task_override + body.model) — they
-are removed from prod because the client must not control the grading task."""
-import json, os, time, urllib.request, urllib.error
+the real examiners' (averaged) scores. Local/dev only.
+
+To run:
+1. Seed the DB: create writingtest@example.com / verbum-test-123 via the admin API.
+2. In writing.ts, temporarily add to GradeBody:
+     task_override?: ExamTask
+     model?: string
+   Change the task lookup line to:
+     const task = body.task_override ?? TASKS[body?.task_id ?? '']
+   Change the model line to:
+     const model = body.model ?? env.GEMINI_MODEL ?? DEFAULT_MODEL
+3. Run: python3 backend/scripts/goldset_official.py
+4. Revert writing.ts (do not commit — client must not control the grading task)."""
+import json, time, urllib.request, urllib.error
 
 BASE = "http://127.0.0.1:8787"
 CRIT = ["wykonanie_zadania", "poprawnosc_gramatyczna", "slownictwo", "styl", "ortografia_interpunkcja"]
@@ -64,23 +74,27 @@ def grade(tok, model, ex):
     raise RuntimeError("retries exhausted")
 
 
-tok = login()
-for model in MODELS:
-    print(f"\n=== {model} — model scores vs examiner gold (abs error) ===")
-    print(f"{'essay':16} {'gold%':>5} {'pred%':>5} " + " ".join(f"{c.split('_')[0][:4]:>5}" for c in CRIT) + f"  {'MAE':>4}")
-    maes = []
-    overall_errs = []
-    for ex in EXAMPLES:
-        g = ex["gold"]; gold_overall = round(sum(g.values()) / 20 * 100)
-        try:
-            d = grade(tok, model, ex)
-            s = d.get("scores", {})
-            diffs = [abs(float(s.get(c, 0)) - g[c]) for c in CRIT]
-            mae = sum(diffs) / len(diffs)
-            maes.append(mae); overall_errs.append(abs(d.get("overall_percent", 0) - gold_overall))
-            print(f"{ex['id']:16} {gold_overall:>4}% {d.get('overall_percent'):>4}% " + " ".join(f"{x:>5.1f}" for x in diffs) + f"  {mae:>4.2f}")
-        except Exception as e:
-            print(f"{ex['id']:16} ERR {str(e)[:50]}")
-        time.sleep(2)
-    if maes:
-        print(f"  -> mean criterion MAE: {sum(maes)/len(maes):.2f}  |  mean overall-% error: {sum(overall_errs)/len(overall_errs):.0f}pp")
+if __name__ == "__main__":
+    tok = login()
+    for model in MODELS:
+        print(f"\n=== {model} — model scores vs examiner gold (abs error) ===")
+        print(f"{'essay':16} {'gold%':>5} {'pred%':>5} " + " ".join(f"{c.split('_')[0][:4]:>5}" for c in CRIT) + f"  {'MAE':>4}")
+        maes = []
+        overall_errs = []
+        for ex in EXAMPLES:
+            g = ex["gold"]; gold_overall = round(sum(g.values()) / 20 * 100)
+            try:
+                d = grade(tok, model, ex)
+                s = d.get("scores", {})
+                missing = [c for c in CRIT if c not in s]
+                if missing:
+                    print(f"  WARN: backend omitted scores for {missing!r} — MAE may be inflated")
+                diffs = [abs(float(s.get(c, 0)) - g[c]) for c in CRIT]
+                mae = sum(diffs) / len(diffs)
+                maes.append(mae); overall_errs.append(abs(d.get("overall_percent", 0) - gold_overall))
+                print(f"{ex['id']:16} {gold_overall:>4}% {d.get('overall_percent'):>4}% " + " ".join(f"{x:>5.1f}" for x in diffs) + f"  {mae:>4.2f}")
+            except Exception as e:
+                print(f"{ex['id']:16} ERR {str(e)[:50]}")
+            time.sleep(2)
+        if maes:
+            print(f"  -> mean criterion MAE: {sum(maes)/len(maes):.2f}  |  mean overall-% error: {sum(overall_errs)/len(overall_errs):.0f}pp")

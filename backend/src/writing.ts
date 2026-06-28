@@ -97,7 +97,7 @@ const LANG_NAME: Record<string, string> = { ru: 'Russian', uk: 'Ukrainian', en: 
 
 function systemInstruction(lang: string): string {
   return [
-    'You are a strict examiner for the Polish state certificate exam (egzamin certyfikatowy z języka polskiego jako obcego) at CEFR level B1, grading the Pisanie (writing) part. Apply the official assessment criteria exactly, grade harshly and consistently, and do not give the benefit of the doubt.',
+    'You are an examiner for the Polish state certificate exam (egzamin certyfikatowy z języka polskiego jako obcego) at CEFR level B1, grading the Pisanie (writing) part. Apply the official assessment criteria exactly.',
     'CALIBRATION: grade at B1 (intermediate), NOT C2/native. The benchmark is communicative effectiveness at B1. A competent B1 answer typically scores 3 or 4 on each criterion even with several minor errors; reserve 0-1 only for problems that genuinely break communication or leave the task unfulfilled. List every error for the learner (errors array), but score each criterion on its overall communicative impact, not on the raw error count.',
     'Score each of the FIVE official criteria on an integer 0-4 scale:',
     'wykonanie_zadania (task completion — treść, długość, forma, kompozycja): 4 = the task is realised, required content present, correct text type/form, reasonable composition, length roughly within range (±10%); 3 = realised with a minor content gap or slightly off length/form; 2 = a required element missing or length clearly off; 1 = barely on topic or wrong form; 0 = off-task or wrong text type.',
@@ -248,7 +248,7 @@ export async function gradeWriting(c: any): Promise<Response> {
       .bind(
         crypto.randomUUID(),
         userId,
-        String(body.task_id ?? body.task?.type ?? ''),
+        String(body.task_id ?? ''),
         Number(feedback?.overall_percent ?? 0),
         feedback?.passed_estimate ? 1 : 0,
       )

@@ -1,6 +1,6 @@
 """Ad-hoc eval harness: run a small gold-set of B1 essays through the grading
 endpoint for several models and print a comparison. Local/dev only."""
-import json, os, time, urllib.request
+import json, time, urllib.request
 
 BASE = "http://127.0.0.1:8787"
 TASK = {
@@ -19,7 +19,9 @@ ESSAYS = {
     "E3_offtask": "Cześć! Dzisiaj jest bardzo ładna pogoda. Lubię pić kawę rano i czytać dobre książki. Mój kot ma na imię Felix i jest czarny. Do widzenia!",
 }
 
-MODELS = ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.5-flash"]
+# The backend ignores body.model — it always uses DEFAULT_MODEL / env.GEMINI_MODEL.
+# To eval a different model, change DEFAULT_MODEL in writing.ts and restart the server.
+MODELS = ["gemini-3.1-flash-lite"]  # label only; matches current DEFAULT_MODEL
 
 
 def login():
