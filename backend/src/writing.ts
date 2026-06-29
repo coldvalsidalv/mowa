@@ -130,10 +130,7 @@ function userPrompt(t: ExamTask, text: string): string {
   ].join('\n')
 }
 
-// KV fail-safe for the daily writing limit, used only when the D1 counter is
-// unavailable. Counts grade attempts made during the D1 outage so a database
-// failure can't turn the paid endpoint into an unlimited one. Eventually
-// consistent and non-atomic — acceptable for a degraded-mode budget guard.
+// KV fail-safe: counts grade attempts when D1 is down so an outage can't lift the budget guard. Non-atomic — intentional for a degraded-mode guard.
 async function kvOverDailyLimit(env: any, userId: string, limit: number): Promise<boolean> {
   const kv = env.WRITING_RL
   if (!kv) return false // binding not configured — can't fall back, don't block
@@ -185,9 +182,7 @@ export async function gradeWriting(c: any): Promise<Response> {
       .first()
     overLimit = !!row && Number(row.n) >= dailyLimit
   } catch (e) {
-    // D1 down → fall back to a KV counter so an outage can't lift the budget
-    // guard entirely (fail-safe, not fail-open). KV is best-effort too: if the
-    // binding is absent or KV also errors, we log and allow (last resort).
+    // D1 down → KV fallback; if KV is also absent/erroring, we allow (last resort).
     console.log('writing rate-limit D1 check failed, trying KV fallback:', e)
     overLimit = await kvOverDailyLimit(env, userId, dailyLimit)
   }
