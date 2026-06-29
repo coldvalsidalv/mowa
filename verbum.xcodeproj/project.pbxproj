@@ -49,14 +49,14 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		2BF024862EF0BDC000CAC740 /* mowaTests */ = {
+		2BF024862EF0BDC000CAC740 /* verbumTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = mowaTests;
+			path = verbumTests;
 			sourceTree = "<group>";
 		};
-		2BF024902EF0BDC000CAC740 /* mowaUITests */ = {
+		2BF024902EF0BDC000CAC740 /* verbumUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = mowaUITests;
+			path = verbumUITests;
 			sourceTree = "<group>";
 		};
 		2BF024A02EF0BE1F00CAC740 /* Models */ = {
@@ -119,8 +119,8 @@
 				2BF024A32EF0BE3B00CAC740 /* Views */,
 				2BF024A22EF0BE3100CAC740 /* ViewModels */,
 				2BF024A02EF0BE1F00CAC740 /* Models */,
-				2BF024862EF0BDC000CAC740 /* mowaTests */,
-				2BF024902EF0BDC000CAC740 /* mowaUITests */,
+				2BF024862EF0BDC000CAC740 /* verbumTests */,
+				2BF024902EF0BDC000CAC740 /* verbumUITests */,
 				2BF024772EF0BDBE00CAC740 /* Products */,
 				2BF024792EF0BDBE00CAC740 /* VerbumApp.swift */,
 				2B153A082F43E78400716F79 /* ContentView.swift */,
@@ -185,7 +185,7 @@
 				2BF024852EF0BDC000CAC740 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				2BF024862EF0BDC000CAC740 /* mowaTests */,
+				2BF024862EF0BDC000CAC740 /* verbumTests */,
 			);
 			name = VerbumTests;
 			packageProductDependencies = (
@@ -208,7 +208,7 @@
 				2BF0248F2EF0BDC000CAC740 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				2BF024902EF0BDC000CAC740 /* mowaUITests */,
+				2BF024902EF0BDC000CAC740 /* verbumUITests */,
 			);
 			name = VerbumUITests;
 			packageProductDependencies = (
@@ -240,7 +240,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 2BF024712EF0BDBE00CAC740 /* Build configuration list for PBXProject "mowa" */;
+			buildConfigurationList = 2BF024712EF0BDBE00CAC740 /* Build configuration list for PBXProject "verbum" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -579,7 +579,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = mowa;
+				TEST_TARGET_NAME = verbum;
 			};
 			name = Debug;
 		};
@@ -599,14 +599,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = mowa;
+				TEST_TARGET_NAME = verbum;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2BF024712EF0BDBE00CAC740 /* Build configuration list for PBXProject "mowa" */ = {
+		2BF024712EF0BDBE00CAC740 /* Build configuration list for PBXProject "verbum" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2BF024952EF0BDC000CAC740 /* Debug */,

@@ -11,7 +11,7 @@ final class AvatarManager: ObservableObject {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(filename)
     }
     
-    private let ioQueue = DispatchQueue(label: "com.mowa.avatarIO", qos: .userInitiated)
+    private let ioQueue = DispatchQueue(label: "com.verbum.avatarIO", qos: .userInitiated)
     
     private init() {
         loadAvatar()
