@@ -40,18 +40,13 @@ struct BundleExamSession: Decodable, Sendable {
 }
 
 enum ExamSessionParser {
-    /// "yyyy-MM-dd" -> Date (локальная полночь, согласовано с daysLeft).
-    static let dateFormatter: DateFormatter = {
+    nonisolated static func from(_ b: BundleExamSession) -> ExamSession? {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
         f.calendar = Calendar(identifier: .gregorian)
         f.locale = Locale(identifier: "en_US_POSIX")
-        return f
-    }()
-
-    static func from(_ b: BundleExamSession) -> ExamSession? {
-        guard let start = dateFormatter.date(from: b.start_date),
-              let end = dateFormatter.date(from: b.end_date) else { return nil }
+        guard let start = f.date(from: b.start_date),
+              let end = f.date(from: b.end_date) else { return nil }
         return ExamSession(id: b.session_id, startDate: start, endDate: end, levels: b.levels)
     }
 }

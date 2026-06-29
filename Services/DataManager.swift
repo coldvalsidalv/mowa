@@ -22,7 +22,9 @@ final class DataManager: Sendable {
         guard let url = Bundle.main.url(forResource: "words", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let words = try? JSONDecoder().decode([BundleWord].self, from: data) else {
-            verbumLog("❌ DataManager: failed to read words.json from bundle")
+            #if DEBUG
+            print("❌ DataManager: failed to read words.json from bundle")
+            #endif
             return []
         }
         return words
@@ -34,7 +36,9 @@ final class DataManager: Sendable {
         guard let url = Bundle.main.url(forResource: "grammar", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let lessons = try? JSONDecoder().decode([GrammarLesson].self, from: data) else {
-            verbumLog("❌ DataManager: failed to read grammar.json from bundle")
+            #if DEBUG
+            print("❌ DataManager: failed to read grammar.json from bundle")
+            #endif
             return []
         }
         return lessons
@@ -68,7 +72,9 @@ final class DataManager: Sendable {
         guard let url = Bundle.main.url(forResource: "exam_sessions", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let raw = try? JSONDecoder().decode([BundleExamSession].self, from: data) else {
-            verbumLog("❌ DataManager: failed to read exam_sessions.json from bundle")
+            #if DEBUG
+            print("❌ DataManager: failed to read exam_sessions.json from bundle")
+            #endif
             return []
         }
         return raw.compactMap(ExamSessionParser.from)

@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import Charts
 
 // MARK: - Root: онбординг или основной экран
