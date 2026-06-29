@@ -8,7 +8,7 @@ included:
 excluded:
   - .claude
   - backend
-  - mowaTests
+  - verbumTests
 
 disabled_rules:
   - trailing_whitespace                      # Xcode сам расставляет
