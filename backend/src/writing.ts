@@ -130,17 +130,18 @@ function userPrompt(t: ExamTask, text: string): string {
   ].join('\n')
 }
 
-// KV fail-safe: counts grade attempts when D1 is down so an outage can't lift the budget guard. Non-atomic — intentional for a degraded-mode guard.
+// KV fail-safe (D1 down): one key per attempt + list-count; race window is KV replication latency (~ms), not full round-trip.
 async function kvOverDailyLimit(env: any, userId: string, limit: number): Promise<boolean> {
   const kv = env.WRITING_RL
   if (!kv) return false // binding not configured — can't fall back, don't block
   try {
     const day = new Date().toISOString().slice(0, 10) // UTC YYYY-MM-DD
-    const key = `wr:${userId}:${day}`
-    const current = Number((await kv.get(key)) ?? '0')
-    if (current >= limit) return true
-    // 2-day TTL covers the UTC day; the date in the key handles rollover.
-    await kv.put(key, String(current + 1), { expirationTtl: 172800 })
+    const prefix = `wr:${userId}:${day}:`
+    // limit+1 so we stop scanning as soon as we know we're over.
+    const listed = await kv.list({ prefix, limit: limit + 1 })
+    if (listed.keys.length >= limit) return true
+    // 2-day TTL; date in prefix handles rollover.
+    await kv.put(`${prefix}${crypto.randomUUID()}`, '1', { expirationTtl: 172800 })
     return false
   } catch (e) {
     console.log('writing rate-limit KV fallback failed:', e)
