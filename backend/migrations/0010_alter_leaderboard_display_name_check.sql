@@ -9,6 +9,7 @@
 -- Do NOT use `teeny generate`/`teeny deploy` here — they rewrite the whole
 -- migration history from an empty ledger.
 
+BEGIN;
 CREATE TABLE leaderboard_new (
 	id TEXT PRIMARY KEY NOT NULL,
 	created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -24,3 +25,4 @@ ALTER TABLE leaderboard_new RENAME TO leaderboard;
 CREATE INDEX idx_leaderboard_leaderboard_xp ON leaderboard (xp);
 CREATE TRIGGER tgr_leaderboard_raise_on_created_update BEFORE UPDATE OF created ON leaderboard BEGIN SELECT RAISE(FAIL, 'Cannot update created column') WHERE OLD.created != NEW.created; END;
 CREATE TRIGGER tgr_leaderboard_update_updated_on_update AFTER UPDATE ON leaderboard BEGIN UPDATE leaderboard SET updated = CURRENT_TIMESTAMP WHERE id = NEW.id AND OLD.updated = NEW.updated; END;
+COMMIT;

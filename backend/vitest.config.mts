@@ -24,6 +24,7 @@ export default defineConfig(async () => {
           // Secrets live in .dev.vars (not loaded by the pool) — inject explicitly.
           // Values are arbitrary; the canary only checks that the SAME key
           // teenybase signs with verifies in writing.ts.
+          kvNamespaces: ['WRITING_RL'],
           bindings: {
             TEST_MIGRATIONS: migrations,
             JWT_SECRET: 'canary-top-secret',
