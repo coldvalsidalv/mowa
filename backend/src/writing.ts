@@ -126,6 +126,7 @@ function userPrompt(t: ExamTask, text: string): string {
     text,
     'CANDIDATE_TEXT',
     '',
+    'Before scoring: for each REQUIRED POINT above, judge it PRESENT (clearly addressed) / PARTIAL (mentioned but superficial) / ABSENT. Then set wykonanie_zadania accordingly: all present = 4; one partial or minor gap = 3; one fully absent = 2; two or more absent = 1.',
     'Return the grading as JSON matching the schema.',
   ].join('\n')
 }
