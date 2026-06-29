@@ -1,13 +1,13 @@
 //
-//  mowaUITestsLaunchTests.swift
-//  mowaUITests
+//  verbumUITestsLaunchTests.swift
+//  verbumUITests
 //
 //  Created by Uladzislau on 15/12/25.
 //
 
 import XCTest
 
-final class mowaUITestsLaunchTests: XCTestCase {
+final class verbumUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

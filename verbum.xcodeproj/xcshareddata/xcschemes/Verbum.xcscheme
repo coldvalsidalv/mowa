@@ -17,7 +17,7 @@
                BlueprintIdentifier = "2BF024752EF0BDBE00CAC740"
                BuildableName = "Verbum.app"
                BlueprintName = "Verbum"
-               ReferencedContainer = "container:mowa.xcodeproj">
+               ReferencedContainer = "container:verbum.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,7 +31,7 @@
                BlueprintIdentifier = "2BF024822EF0BDC000CAC740"
                BuildableName = "VerbumTests.xctest"
                BlueprintName = "VerbumTests"
-               ReferencedContainer = "container:mowa.xcodeproj">
+               ReferencedContainer = "container:verbum.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,7 +50,7 @@
                BlueprintIdentifier = "2BF024822EF0BDC000CAC740"
                BuildableName = "VerbumTests.xctest"
                BlueprintName = "VerbumTests"
-               ReferencedContainer = "container:mowa.xcodeproj">
+               ReferencedContainer = "container:verbum.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -72,7 +72,7 @@
             BlueprintIdentifier = "2BF024752EF0BDBE00CAC740"
             BuildableName = "Verbum.app"
             BlueprintName = "Verbum"
-            ReferencedContainer = "container:mowa.xcodeproj">
+            ReferencedContainer = "container:verbum.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -89,7 +89,7 @@
             BlueprintIdentifier = "2BF024752EF0BDBE00CAC740"
             BuildableName = "Verbum.app"
             BlueprintName = "Verbum"
-            ReferencedContainer = "container:mowa.xcodeproj">
+            ReferencedContainer = "container:verbum.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
