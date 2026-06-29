@@ -34,7 +34,7 @@ jobs:
       - name: Test
         run: |
           xcodebuild test \
-            -project mowa.xcodeproj \
+            -project verbum.xcodeproj \
             -scheme Verbum \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' \
             -resultBundlePath TestResults.xcresult \

@@ -46,6 +46,7 @@ const FEEDBACK_SCHEMA = {
     // point before committing to an wykonanie_zadania score.
     required_points_coverage: {
       type: 'ARRAY',
+      minItems: 1,
       items: {
         type: 'OBJECT',
         properties: {
@@ -268,6 +269,9 @@ export async function gradeWriting(c: any): Promise<Response> {
   }
   if (!feedback?.scores || typeof feedback.scores !== 'object') {
     return c.json({ code: 502, message: 'LLM response missing scores' }, 502)
+  }
+  if (!Array.isArray(feedback.required_points_coverage) || feedback.required_points_coverage.length === 0) {
+    return c.json({ code: 502, message: 'LLM response missing required_points_coverage' }, 502)
   }
 
   // Override the model's self-estimate with a deterministic formula.
