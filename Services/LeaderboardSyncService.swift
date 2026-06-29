@@ -22,7 +22,13 @@ final class LeaderboardSyncService {
         let xp = UserDefaults.standard.integer(forKey: StorageKeys.userXP)
         guard xp > 0 else { return }
 
-        let displayName = UserDefaults.standard.string(forKey: StorageKeys.userName) ?? ""
+        // Name goes into the public leaderboard — trim to 32 chars (matches the
+        // server-side CHECK) so the table can't be flooded with huge strings.
+        let displayName = String(
+            (UserDefaults.standard.string(forKey: StorageKeys.userName) ?? "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .prefix(32)
+        )
         guard !displayName.isEmpty else { return }
 
         let lastSync = UserDefaults.standard.object(forKey: throttleKey) as? Date ?? .distantPast

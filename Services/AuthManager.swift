@@ -70,6 +70,12 @@ final class AuthManager: ObservableObject {
     private let decoder: JSONDecoder = JSONDecoder()
     private let encoder: JSONEncoder = JSONEncoder()
 
+    /// In-flight refresh. Concurrent `refresh()` callers await the same Task
+    /// instead of each starting its own — otherwise a burst of parallel 401s
+    /// (e.g. during paged word loading) would burn the maxTokenRefresh budget
+    /// and race on writing tokens into the Keychain.
+    private var refreshTask: Task<Void, Error>?
+
     private init() {
         let token = KeychainHelper.load(KeychainKeys.accessToken)
         self.isAuthenticated = (token != nil)
@@ -135,6 +141,20 @@ final class AuthManager: ObservableObject {
     /// При успехе — обновляет токены в Keychain. При неудаче — НЕ делает signOut автоматически
     /// (это решение принимает caller).
     func refresh() async throws {
+        // Single-flight: if a refresh is already running, await it instead of starting a second.
+        if let existing = refreshTask {
+            try await existing.value
+            return
+        }
+        let task = Task { [weak self] in
+            defer { self?.refreshTask = nil }
+            try await self?.performRefresh()
+        }
+        refreshTask = task
+        try await task.value
+    }
+
+    private func performRefresh() async throws {
         guard let refreshTok = KeychainHelper.load(KeychainKeys.refreshToken) else {
             throw AuthError.noRefreshToken
         }
