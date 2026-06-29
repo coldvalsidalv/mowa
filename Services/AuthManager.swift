@@ -70,10 +70,7 @@ final class AuthManager: ObservableObject {
     private let decoder: JSONDecoder = JSONDecoder()
     private let encoder: JSONEncoder = JSONEncoder()
 
-    /// In-flight refresh. Concurrent `refresh()` callers await the same Task
-    /// instead of each starting its own — otherwise a burst of parallel 401s
-    /// (e.g. during paged word loading) would burn the maxTokenRefresh budget
-    /// and race on writing tokens into the Keychain.
+    // Single in-flight refresh task; concurrent callers await it instead of starting their own.
     private var refreshTask: Task<Void, Error>?
 
     private init() {
@@ -146,9 +143,9 @@ final class AuthManager: ObservableObject {
             try await existing.value
             return
         }
-        let task = Task { [weak self] in
-            defer { self?.refreshTask = nil }
-            try await self?.performRefresh()
+        let task = Task {
+            defer { self.refreshTask = nil }
+            try await self.performRefresh()
         }
         refreshTask = task
         try await task.value
