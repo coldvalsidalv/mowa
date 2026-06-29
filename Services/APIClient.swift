@@ -327,11 +327,10 @@ final class APIClient {
             do {
                 try await AuthManager.shared.refresh()
             } catch AuthError.network(let underlying) {
-                // Transient network failure during refresh — the session may still
-                // be valid. Don't sign out; surface it as a network error.
+                // Network blip during refresh — session may still be valid; don't sign out.
                 throw APIError.networkError(underlying)
             } catch {
-                // Refresh token invalid/exhausted/expired — the session is dead.
+                // Token invalid/exhausted/expired — session is dead.
                 AuthManager.shared.signOut()
                 throw APIError.serverError(401, message: nil)
             }
