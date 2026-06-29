@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct GrammarLessonView: View {
     @StateObject var viewModel: GrammarLessonViewModel

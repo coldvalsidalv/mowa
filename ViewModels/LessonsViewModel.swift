@@ -88,7 +88,9 @@ final class LessonsViewModel: ObservableObject {
         return grouped.keys.sorted().map { category in
             let items = grouped[category]!
             let learned = items.filter { $0.fsrsData.state != .new }.count
-            let hash = category.stableHash
+            var fnv: UInt64 = 0xcbf29ce484222325
+            for byte in category.utf8 { fnv ^= UInt64(byte); fnv = fnv &* 0x100000001b3 }
+            let hash = Int(fnv & 0x7fffffffffffffff)
             return CategoryStat(
                 id: category,
                 totalWords: items.count,

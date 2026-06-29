@@ -21,7 +21,9 @@ nonisolated enum KeychainHelper {
         ]
         let status = SecItemAdd(query as CFDictionary, nil)
         if status != errSecSuccess {
-            verbumLog("⚠️ KeychainHelper: save failed for \(key), status=\(status)")
+            #if DEBUG
+            print("⚠️ KeychainHelper: save failed for \(key), status=\(status)")
+            #endif
         }
     }
 
