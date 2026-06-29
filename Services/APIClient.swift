@@ -326,11 +326,17 @@ final class APIClient {
             // Пробуем рефреш токена и повторяем запрос один раз.
             do {
                 try await AuthManager.shared.refresh()
-                return try await postOnce(path: path, body: body, isRetry: true, timeout: timeout)
+            } catch AuthError.network(let underlying) {
+                // Transient network failure during refresh — the session may still
+                // be valid. Don't sign out; surface it as a network error.
+                throw APIError.networkError(underlying)
             } catch {
+                // Refresh token invalid/exhausted/expired — the session is dead.
                 AuthManager.shared.signOut()
                 throw APIError.serverError(401, message: nil)
             }
+            // Retry outside the do/catch: its own network error must not trigger signOut.
+            return try await postOnce(path: path, body: body, isRetry: true, timeout: timeout)
         }
 
         if !(200...299).contains(http.statusCode) {
