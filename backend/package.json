@@ -6,15 +6,22 @@
   "scripts": {
     "generate": "teeny generate --config teenybase.ts --local",
     "deploy:local": "teeny deploy --config teenybase.ts --local",
-    "dev": "teeny dev --config teenybase.ts --local"
+    "dev": "teeny dev --config teenybase.ts --local",
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.16.20",
     "teenybase": "^0.0.14",
     "typescript": "^6.0.3",
+    "vitest": "^4.1.9",
     "wrangler": "^4.98.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20260625.1": true
   }
 }

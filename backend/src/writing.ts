@@ -130,6 +130,27 @@ function userPrompt(t: ExamTask, text: string): string {
   ].join('\n')
 }
 
+// KV fail-safe for the daily writing limit, used only when the D1 counter is
+// unavailable. Counts grade attempts made during the D1 outage so a database
+// failure can't turn the paid endpoint into an unlimited one. Eventually
+// consistent and non-atomic — acceptable for a degraded-mode budget guard.
+async function kvOverDailyLimit(env: any, userId: string, limit: number): Promise<boolean> {
+  const kv = env.WRITING_RL
+  if (!kv) return false // binding not configured — can't fall back, don't block
+  try {
+    const day = new Date().toISOString().slice(0, 10) // UTC YYYY-MM-DD
+    const key = `wr:${userId}:${day}`
+    const current = Number((await kv.get(key)) ?? '0')
+    if (current >= limit) return true
+    // 2-day TTL covers the UTC day; the date in the key handles rollover.
+    await kv.put(key, String(current + 1), { expirationTtl: 172800 })
+    return false
+  } catch (e) {
+    console.log('writing rate-limit KV fallback failed:', e)
+    return false
+  }
+}
+
 export async function gradeWriting(c: any): Promise<Response> {
   const env = c.env
 
@@ -156,17 +177,22 @@ export async function gradeWriting(c: any): Promise<Response> {
 
   // Per-user daily rate limit — budget guard for the paid LLM endpoint.
   const dailyLimit = Number(env.WRITING_DAILY_LIMIT ?? 10)
+  let overLimit = false
   try {
     const row: any = await env.PRIMARY_DB
       .prepare("SELECT COUNT(*) AS n FROM writing_attempts WHERE user_id = ? AND created >= datetime('now','start of day')")
       .bind(userId)
       .first()
-    if (row && Number(row.n) >= dailyLimit) {
-      return c.json({ code: 429, message: 'Дневной лимит проверок исчерпан. Попробуй завтра.' }, 429)
-    }
+    overLimit = !!row && Number(row.n) >= dailyLimit
   } catch (e) {
-    // Storage hiccup shouldn't hard-block grading; log and continue.
-    console.log('writing rate-limit check failed:', e)
+    // D1 down → fall back to a KV counter so an outage can't lift the budget
+    // guard entirely (fail-safe, not fail-open). KV is best-effort too: if the
+    // binding is absent or KV also errors, we log and allow (last resort).
+    console.log('writing rate-limit D1 check failed, trying KV fallback:', e)
+    overLimit = await kvOverDailyLimit(env, userId, dailyLimit)
+  }
+  if (overLimit) {
+    return c.json({ code: 429, message: 'Дневной лимит проверок исчерпан. Попробуй завтра.' }, 429)
   }
 
   let body: GradeBody

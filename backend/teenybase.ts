@@ -38,7 +38,11 @@ export default {
       fields: [
         ...baseFields,
         { name: 'user_id',      type: 'text', sqlType: 'text', notNull: true, unique: true },
-        { name: 'display_name', type: 'text', sqlType: 'text', notNull: true },
+        // Publicly visible name. Length CHECK is the authoritative limit — the
+        // client-side clamp is bypassable. Guards the public leaderboard against
+        // junk/oversized strings.
+        { name: 'display_name', type: 'text', sqlType: 'text', notNull: true,
+          check: sql`length(display_name) BETWEEN 1 AND 32` },
         { name: 'xp',           type: 'integer', sqlType: 'integer', notNull: true, default: { q: '0' } },
       ],
       triggers: [createdTrigger, updatedTrigger],

@@ -13,3 +13,9 @@ binding = "PRIMARY_DB"
 database_name = "verbum"
 database_id = "2ec60272-470d-4b99-a87d-00dc5ea5d1eb"
 migrations_dir = "migrations"
+
+# Fail-safe counter for the writing rate limit when D1 is unavailable.
+# Read defensively in kvOverDailyLimit — the worker still runs if this is absent.
+[[kv_namespaces]]
+binding = "WRITING_RL"
+id = "d4e2c2246ec6450c91a8ba25a2420544"
