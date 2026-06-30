@@ -3,7 +3,7 @@ import SwiftData
 
 struct VocabularyView: View {
     @Query(
-        filter: #Predicate<VocabItem> { $0.fsrsData.reps > 0 },
+        filter: #Predicate<VocabItem> { $0.fsrsData.stability >= 3.0 },
         sort: \VocabItem.polish
     ) private var learnedWords: [VocabItem]
 
@@ -41,7 +41,7 @@ struct VocabularyView: View {
                             }
                             Spacer()
                             Button(action: {
-                                SpeechService.shared.speak(word.polish, language: "pl-PL")
+                                SpeechService.shared.speak(word)
                             }) {
                                 Image(systemName: "speaker.wave.2.fill")
                                     .foregroundColor(.blue)

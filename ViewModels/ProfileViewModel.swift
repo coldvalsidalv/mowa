@@ -36,6 +36,11 @@ final class ProfileViewModel: ObservableObject {
     /// показывает stale ачивки до следующего .onAppear.
     @Published var achievements: [Achievement] = []
 
+    /// Общее число уроков грамматики в бандле — порог ачивки "Профессор".
+    /// Захардкоженное значение (раньше 20) расходилось с реальным контентом (6 уроков)
+    /// и ачивка была недостижима — считаем динамически.
+    private let totalGrammarLessons = DataManager.shared.loadGrammar().count
+
     init() {
         recomputeAchievements()
     }
@@ -49,7 +54,8 @@ final class ProfileViewModel: ObservableObject {
             totalLearnedWords: totalLearnedWords,
             dayStreak: dayStreak,
             userXP: userXP,
-            grammar: completedGrammarCount
+            grammar: completedGrammarCount,
+            totalGrammarLessons: totalGrammarLessons
         )
     }
 
@@ -59,7 +65,8 @@ final class ProfileViewModel: ObservableObject {
         totalLearnedWords: Int,
         dayStreak: Int,
         userXP: Int,
-        grammar: Int
+        grammar: Int,
+        totalGrammarLessons: Int
     ) -> [Achievement] {
         [
             // ── Словарный запас ──────────────────────────────────────────
@@ -188,9 +195,9 @@ final class ProfileViewModel: ObservableObject {
                 description: "Пройди все уроки грамматики",
                 icon: "brain.head.profile",
                 color: .purple,
-                unlocked: grammar >= 20,
-                progress: min(Double(grammar) / 20, 1.0),
-                progressLabel: "\(grammar) / 20 уроков"
+                unlocked: totalGrammarLessons > 0 && grammar >= totalGrammarLessons,
+                progress: totalGrammarLessons > 0 ? min(Double(grammar) / Double(totalGrammarLessons), 1.0) : 0,
+                progressLabel: "\(grammar) / \(totalGrammarLessons) уроков"
             ),
             // ── Особые ───────────────────────────────────────────────────
             .init(
@@ -227,10 +234,6 @@ final class ProfileViewModel: ObservableObject {
 
     var currentLeague: UserLeague {
         UserLeague.determineLeague(for: userXP)
-    }
-
-    var currentLeagueTitle: String {
-        currentLeague.title
     }
 
     // MARK: - Stats from DB
