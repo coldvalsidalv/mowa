@@ -83,6 +83,7 @@ final class QuizViewModel: ObservableObject {
     }
     
     func nextQuestion() {
+        SpeechService.shared.stop()
         if isLastQuestion {
             finishSession()
         } else {

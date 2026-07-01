@@ -54,6 +54,7 @@ struct FlashcardView: View {
             }
         }
         .navigationBarHidden(true)
+        .onDisappear { SpeechService.shared.stop() }
         .alert("Выйти из урока?", isPresented: $showExitAlert) {
             Button("Продолжить", role: .cancel) {}
             Button("Выйти", role: .destructive) { dismiss() }

@@ -84,7 +84,6 @@ struct QuizView: View {
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
-            .disabled(viewModel.showFeedback)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)

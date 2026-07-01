@@ -35,6 +35,7 @@ struct CategoryDetailView: View {
         }
         .navigationTitle(category)
         .navigationBarTitleDisplayMode(.large)
+        .onDisappear { SpeechService.shared.stop() }
     }
 
     // MARK: - Subviews

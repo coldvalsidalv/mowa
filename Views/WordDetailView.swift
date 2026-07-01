@@ -169,6 +169,7 @@ struct WordDetailView: View {
             .padding(.vertical, 12)
         }
         .background(Color(UIColor.systemGroupedBackground))
+        .onDisappear { SpeechService.shared.stop() }
         .alert("Сбросить прогресс?", isPresented: $showResetAlert) {
             Button("Сбросить", role: .destructive) { resetProgress() }
             Button("Отмена", role: .cancel) {}

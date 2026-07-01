@@ -57,5 +57,6 @@ struct VocabularyView: View {
             }
         }
         .navigationTitle("Мой словарь")
+        .onDisappear { SpeechService.shared.stop() }
     }
 }
