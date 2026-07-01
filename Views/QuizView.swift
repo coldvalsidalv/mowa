@@ -68,10 +68,20 @@ struct QuizView: View {
                 .foregroundColor(.gray)
                 .textCase(.uppercase)
                 .kerning(1.2)
-            
-            Text(question.word.polish) // Изменено с word.word на word.polish
+
+            Text(question.word.polish)
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .multilineTextAlignment(.center)
+
+            Button(action: { SpeechService.shared.speak(question.word) }) {
+                Image(systemName: "speaker.wave.2.fill")
+                    .foregroundColor(.blue)
+                    .font(.title3)
+                    .padding(10)
+                    .background(Color.blue.opacity(0.1))
+                    .clipShape(Circle())
+            }
+            .buttonStyle(.plain)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
