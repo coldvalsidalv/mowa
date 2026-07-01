@@ -16,6 +16,9 @@ struct LeaderboardView: View {
     @AppStorage(StorageKeys.userName) private var userName: String = ""
 
     @ObservedObject private var avatarManager = AvatarManager.shared
+    // Подписка нужна, даже если currentLanguage нигде не читается: TabView держит
+    // каждый таб в своём hosting controller, и без прямой подписки этот экран
+    // не перерисуется при смене языка.
     @ObservedObject private var languageManager = LanguageManager.shared
 
     @State private var entries: [RemoteLeaderboardEntry] = []
@@ -322,6 +325,7 @@ struct AvatarView: View {
 struct RivalProfileView: View {
     let user: LeaderboardUser
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     var body: some View {
         VStack(spacing: 24) {
@@ -358,6 +362,7 @@ struct StatColumn: View {
 struct LeagueMapView: View {
     let currentLeague: UserLeague
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     var body: some View {
         NavigationStack {

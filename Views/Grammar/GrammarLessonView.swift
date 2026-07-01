@@ -5,6 +5,7 @@ struct GrammarLessonView: View {
     @StateObject var viewModel: GrammarLessonViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var showExitAlert = false
 
     init(lesson: GrammarLesson) {

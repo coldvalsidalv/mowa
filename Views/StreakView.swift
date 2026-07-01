@@ -3,7 +3,8 @@ import SwiftUI
 struct StreakView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var manager = StreakManager.shared
-    
+    @ObservedObject private var languageManager = LanguageManager.shared
+
     @State private var isPulsing = false
     var onStartLesson: (() -> Void)? = nil
     

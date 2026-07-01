@@ -3,6 +3,7 @@ import SwiftData
 
 struct WritingTaskListView: View {
     @Environment(\.modelContext) private var modelContext
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var tasks: [WritingTask] = []
 
     var body: some View {

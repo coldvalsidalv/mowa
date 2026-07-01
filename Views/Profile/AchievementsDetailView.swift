@@ -3,7 +3,8 @@ import SwiftUI
 struct AchievementsDetailView: View {
     let achievements: [Achievement]
     @Environment(\.dismiss) var dismiss
-    
+    @ObservedObject private var languageManager = LanguageManager.shared
+
     var body: some View {
         NavigationStack {
             List(achievements) { item in

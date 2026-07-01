@@ -4,6 +4,9 @@ import SwiftData
 struct CategoryDetailView: View {
     let category: String
     @Environment(\.modelContext) private var modelContext
+    // Пушится через NavigationLink — свой hosting controller, не обновляется
+    // при смене языка без прямой подписки на LanguageManager.
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     @Query private var words: [VocabItem]
 

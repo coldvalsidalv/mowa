@@ -6,7 +6,8 @@ struct QuizView: View {
     @Environment(\.dismiss) var dismiss
     
     @StateObject private var viewModel = QuizViewModel()
-    
+    @ObservedObject private var languageManager = LanguageManager.shared
+
     var body: some View {
         ZStack {
             Color(UIColor.systemGroupedBackground).ignoresSafeArea()

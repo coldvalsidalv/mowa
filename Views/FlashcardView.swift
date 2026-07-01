@@ -7,6 +7,7 @@ struct FlashcardView: View {
     
     @StateObject private var viewModel: FlashcardViewModel
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var showExitAlert = false
     
     init(categories: [String], isReviewMode: Bool, context: ModelContext) {

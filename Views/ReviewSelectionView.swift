@@ -3,7 +3,8 @@ import SwiftData
 
 struct ReviewSelectionView: View {
     @Environment(\.modelContext) private var context
-    
+    @ObservedObject private var languageManager = LanguageManager.shared
+
     // Реактивная выборка всех карточек, которые уже находятся в процессе изучения (reps > 0)
     @Query(filter: #Predicate<VocabItem> { $0.fsrsData.reps > 0 })
     private var studiedWords: [VocabItem]
@@ -353,6 +354,7 @@ struct GrammarDueListView: View {
     let title: String
     let items: [GrammarProgress]
     let allLessons: [GrammarLesson]
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     var body: some View {
         ScrollView {

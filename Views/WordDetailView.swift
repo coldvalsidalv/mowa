@@ -5,6 +5,7 @@ struct WordDetailView: View {
     let word: VocabItem
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     @State private var showResetAlert = false
 

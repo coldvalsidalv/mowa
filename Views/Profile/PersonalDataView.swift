@@ -6,6 +6,7 @@ struct PersonalDataView: View {
     @AppStorage(StorageKeys.userEmail) private var userEmail: String = ""
     
     @ObservedObject private var avatarManager = AvatarManager.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var selectedItem: PhotosPickerItem? = nil
     
     var body: some View {
