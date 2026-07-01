@@ -16,6 +16,7 @@ struct LeaderboardView: View {
     @AppStorage(StorageKeys.userName) private var userName: String = ""
 
     @ObservedObject private var avatarManager = AvatarManager.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     @State private var entries: [RemoteLeaderboardEntry] = []
     @State private var isLoading = false

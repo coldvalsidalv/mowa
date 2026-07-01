@@ -29,8 +29,8 @@ struct ContentView: View {
     @State private var triggerLessonsEditMode = false
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
-    // Подписка на смену языка — перерисовывает TabView с новыми строками
-    @StateObject private var languageManager = LanguageManager.shared
+    // Подписка на смену языка — перерисовывает таб-бар (заголовки табов) с новыми строками
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     var body: some View {
         ZStack {
@@ -74,8 +74,6 @@ struct ContentView: View {
                 .tag(3)
         }
         .tint(.purple)
-        // Перерисовываем при смене языка
-        .id(languageManager.currentLanguage)
         .onAppear {
             ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
             FSRSParamStore.shared.refreshIfNeeded()

@@ -73,7 +73,7 @@ extension Bundle {
 
 // MARK: - Удобный доступ к строкам
 
-func L(_ key: String, _ args: CVarArg...) -> String {
+nonisolated func L(_ key: String, _ args: CVarArg...) -> String {
     let format = Bundle.main.localizedString(forKey: key, value: key, table: nil)
     if args.isEmpty { return format }
     return String(format: format, arguments: args)

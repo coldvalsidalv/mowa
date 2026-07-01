@@ -4,6 +4,7 @@ import SwiftData
 struct LessonsView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = LessonsViewModel()
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var selectedTab: Int
     @Binding var triggerEditMode: Bool
 
