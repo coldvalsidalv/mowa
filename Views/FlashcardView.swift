@@ -54,6 +54,7 @@ struct FlashcardView: View {
             }
         }
         .navigationBarHidden(true)
+        .onDisappear { SpeechService.shared.stop() }
         .alert("Выйти из урока?", isPresented: $showExitAlert) {
             Button("Продолжить", role: .cancel) {}
             Button("Выйти", role: .destructive) { dismiss() }
@@ -113,11 +114,13 @@ struct FlashcardView: View {
                 
                 Button(action: { SpeechService.shared.speak(word) }) {
                     Image(systemName: "speaker.wave.2.fill")
+                        .foregroundColor(.blue)
                         .font(.title2)
                         .padding(14)
-                        .background(Color.gray.opacity(0.1))
+                        .background(Color.blue.opacity(0.1))
                         .clipShape(Circle())
                 }
+                .buttonStyle(.plain)
             }
             
             Text(word.translation.uppercased())

@@ -108,13 +108,6 @@ struct WordDetailView: View {
                                 Text(word.example)
                                     .font(.body)
                                 Spacer()
-                                Button {
-                                    SpeechService.shared.speak(word.example, language: "pl-PL")
-                                } label: {
-                                    Image(systemName: "speaker.wave.2.fill")
-                                        .foregroundColor(.blue)
-                                        .font(.footnote)
-                                }
                             }
                             .padding(14)
                             .background(Color(UIColor.secondarySystemGroupedBackground))
@@ -144,13 +137,6 @@ struct WordDetailView: View {
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         Spacer()
-                                        Button {
-                                            SpeechService.shared.speak(inflections[item.key]!, language: "pl-PL")
-                                        } label: {
-                                            Image(systemName: "speaker.wave.2.fill")
-                                                .foregroundColor(.blue.opacity(0.6))
-                                                .font(.caption)
-                                        }
                                     }
                                     .padding(.vertical, 10)
                                     .padding(.horizontal, 16)
@@ -183,6 +169,7 @@ struct WordDetailView: View {
             .padding(.vertical, 12)
         }
         .background(Color(UIColor.systemGroupedBackground))
+        .onDisappear { SpeechService.shared.stop() }
         .alert("Сбросить прогресс?", isPresented: $showResetAlert) {
             Button("Сбросить", role: .destructive) { resetProgress() }
             Button("Отмена", role: .cancel) {}
