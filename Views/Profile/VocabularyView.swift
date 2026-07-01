@@ -41,7 +41,7 @@ struct VocabularyView: View {
                             }
                             Spacer()
                             Button(action: {
-                                SpeechService.shared.speak(word)
+                                SpeechService.shared.speak(word.polish, language: "pl-PL")
                             }) {
                                 Image(systemName: "speaker.wave.2.fill")
                                     .foregroundColor(.blue)

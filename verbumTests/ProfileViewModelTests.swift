@@ -100,7 +100,7 @@ final class ProfileViewModelTests: XCTestCase {
         XCTAssertTrue(make(grammar: 6, totalGrammarLessons: 6).first { $0.title == "Профессор" }!.unlocked)
     }
 
-    /// "Профессор" — порог равен реальному числу уроков, а не магической константе.
+    /// "Профессор" threshold tracks the actual lesson count, not a magic constant.
     func test_professorAchievement_tracksActualLessonCount() {
         XCTAssertFalse(make(grammar: 6, totalGrammarLessons: 10).first { $0.title == "Профессор" }!.unlocked)
         XCTAssertTrue(make(grammar: 10, totalGrammarLessons: 10).first { $0.title == "Профессор" }!.unlocked)

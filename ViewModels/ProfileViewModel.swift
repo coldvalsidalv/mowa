@@ -36,9 +36,9 @@ final class ProfileViewModel: ObservableObject {
     /// показывает stale ачивки до следующего .onAppear.
     @Published var achievements: [Achievement] = []
 
-    /// Общее число уроков грамматики в бандле — порог ачивки "Профессор".
-    /// Захардкоженное значение (раньше 20) расходилось с реальным контентом (6 уроков)
-    /// и ачивка была недостижима — считаем динамически.
+    /// Total grammar lessons in the bundle — threshold for the "Профессор" achievement.
+    /// The old hardcoded value (20) diverged from actual content (6 lessons),
+    /// making the achievement unreachable — computed dynamically instead.
     private let totalGrammarLessons = DataManager.shared.loadGrammar().count
 
     init() {
