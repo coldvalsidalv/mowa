@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import UserNotifications
 import Combine
 
 final class ProfileViewModel: ObservableObject {
@@ -72,8 +71,12 @@ final class ProfileViewModel: ObservableObject {
         )
     }
 
-    /// Чистая фабрика достижений — без instance-state, тестируема без создания
-    /// ProfileViewModel (что под Swift 6 isolated deinit крашит XCTest).
+    /// Pure achievement factory — no instance state, testable without constructing
+    /// ProfileViewModel (whose isolated deinit crashes XCTest under Swift 6).
+    ///
+    /// Threshold achievements are described as data (`achievementSpecs`) and built by
+    /// a single mapping: adding one = one row in the list, no logic change (OCP).
+    /// The composite "Разносторонний" doesn't fit the single-metric model and is added explicitly.
     nonisolated static func makeAchievements(
         totalLearnedWords: Int,
         dayStreak: Int,
@@ -81,139 +84,42 @@ final class ProfileViewModel: ObservableObject {
         grammar: Int,
         totalGrammarLessons: Int
     ) -> [Achievement] {
-        [
-            // ── Словарный запас ──────────────────────────────────────────
-            .init(
-                title: "Первое слово",
-                description: "Выучи своё первое слово",
-                icon: "hand.raised.fill",
-                color: .blue,
-                unlocked: totalLearnedWords >= 1,
-                progress: min(Double(totalLearnedWords) / 1, 1.0),
-                progressLabel: "\(totalLearnedWords) / 1 слово"
-            ),
-            .init(
-                title: "Десятка",
-                description: "Выучи 10 слов",
-                icon: "sparkles",
-                color: .cyan,
-                unlocked: totalLearnedWords >= 10,
-                progress: min(Double(totalLearnedWords) / 10, 1.0),
-                progressLabel: "\(totalLearnedWords) / 10 слов"
-            ),
-            .init(
-                title: "Сотня",
-                description: "Выучи 100 слов",
-                icon: "graduationcap.fill",
-                color: .indigo,
-                unlocked: totalLearnedWords >= 100,
-                progress: min(Double(totalLearnedWords) / 100, 1.0),
-                progressLabel: "\(totalLearnedWords) / 100 слов"
-            ),
-            .init(
-                title: "Полиглот",
-                description: "Выучи 500 слов",
-                icon: "globe.europe.africa.fill",
-                color: .green,
-                unlocked: totalLearnedWords >= 500,
-                progress: min(Double(totalLearnedWords) / 500, 1.0),
-                progressLabel: "\(totalLearnedWords) / 500 слов"
-            ),
-            .init(
-                title: "Мастер слов",
-                description: "Выучи 2000 слов",
-                icon: "crown.fill",
-                color: .yellow,
-                unlocked: totalLearnedWords >= 2000,
-                progress: min(Double(totalLearnedWords) / 2000, 1.0),
-                progressLabel: "\(totalLearnedWords) / 2000 слов"
-            ),
-            // ── Серия дней ───────────────────────────────────────────────
-            .init(
-                title: "Привычка",
-                description: "3 дня занятий подряд",
-                icon: "flame",
-                color: .orange,
-                unlocked: dayStreak >= 3,
-                progress: min(Double(dayStreak) / 3, 1.0),
-                progressLabel: "\(dayStreak) / 3 дня"
-            ),
-            .init(
-                title: "Огонь",
-                description: "7 дней занятий подряд",
-                icon: "flame.fill",
-                color: .red,
-                unlocked: dayStreak >= 7,
-                progress: min(Double(dayStreak) / 7, 1.0),
-                progressLabel: "\(dayStreak) / 7 дней"
-            ),
-            .init(
-                title: "Несгораемый",
-                description: "30 дней занятий подряд",
-                icon: "bolt.fill",
-                color: .pink,
-                unlocked: dayStreak >= 30,
-                progress: min(Double(dayStreak) / 30, 1.0),
-                progressLabel: "\(dayStreak) / 30 дней"
-            ),
-            // ── Опыт ─────────────────────────────────────────────────────
-            .init(
-                title: "Первые очки",
-                description: "Набери 100 XP",
-                icon: "star.fill",
-                color: .blue,
-                unlocked: userXP >= 100,
-                progress: min(Double(userXP) / 100, 1.0),
-                progressLabel: "\(userXP) / 100 XP"
-            ),
-            .init(
-                title: "Чемпион",
-                description: "Набери 1000 XP",
-                icon: "trophy.fill",
-                color: .orange,
-                unlocked: userXP >= 1000,
-                progress: min(Double(userXP) / 1000, 1.0),
-                progressLabel: "\(userXP) / 1000 XP"
-            ),
-            .init(
-                title: "Легенда",
-                description: "Набери 5000 XP",
-                icon: "medal.fill",
-                color: .purple,
-                unlocked: userXP >= 5000,
-                progress: min(Double(userXP) / 5000, 1.0),
-                progressLabel: "\(userXP) / 5000 XP"
-            ),
-            // ── Грамматика ────────────────────────────────────────────────
-            .init(
-                title: "Первый урок",
-                description: "Пройди первый урок грамматики",
-                icon: "pencil.and.list.clipboard",
-                color: .teal,
-                unlocked: grammar >= 1,
-                progress: min(Double(grammar) / 1, 1.0),
-                progressLabel: "\(grammar) / 1 урок"
-            ),
-            .init(
-                title: "Грамматик",
-                description: "Пройди 5 уроков грамматики",
-                icon: "text.book.closed.fill",
-                color: .green,
-                unlocked: grammar >= 5,
-                progress: min(Double(grammar) / 5, 1.0),
-                progressLabel: "\(grammar) / 5 уроков"
-            ),
-            .init(
-                title: "Профессор",
-                description: "Пройди все уроки грамматики",
-                icon: "brain.head.profile",
-                color: .purple,
-                unlocked: totalGrammarLessons > 0 && grammar >= totalGrammarLessons,
-                progress: totalGrammarLessons > 0 ? min(Double(grammar) / Double(totalGrammarLessons), 1.0) : 0,
-                progressLabel: "\(grammar) / \(totalGrammarLessons) уроков"
-            ),
-            // ── Особые ───────────────────────────────────────────────────
-            .init(
+        func metricValue(_ metric: AchievementMetric) -> Int {
+            switch metric {
+            case .words:   return totalLearnedWords
+            case .streak:  return dayStreak
+            case .xp:      return userXP
+            case .grammar: return grammar
+            }
+        }
+        func resolvedThreshold(_ threshold: AchievementThreshold) -> Int {
+            switch threshold {
+            case .fixed(let count):    return count
+            case .totalGrammarLessons: return totalGrammarLessons
+            }
+        }
+
+        var result = achievementSpecs.map { spec -> Achievement in
+            let currentValue = metricValue(spec.metric)
+            let threshold = resolvedThreshold(spec.threshold)
+            // threshold == 0 only happens for "Профессор" while the lesson list isn't
+            // loaded yet — then the achievement is locked (as in the original guard logic).
+            let unlocked = threshold > 0 && currentValue >= threshold
+            let progress = threshold > 0 ? min(Double(currentValue) / Double(threshold), 1.0) : 0
+            return Achievement(
+                title: spec.title,
+                description: spec.description,
+                icon: spec.icon,
+                color: spec.color,
+                unlocked: unlocked,
+                progress: progress,
+                progressLabel: "\(currentValue) / \(threshold) \(spec.unit)"
+            )
+        }
+
+        // ── Special: the composite achievement doesn't reduce to a single metric ──
+        result.append(
+            Achievement(
                 title: "Разносторонний",
                 description: "50 слов и 3 урока грамматики",
                 icon: "square.grid.2x2.fill",
@@ -221,8 +127,9 @@ final class ProfileViewModel: ObservableObject {
                 unlocked: totalLearnedWords >= 50 && grammar >= 3,
                 progress: min(Double(min(totalLearnedWords, 50)) / 50 * 0.5 + Double(min(grammar, 3)) / 3 * 0.5, 1.0),
                 progressLabel: totalLearnedWords < 50 ? "\(totalLearnedWords) / 50 слов" : "\(grammar) / 3 урока"
-            ),
-        ]
+            )
+        )
+        return result
     }
 
     var notificationTimeBinding: Binding<Date> {
@@ -295,37 +202,13 @@ final class ProfileViewModel: ObservableObject {
 
     func toggleNotifications(_ isEnabled: Bool) {
         if isEnabled {
-            UNUserNotificationCenter.current().getNotificationSettings { settings in
-                DispatchQueue.main.async {
-                    switch settings.authorizationStatus {
-                    case .notDetermined:
-                        NotificationManager.shared.requestAuthorization { granted in
-                            if granted {
-                                self.scheduleDailyReminder()
-                            } else {
-                                self.notificationsEnabled = false
-                            }
-                        }
-                    case .denied:
-                        self.notificationsEnabled = false
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
-                    default:
-                        self.scheduleDailyReminder()
-                    }
-                }
+            let time = Date(timeIntervalSince1970: notificationTimeInterval)
+            NotificationManager.shared.enableFromSettings(reminderTime: time) { [weak self] didEnable in
+                if !didEnable { self?.notificationsEnabled = false }
             }
         } else {
-            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            NotificationManager.shared.disableAll()
         }
-    }
-
-    private func scheduleDailyReminder() {
-        let time = Date(timeIntervalSince1970: notificationTimeInterval)
-        NotificationManager.shared.scheduleDailyReminder(at: time)
-        NotificationManager.shared.scheduleStreakProtection()
     }
 
     func resetAllProgress() {
@@ -339,18 +222,11 @@ final class ProfileViewModel: ObservableObject {
         recomputeAchievements()
     }
 
-    /// Удаляет аккаунт на бэкенде, затем разлогинивает и чистит локальный профиль.
-    /// При ошибке сети ничего не чистим — юзер остаётся залогинен и видит alert.
+    /// Deletes the account (network + sign-out live in AccountService), then clears the
+    /// local profile. On a network error we clear nothing — the user stays logged in and sees an alert.
     func deleteAccount() async {
-        guard let userId = KeychainHelper.load(KeychainKeys.userId) else {
-            // Сессии нет — удалять на сервере нечего, просто чистим локально.
-            AuthManager.shared.signOut()
-            clearLocalProfile()
-            return
-        }
         do {
-            try await APIClient.shared.deleteAccount(userId: userId)
-            AuthManager.shared.signOut()
+            try await AccountService.shared.deleteAccount()
             clearLocalProfile()
         } catch {
             accountDeletionError = "Не удалось удалить аккаунт. Проверь соединение и попробуй ещё раз."
@@ -365,3 +241,64 @@ final class ProfileViewModel: ObservableObject {
         AvatarManager.shared.deleteAvatar()
     }
 }
+
+// MARK: - Achievement specs (data, not code)
+
+/// Progress metric a threshold achievement is bound to.
+private enum AchievementMetric {
+    case words, streak, xp, grammar
+}
+
+/// Unlock threshold: fixed, or dynamic (the grammar lesson count).
+private enum AchievementThreshold {
+    case fixed(Int)
+    case totalGrammarLessons
+}
+
+/// Declarative description of a threshold achievement. Adding a new achievement is
+/// a new element in `achievementSpecs`, not an edit to `makeAchievements` (OCP).
+private struct AchievementSpec {
+    let title: String
+    let description: String
+    let icon: String
+    let color: Color
+    let metric: AchievementMetric
+    let threshold: AchievementThreshold
+    let unit: String   // suffix for progressLabel: "слов" / "дней" / "XP" / "уроков"
+}
+
+/// Immutable Sendable constant — read from the nonisolated `makeAchievements`.
+private let achievementSpecs: [AchievementSpec] = [
+    // ── Vocabulary ──────────────────────────────────────────
+    .init(title: "Первое слово", description: "Выучи своё первое слово",
+          icon: "hand.raised.fill", color: .blue, metric: .words, threshold: .fixed(1), unit: "слово"),
+    .init(title: "Десятка", description: "Выучи 10 слов",
+          icon: "sparkles", color: .cyan, metric: .words, threshold: .fixed(10), unit: "слов"),
+    .init(title: "Сотня", description: "Выучи 100 слов",
+          icon: "graduationcap.fill", color: .indigo, metric: .words, threshold: .fixed(100), unit: "слов"),
+    .init(title: "Полиглот", description: "Выучи 500 слов",
+          icon: "globe.europe.africa.fill", color: .green, metric: .words, threshold: .fixed(500), unit: "слов"),
+    .init(title: "Мастер слов", description: "Выучи 2000 слов",
+          icon: "crown.fill", color: .yellow, metric: .words, threshold: .fixed(2000), unit: "слов"),
+    // ── Day streak ───────────────────────────────────────────────
+    .init(title: "Привычка", description: "3 дня занятий подряд",
+          icon: "flame", color: .orange, metric: .streak, threshold: .fixed(3), unit: "дня"),
+    .init(title: "Огонь", description: "7 дней занятий подряд",
+          icon: "flame.fill", color: .red, metric: .streak, threshold: .fixed(7), unit: "дней"),
+    .init(title: "Несгораемый", description: "30 дней занятий подряд",
+          icon: "bolt.fill", color: .pink, metric: .streak, threshold: .fixed(30), unit: "дней"),
+    // ── Experience (XP) ──────────────────────────────────────────
+    .init(title: "Первые очки", description: "Набери 100 XP",
+          icon: "star.fill", color: .blue, metric: .xp, threshold: .fixed(100), unit: "XP"),
+    .init(title: "Чемпион", description: "Набери 1000 XP",
+          icon: "trophy.fill", color: .orange, metric: .xp, threshold: .fixed(1000), unit: "XP"),
+    .init(title: "Легенда", description: "Набери 5000 XP",
+          icon: "medal.fill", color: .purple, metric: .xp, threshold: .fixed(5000), unit: "XP"),
+    // ── Grammar ────────────────────────────────────────────────
+    .init(title: "Первый урок", description: "Пройди первый урок грамматики",
+          icon: "pencil.and.list.clipboard", color: .teal, metric: .grammar, threshold: .fixed(1), unit: "урок"),
+    .init(title: "Грамматик", description: "Пройди 5 уроков грамматики",
+          icon: "text.book.closed.fill", color: .green, metric: .grammar, threshold: .fixed(5), unit: "уроков"),
+    .init(title: "Профессор", description: "Пройди все уроки грамматики",
+          icon: "brain.head.profile", color: .purple, metric: .grammar, threshold: .totalGrammarLessons, unit: "уроков"),
+]

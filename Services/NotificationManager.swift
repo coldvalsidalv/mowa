@@ -117,4 +117,44 @@ extension NotificationManager {
     func scheduleNewContent() {
         scheduleNotification(type: .content, title: "🆕 Новые слова добавлены", body: "В словаре появились новые темы — иди изучай!", timeInterval: 259200)
     }
+
+    // MARK: - Notifications toggle (flow from Profile)
+
+    /// Full enable flow from the UI: check status → request if needed → jump to
+    /// Settings if previously denied. On success schedules the daily reminder +
+    /// streak protection. `onResult(true)` — enabled and scheduled; `onResult(false)`
+    /// — couldn't enable, the caller should turn the toggle back off.
+    /// Encapsulates UNUserNotificationCenter/UIApplication so the VM doesn't touch them.
+    func enableFromSettings(reminderTime: Date, onResult: @escaping @Sendable (Bool) -> Void) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                switch settings.authorizationStatus {
+                case .notDetermined:
+                    self.requestAuthorization { granted in
+                        if granted { self.scheduleReminderWithStreak(at: reminderTime) }
+                        onResult(granted)
+                    }
+                case .denied:
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                    onResult(false)
+                default:
+                    self.scheduleReminderWithStreak(at: reminderTime)
+                    onResult(true)
+                }
+            }
+        }
+    }
+
+    /// Toggle off: remove all pending and delivered notifications.
+    func disableAll() {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+    }
+
+    private func scheduleReminderWithStreak(at time: Date) {
+        scheduleDailyReminder(at: time)
+        scheduleStreakProtection()
+    }
 }

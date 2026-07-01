@@ -13,6 +13,24 @@ enum ReviewTier {
     case strong         // review, stability >= 14
 }
 
+// MARK: - Injected collaborators
+
+/// Consumer-owned abstractions (DIP): LearningEngine declares the narrow surface
+/// it needs from its side-effecting collaborators, so tests can substitute
+/// no-op/spy doubles for the singletons that touch UserDefaults / Keychain / network.
+@MainActor
+protocol StreakTracking {
+    func completeLesson()
+}
+
+@MainActor
+protocol ReviewLogSyncing {
+    func syncIfNeeded(context: ModelContext)
+}
+
+extension StreakManager: StreakTracking {}
+extension ReviewLogSyncService: ReviewLogSyncing {}
+
 /// Сервис уровня бизнес-логики. Оркестрирует выборку из БД и работу FSRS.
 @MainActor
 final class LearningEngine: ObservableObject {
@@ -21,6 +39,8 @@ final class LearningEngine: ObservableObject {
     /// Hot-reload в середине сессии намеренно не делаем — оптимизатор перезаписывает
     /// параметры асинхронно, в середине сессии менять мат-модель опасно.
     private let scheduler: FSRSScheduler
+    private let streakTracker: StreakTracking
+    private let reviewLogSync: ReviewLogSyncing
 
     @Published var sessionQueue: [VocabItem] = []
     @Published var sessionProgress: CGFloat = 0.0
@@ -29,14 +49,22 @@ final class LearningEngine: ObservableObject {
     /// Нужно, чтобы не вернуть её в очередь больше cap-раз.
     private var againRetryCount: [UUID: Int] = [:]
 
-    init(context: ModelContext) {
+    /// Dependencies are optional with a nil default (rather than `= .shared` in the
+    /// signature): a default argument is evaluated in a nonisolated context and can't
+    /// reference MainActor-isolated singletons. We resolve them in the init body (MainActor).
+    init(context: ModelContext,
+         params: FSRSParams? = nil,
+         streakTracker: StreakTracking? = nil,
+         reviewLogSync: ReviewLogSyncing? = nil) {
         self.modelContext = context
-        let p = FSRSParamStore.shared.current
+        self.streakTracker = streakTracker ?? StreakManager.shared
+        self.reviewLogSync = reviewLogSync ?? ReviewLogSyncService.shared
+        let resolvedParams = params ?? FSRSParamStore.shared.current
         self.scheduler = FSRSScheduler(
-            parameters: p.parameters,
-            desiredRetention: p.desiredRetention,
-            learningSteps: p.learningSteps,
-            relearningSteps: p.relearningSteps
+            parameters: resolvedParams.parameters,
+            desiredRetention: resolvedParams.desiredRetention,
+            learningSteps: resolvedParams.learningSteps,
+            relearningSteps: resolvedParams.relearningSteps
         )
     }
 
@@ -199,7 +227,7 @@ final class LearningEngine: ObservableObject {
             }
             // Иначе карточка получила forget-обновление и уйдёт в next due; в текущей сессии больше не показываем.
         } else {
-            StreakManager.shared.completeLesson()
+            streakTracker.completeLesson()
         }
 
         updateProgress()
@@ -212,7 +240,7 @@ final class LearningEngine: ObservableObject {
 
         // Конец сессии — отправляем накопленные ReviewLog'и на бэкенд.
         if sessionQueue.isEmpty {
-            ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
+            reviewLogSync.syncIfNeeded(context: modelContext)
         }
     }
 

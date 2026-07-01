@@ -1,107 +1,17 @@
 import Foundation
 
-// MARK: - Remote DTOs (чистые контейнеры для JSON-декодинга, без логики)
+// MARK: - Transport DTOs
 
 nonisolated struct TeenyListResponse<T: Decodable>: Decodable, @unchecked Sendable {
     let items: [T]
     let total: Int
 }
 
-/// Заглушка для endpoint'ов, ответ которых нам не нужен парсить.
-/// Кастомный init принимает любой JSON (объект, массив, скаляр) —
-/// синтезированный падал бы на не-объектах.
+/// Placeholder for endpoints whose response we don't need to parse.
+/// The custom init accepts any JSON (object, array, scalar) — the
+/// synthesized one would fail on non-objects.
 struct TeenyEmpty: Decodable, Sendable {
     init(from decoder: Decoder) throws {}
-}
-
-/// Сырой DTO с бэкенда. JSON-столбцы приходят как строки (как inflections в RemoteWord) —
-/// парсим в toParams().
-struct RemoteFSRSParams: Decodable, Sendable {
-    let id: String
-    let user_id: String
-    let parameters: String         // JSON-encoded [Double]
-    let desired_retention: Double
-    let learning_steps: String     // JSON-encoded [Double]
-    let relearning_steps: String   // JSON-encoded [Double]
-
-    func toParams() throws -> FSRSParams {
-        let dec = JSONDecoder()
-        guard let pData = parameters.data(using: .utf8),
-              let lsData = learning_steps.data(using: .utf8),
-              let rsData = relearning_steps.data(using: .utf8) else {
-            throw APIError.decodingError(NSError(domain: "FSRSParams", code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "non-utf8 JSON"]))
-        }
-        return FSRSParams(
-            parameters: try dec.decode([Double].self, from: pData),
-            desiredRetention: desired_retention,
-            learningSteps: try dec.decode([TimeInterval].self, from: lsData),
-            relearningSteps: try dec.decode([TimeInterval].self, from: rsData)
-        )
-    }
-}
-
-struct RemoteWord: Sendable {
-    let id: String
-    let polish: String
-    let translation: String
-    let transcription: String?
-    let part_of_speech: String?
-    let example: String?
-    let examples_list: String?
-    let category: String
-    let image_name: String?
-    let updated: String?
-    let rank: Int?
-    let inflections: String?
-}
-
-extension RemoteWord: Decodable {
-    enum CodingKeys: String, CodingKey {
-        case id, polish, translation, transcription, category, updated, rank, inflections
-        case part_of_speech, example, examples_list, image_name
-    }
-
-    nonisolated init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id           = try container.decode(String.self, forKey: .id)
-        polish       = try container.decode(String.self, forKey: .polish)
-        translation  = try container.decode(String.self, forKey: .translation)
-        transcription  = try container.decodeIfPresent(String.self, forKey: .transcription)
-        part_of_speech = try container.decodeIfPresent(String.self, forKey: .part_of_speech)
-        example        = try container.decodeIfPresent(String.self, forKey: .example)
-        examples_list  = try container.decodeIfPresent(String.self, forKey: .examples_list)
-        category       = try container.decode(String.self, forKey: .category)
-        image_name     = try container.decodeIfPresent(String.self, forKey: .image_name)
-        updated        = try container.decodeIfPresent(String.self, forKey: .updated)
-        rank           = try container.decodeIfPresent(Int.self, forKey: .rank)
-        inflections    = try container.decodeIfPresent(String.self, forKey: .inflections)
-    }
-}
-
-struct RemoteLeaderboardEntry: Decodable, Sendable {
-    let id: String
-    let user_id: String
-    let display_name: String
-    let xp: Int
-}
-
-struct RemoteGrammarLesson: Decodable, Sendable {
-    let lesson_id: String
-    let title: String
-    let description: String?
-    let level: String
-    let order_index: Int?
-    let steps: String
-}
-
-/// Teenybase возвращает json-поля как строки (как steps у грамматики),
-/// поэтому levels декодируем строкой и парсим вручную.
-struct RemoteExamSession: Decodable, Sendable {
-    let session_id: String
-    let start_date: String
-    let end_date: String
-    let levels: String
 }
 
 // MARK: - Error
@@ -113,8 +23,11 @@ enum APIError: Error {
     case serverError(Int, message: String?)
 }
 
-// MARK: - APIClient
+// MARK: - APIClient (transport)
 
+/// Network layer. Only transport lives here (generic POST with auth token and
+/// retry on 401). Domain methods (vocabulary, fsrs, grammar, leaderboard, …) are
+/// split into `APIClient+<Domain>.swift`, each with its own Remote DTOs.
 final class APIClient {
     static let shared = APIClient()
     private init() {}
@@ -122,175 +35,14 @@ final class APIClient {
     private let session = URLSession.shared
     private let decoder = JSONDecoder()
 
-    // MARK: - Vocabulary
-
-    /// Загружает все слова (полный sync при первом запуске)
-    func fetchAllWords() async throws -> [RemoteWord] {
-        try await fetchWords(updatedSince: nil)
-    }
-
-    /// Загружает только слова обновлённые после `since` (delta sync)
-    func fetchWordsDelta(since: Date) async throws -> [RemoteWord] {
-        try await fetchWords(updatedSince: since)
-    }
-
-    private func fetchWords(updatedSince: Date?) async throws -> [RemoteWord] {
-        let pageSize = 200
-        var body: [String: Any] = ["limit": pageSize, "offset": 0]
-        if let since = updatedSince {
-            let formatted = ISO8601DateFormatter.teenybase.string(from: since)
-            body["where"] = "updated > \"\(formatted)\""
-        }
-
-        let first: TeenyListResponse<RemoteWord> = try await post(
-            path: "/api/v1/table/vocabulary/list", body: body)
-        var all = first.items
-
-        let totalPages = Int(ceil(Double(first.total) / Double(pageSize)))
-        if totalPages > 1 {
-            try await withThrowingTaskGroup(of: [RemoteWord].self) { group in
-                for page in 2...totalPages {
-                    group.addTask { [weak self] in
-                        guard let self else { return [] }
-                        var pageBody = body
-                        pageBody["offset"] = (page - 1) * pageSize
-                        let resp: TeenyListResponse<RemoteWord> = try await self.post(
-                            path: "/api/v1/table/vocabulary/list", body: pageBody)
-                        return resp.items
-                    }
-                }
-                for try await batch in group { all.append(contentsOf: batch) }
-            }
-        }
-        return all
-    }
-
-    // MARK: - FSRS Params
-
-    /// Тянет персональные FSRS-параметры юзера. nil — записи нет, значит используем дефолты.
-    func fetchFsrsParams(userId: String) async throws -> FSRSParams? {
-        let body: [String: Any] = [
-            "where": "user_id == \"\(userId)\"",
-            "limit": 1
-        ]
-        let resp: TeenyListResponse<RemoteFSRSParams> = try await post(
-            path: "/api/v1/table/fsrs_params/list", body: body
-        )
-        guard let remote = resp.items.first else { return nil }
-        return try remote.toParams()
-    }
-
-    // MARK: - Review Logs
-
-    /// Загружает один ReviewLog на бэкенд. Идемпотентно — при коллизии
-    /// (user_id, card_id, review_date) сервер вернёт 4xx, мы трактуем это как success.
-    /// `cardId` — Teenybase UUID карточки (remoteId), не локальный SwiftData UUID.
-    func insertReviewLog(userId: String,
-                         cardId: String,
-                         rating: Int,
-                         reviewDate: Date,
-                         reviewDurationMs: Int) async throws {
-        let body: [String: Any] = [
-            "values": [
-                "user_id": userId,
-                "card_id": cardId,
-                "rating": rating,
-                "review_date": ISO8601DateFormatter.teenybase.string(from: reviewDate),
-                "review_duration_ms": reviewDurationMs
-            ]
-        ]
-        do {
-            let _: TeenyEmpty = try await post(path: "/api/v1/table/review_logs/insert", body: body)
-        } catch APIError.serverError(let code, let message)
-            where code == 409 || (code == 400 && message?.localizedCaseInsensitiveContains("unique") == true) {
-            // Unique constraint (user_id, card_id, review_date) — повторный синк того же
-            // лога, трактуем как success. Любые другие ошибки (401, валидация и т.д.)
-            // пробрасываем: caller не должен продвигать cursor, иначе лог потерян навсегда.
-        }
-    }
-
-    // MARK: - Account
-
-    /// Удаляет запись юзера на бэкенде (правило таблицы: auth.uid == id,
-    /// т.е. юзер может удалить только себя). App Store 5.1.1(v) требует
-    /// возможность удаления аккаунта прямо из приложения.
-    func deleteAccount(userId: String) async throws {
-        let body: [String: Any] = ["where": "id == \"\(userId)\""]
-        let _: TeenyEmpty = try await post(path: "/api/v1/table/users/delete", body: body)
-    }
-
-    // MARK: - Grammar
-
-    func fetchAllGrammarLessons() async throws -> [GrammarLesson] {
-        let resp: TeenyListResponse<RemoteGrammarLesson> = try await post(
-            path: "/api/v1/table/grammar_lessons/list",
-            body: ["limit": 200, "sort": "order_index"]
-        )
-        return resp.items.compactMap { remoteToGrammarLesson($0) }
-    }
-
-    // MARK: - Exam sessions
-
-    func fetchAllExamSessions() async throws -> [ExamSession] {
-        let resp: TeenyListResponse<RemoteExamSession> = try await post(
-            path: "/api/v1/table/exam_sessions/list",
-            body: ["limit": 100, "sort": "start_date"]
-        )
-        return resp.items.compactMap { remoteToExamSession($0) }
-    }
-
-    // MARK: - Leaderboard
-
-    func fetchLeaderboard() async throws -> [RemoteLeaderboardEntry] {
-        let resp: TeenyListResponse<RemoteLeaderboardEntry> = try await post(
-            path: "/api/v1/table/leaderboard/list",
-            body: ["limit": 25, "sort": "-xp"]
-        )
-        return resp.items
-    }
-
-    /// Upsert: insert → при конфликте unique user_id → update.
-    func upsertLeaderboard(userId: String, displayName: String, xp: Int) async throws {
-        let insertBody: [String: Any] = [
-            "values": ["user_id": userId, "display_name": displayName, "xp": xp]
-        ]
-        do {
-            let _: TeenyEmpty = try await post(path: "/api/v1/table/leaderboard/insert", body: insertBody)
-        } catch APIError.serverError(let code, let message)
-            where code == 409 || (code == 400 && message?.localizedCaseInsensitiveContains("unique") == true) {
-            let updateBody: [String: Any] = [
-                "where": "user_id == \"\(userId)\"",
-                "values": ["display_name": displayName, "xp": xp]
-            ]
-            let _: TeenyEmpty = try await post(path: "/api/v1/table/leaderboard/update", body: updateBody)
-        }
-    }
-
-    // MARK: - Writing grading (Phase 2)
-
-    func gradeWriting(task: WritingTask, text: String, lang: String) async throws -> WritingFeedback {
-        let body: [String: Any] = [
-            "task_id": task.taskId,
-            "task": [
-                "type": task.type,
-                "prompt": task.prompt,
-                "required_points": task.requiredPoints,
-                "min_words": task.minWords,
-                "max_words": task.maxWords,
-            ],
-            "text": text,
-            "feedback_lang": lang,
-        ]
-        // LLM grading is slow (several seconds); the default 15s timeout is too tight.
-        return try await post(path: "/api/v1/writing/grade", body: body, timeout: 60)
-    }
-
     // MARK: - Generic POST
 
-    /// Внутренний POST с автоматической подстановкой auth-токена и retry на 401.
-    /// При 401 пытается обновить токен через AuthManager, повторяет запрос один раз.
-    /// Если refresh не удался — signOut() и пробрасывает 401.
-    private func post<T: Decodable>(path: String, body: [String: Any], timeout: TimeInterval = 15) async throws -> T {
+    /// POST that automatically injects the auth token and retries once on 401.
+    /// On 401 it tries to refresh the token via AuthManager and retries the request
+    /// once. If the refresh fails — signOut() and rethrow the 401.
+    ///
+    /// Internal (not private): called by the domain extensions in sibling files.
+    func post<T: Decodable>(path: String, body: [String: Any], timeout: TimeInterval = 15) async throws -> T {
         try await postOnce(path: path, body: body, isRetry: false, timeout: timeout)
     }
 
@@ -302,7 +54,7 @@ final class APIClient {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        // Auth-токен пользователя приоритетнее статического contentReadToken.
+        // The user's auth token takes precedence over the static contentReadToken.
         if let token = AuthManager.shared.currentAccessToken() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else if !VerbumConfig.contentReadToken.isEmpty {
@@ -323,7 +75,7 @@ final class APIClient {
         }
 
         if http.statusCode == 401 && !isRetry {
-            // Пробуем рефреш токена и повторяем запрос один раз.
+            // Try to refresh the token and retry the request once.
             do {
                 try await AuthManager.shared.refresh()
             } catch AuthError.network(let underlying) {
@@ -355,35 +107,11 @@ final class APIClient {
 // MARK: - Helpers
 
 extension ISO8601DateFormatter {
-    /// Формат дат Teenybase: "2026-06-04 19:10:47" (SQLite CURRENT_TIMESTAMP)
+    /// Teenybase date format: "2026-06-04 19:10:47" (SQLite CURRENT_TIMESTAMP)
     static let teenybase: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate, .withSpaceBetweenDateAndTime, .withTime, .withColonSeparatorInTime]
         formatter.timeZone = TimeZone(identifier: "UTC")
         return formatter
     }()
-}
-
-private func remoteToExamSession(_ r: RemoteExamSession) -> ExamSession? {
-    let levels = (r.levels.data(using: .utf8))
-        .flatMap { try? JSONDecoder().decode([String].self, from: $0) } ?? []
-    let bundle = BundleExamSession(
-        session_id: r.session_id, start_date: r.start_date, end_date: r.end_date, levels: levels
-    )
-    return ExamSessionParser.from(bundle)
-}
-
-private func remoteToGrammarLesson(_ r: RemoteGrammarLesson) -> GrammarLesson? {
-    guard let data = r.steps.data(using: .utf8),
-          let steps = try? JSONDecoder().decode([GrammarStep].self, from: data) else {
-        verbumLog("❌ APIClient: failed to decode steps for lesson \(r.lesson_id)")
-        return nil
-    }
-    return GrammarLesson(
-        id: r.lesson_id,
-        title: r.title,
-        description: r.description ?? "",
-        level: r.level,
-        steps: steps
-    )
 }
