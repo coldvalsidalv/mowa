@@ -7,6 +7,10 @@ struct HomeView: View {
 
     @StateObject private var viewModel = HomeViewModel()
     @StateObject private var examPlan = ExamPlanStore()
+    // Подписка нужна, даже если currentLanguage нигде не читается: TabView держит
+    // каждый таб в своём hosting controller, и без прямой подписки этот экран
+    // не перерисуется при смене языка.
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var categoryStats: [String: (total: Int, learned: Int)] = [:]
 
     @State private var showExamSetup = false

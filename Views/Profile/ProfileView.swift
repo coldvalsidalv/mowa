@@ -28,6 +28,9 @@ struct Achievement: Identifiable {
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
     @ObservedObject private var avatarManager = AvatarManager.shared
+    // TabView рендерит каждый таб в отдельном hosting controller — перерисовка
+    // ContentView при смене языка сюда не долетает без прямой подписки на LanguageManager.
+    @ObservedObject private var languageManager = LanguageManager.shared
     @Environment(\.modelContext) private var modelContext
     @State private var showAllAchievements = false
 

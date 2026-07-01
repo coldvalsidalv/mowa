@@ -3,6 +3,7 @@ import SwiftData
 
 struct WritingEditorView: View {
     @StateObject private var viewModel: WritingViewModel
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     init(task: WritingTask, context: ModelContext) {
         _viewModel = StateObject(wrappedValue: WritingViewModel(task: task, context: context))

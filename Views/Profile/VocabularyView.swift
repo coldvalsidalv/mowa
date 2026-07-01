@@ -6,6 +6,7 @@ struct VocabularyView: View {
         filter: #Predicate<VocabItem> { $0.fsrsData.stability >= 3.0 },
         sort: \VocabItem.polish
     ) private var learnedWords: [VocabItem]
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     var body: some View {
         List {

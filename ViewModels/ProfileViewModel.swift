@@ -272,7 +272,7 @@ private struct AchievementSpec {
 }
 
 /// Immutable Sendable constant — read from the nonisolated `makeAchievements`.
-private let achievementSpecs: [AchievementSpec] = [
+private nonisolated let achievementSpecs: [AchievementSpec] = [
     // ── Vocabulary ──────────────────────────────────────────
     .init(title: "ach.first_word_title", description: "ach.first_word_desc",
           icon: "hand.raised.fill", color: .blue, metric: .words, threshold: .fixed(1), unit: "ach.unit_word"),

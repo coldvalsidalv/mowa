@@ -129,6 +129,7 @@ struct ExamCard: View {
 struct ExamSetupSheet: View {
     @ObservedObject var store: ExamPlanStore
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     @State private var level: ExamLevel
     @State private var date: Date

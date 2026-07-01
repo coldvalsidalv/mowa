@@ -4,6 +4,10 @@ import SwiftData
 struct LessonsView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = LessonsViewModel()
+    // Подписка нужна, даже если currentLanguage нигде не читается: TabView держит
+    // каждый таб в своём hosting controller, и без прямой подписки этот экран
+    // не перерисуется при смене языка.
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var selectedTab: Int
     @Binding var triggerEditMode: Bool
 
@@ -315,7 +319,8 @@ struct GrammarLevelListView: View {
     let title: String
     let lessons: [GrammarLesson]
     let completedIDs: Set<String>
-    
+    @ObservedObject private var languageManager = LanguageManager.shared
+
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
