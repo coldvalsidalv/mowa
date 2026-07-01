@@ -10,6 +10,19 @@ final class SpeechService: NSObject, ObservableObject {
     private var fetchTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
 
+    private lazy var ttsCacheDirectory: URL = {
+        let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let dir = caches.appendingPathComponent("verbum-tts", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }()
+
+    private lazy var ttsSession: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 8
+        return URLSession(configuration: config)
+    }()
+
     @Published var isSpeaking = false
 
     private override init() {
@@ -31,6 +44,7 @@ final class SpeechService: NSObject, ObservableObject {
 
     private func observeInterruptions() {
         NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 guard let userInfo = notification.userInfo,
                       let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
@@ -59,6 +73,8 @@ final class SpeechService: NSObject, ObservableObject {
 
         fetchTask?.cancel()
         fetchTask = nil
+        audioPlayer?.stop()
+        audioPlayer = nil
 
         let cacheURL = ttsCacheURL(for: polish)
         if FileManager.default.fileExists(atPath: cacheURL.path) {
@@ -71,7 +87,8 @@ final class SpeechService: NSObject, ObservableObject {
             do {
                 let data = try await self.downloadTTS(polish: polish)
                 guard !Task.isCancelled else { return }
-                try data.write(to: cacheURL)
+                try data.write(to: cacheURL, options: .atomic)
+                guard !Task.isCancelled else { return }
                 await MainActor.run { self.playAudio(url: cacheURL) }
             } catch {
                 guard !Task.isCancelled else { return }
@@ -91,7 +108,7 @@ final class SpeechService: NSObject, ObservableObject {
         synthesizer.stopSpeaking(at: .immediate)
         audioPlayer?.stop()
         audioPlayer = nil
-        DispatchQueue.main.async { self.isSpeaking = false }
+        isSpeaking = false
     }
 
     // MARK: - Private
@@ -132,7 +149,7 @@ final class SpeechService: NSObject, ObservableObject {
     private func downloadTTS(polish: String) async throws -> Data {
         let encoded = polish.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? polish
         let url = URL(string: "\(VerbumConfig.baseURL)/api/tts/\(encoded)")!
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let (data, response) = try await ttsSession.data(from: url)
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
@@ -140,11 +157,8 @@ final class SpeechService: NSObject, ObservableObject {
     }
 
     private func ttsCacheURL(for polish: String) -> URL {
-        let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-        let dir = caches.appendingPathComponent("verbum-tts", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let safe = polish.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? polish
-        return dir.appendingPathComponent("\(safe).mp3")
+        return ttsCacheDirectory.appendingPathComponent("\(safe).mp3")
     }
 }
 

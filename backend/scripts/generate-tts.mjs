@@ -129,6 +129,7 @@ async function main() {
     const batch = words.slice(i, i + CONCURRENCY)
     const results = await runBatch(batch)
 
+    const rateLimited = []
     for (let j = 0; j < results.length; j++) {
       const r = results[j]
       if (r.status === 'fulfilled') {
@@ -137,18 +138,25 @@ async function main() {
       } else {
         const err = r.reason?.message ?? r.reason
         if (err === 'rate_limit') {
-          console.log('\n  Rate limit — ждём 60с...')
-          await new Promise(res => setTimeout(res, 60_000))
-          // повтор одного слова
-          try {
-            await processWord(batch[j])
-            ok++
-          } catch {
-            console.error(`  ✗ ${batch[j].polish} (${batch[j].id})`)
-            failed++
-          }
+          rateLimited.push(batch[j])
         } else {
           console.error(`  ✗ ${batch[j].polish}: ${err}`)
+          failed++
+        }
+      }
+    }
+    if (rateLimited.length > 0) {
+      console.log(`\n  Rate limit (${rateLimited.length}) — ждём 60с...`)
+      await new Promise(res => setTimeout(res, 60_000))
+      const retryResults = await Promise.allSettled(rateLimited.map(w => processWord(w)))
+      for (let k = 0; k < retryResults.length; k++) {
+        const r = retryResults[k]
+        if (r.status === 'fulfilled') {
+          if (r.value === 'skip') skipped++
+          else ok++
+        } else {
+          const retryErr = r.reason?.message ?? r.reason
+          console.error(`  ✗ ${rateLimited[k].polish} (${rateLimited[k].id}): ${retryErr}`)
           failed++
         }
       }
