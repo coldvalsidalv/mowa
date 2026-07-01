@@ -95,27 +95,27 @@ extension NotificationManager {
         let comps = Calendar.current.dateComponents([.hour, .minute], from: time)
         scheduleDailyNotification(
             type: .vocabulary,
-            title: "🇵🇱 Время заниматься польским",
-            body: "Несколько минут повторения — и слова не забудутся.",
+            title: L("notification.vocab_title"),
+            body: L("notification.vocab_body"),
             hour: comps.hour ?? 9,
             minute: comps.minute ?? 0
         )
     }
 
     func scheduleGrammarReview() {
-        scheduleNotification(type: .grammar, title: "📖 Грамматика ждёт", body: "Пара минут на польскую грамматику — и правила встанут на место.", timeInterval: 172800)
+        scheduleNotification(type: .grammar, title: L("notification.grammar_title"), body: L("notification.grammar_body"), timeInterval: 172800)
     }
 
     func scheduleStreakProtection() {
-        scheduleDailyNotification(type: .streak, title: "🔥 Не дай стриму угаснуть!", body: "Пройди урок до полуночи, чтобы сохранить свою серию.", hour: 20, minute: 0)
+        scheduleDailyNotification(type: .streak, title: L("notification.streak_title"), body: L("notification.streak_body"), hour: 20, minute: 0)
     }
 
     func scheduleDailyChallengeReminder() {
-        scheduleNotification(type: .challenges, title: "🏆 Ежедневные вызовы ждут", body: "Задания обновлены. Выполни их и заработай XP!", timeInterval: 64800)
+        scheduleNotification(type: .challenges, title: L("notification.challenges_title"), body: L("notification.challenges_body"), timeInterval: 64800)
     }
 
     func scheduleNewContent() {
-        scheduleNotification(type: .content, title: "🆕 Новые слова добавлены", body: "В словаре появились новые темы — иди изучай!", timeInterval: 259200)
+        scheduleNotification(type: .content, title: L("notification.content_title"), body: L("notification.content_body"), timeInterval: 259200)
     }
 
     // MARK: - Notifications toggle (flow from Profile)

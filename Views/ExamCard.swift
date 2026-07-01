@@ -38,8 +38,8 @@ struct ExamCard: View {
                     .frame(width: 50, height: 50)
                     .background(Color.white.opacity(0.2)).clipShape(Circle())
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Готовишься к экзамену?").font(.headline).foregroundColor(.white)
-                    Text("Поставь цель — уровень и дату").font(.caption).foregroundColor(.white.opacity(0.85))
+                    Text(L("exam.setup_title")).font(.headline).foregroundColor(.white)
+                    Text(L("exam.setup_sub")).font(.caption).foregroundColor(.white.opacity(0.85))
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundColor(.white.opacity(0.7))
@@ -57,7 +57,7 @@ struct ExamCard: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 8) {
-                        Text("Экзамен \(level.title)").font(.headline).foregroundColor(.white)
+                        Text(L("exam.title_fmt", level.title)).font(.headline).foregroundColor(.white)
                         Button(action: onSetup) {
                             Image(systemName: "pencil").font(.caption).foregroundColor(.white.opacity(0.8))
                         }
@@ -69,7 +69,7 @@ struct ExamCard: View {
                     Text(days > 0 ? "\(days)" : (days == 0 ? "0" : "—"))
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
-                    Text("дней").font(.caption2).foregroundColor(.white.opacity(0.8))
+                    Text(L("exam.days")).font(.caption2).foregroundColor(.white.opacity(0.8))
                 }
             }
 
@@ -81,7 +81,7 @@ struct ExamCard: View {
 
             Button(action: { onStart(level) }) {
                 HStack {
-                    Text("Учить \(level.title)").font(.subheadline).bold()
+                    Text(L("exam.learn_fmt", level.title)).font(.subheadline).bold()
                     Image(systemName: "arrow.right")
                 }
                 .foregroundColor(.indigo)
@@ -106,16 +106,16 @@ struct ExamCard: View {
     }
 
     private func countdownText(_ days: Int) -> String {
-        if days < 0 { return "Дата экзамена прошла" }
-        if days == 0 { return "Экзамен сегодня — удачи!" }
-        return "До экзамена осталось"
+        if days < 0 { return L("exam.past") }
+        if days == 0 { return L("exam.today") }
+        return L("exam.countdown")
     }
 
     private func planText(days: Int) -> String {
-        guard remainingNew > 0 else { return "Все слова уровня пройдены" }
-        if days <= 0 { return "Осталось ~\(remainingNew) новых слов" }
+        guard remainingNew > 0 else { return L("exam.all_done") }
+        if days <= 0 { return L("exam.remaining_fmt", remainingNew) }
         let perDay = Int((Double(remainingNew) / Double(days)).rounded(.up))
-        return "~\(perDay) слов в день · осталось \(remainingNew)"
+        return L("exam.per_day_fmt", perDay, remainingNew)
     }
 
     private func refreshRemaining() {
@@ -151,8 +151,8 @@ struct ExamSetupSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Целевой уровень") {
-                    Picker("Уровень", selection: $level) {
+                Section(L("exam.target_level")) {
+                    Picker(L("exam.level"), selection: $level) {
                         ForEach(ExamLevel.allCases) { Text($0.title).tag($0) }
                     }
                     .pickerStyle(.segmented)
@@ -160,14 +160,14 @@ struct ExamSetupSheet: View {
 
                 officialSessionsSection
 
-                Section("Другая дата") {
-                    DatePicker("Своя дата", selection: $date, in: Date()..., displayedComponents: .date)
+                Section(L("exam.other_date")) {
+                    DatePicker(L("exam.custom_date"), selection: $date, in: Date()..., displayedComponents: .date)
                         .datePickerStyle(.compact)
                 }
 
                 if store.isConfigured {
                     Section {
-                        Button("Удалить цель", role: .destructive) {
+                        Button(L("exam.delete_goal"), role: .destructive) {
                             store.targetLevel = nil
                             store.examDate = nil
                             dismiss()
@@ -175,7 +175,7 @@ struct ExamSetupSheet: View {
                     }
                 }
             }
-            .navigationTitle("План экзамена")
+            .navigationTitle(L("exam.plan_title"))
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 sessions = await DataManager.shared.loadExamSessionsAsync()
@@ -187,10 +187,10 @@ struct ExamSetupSheet: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Отмена") { dismiss() }
+                    Button(L("common.cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Сохранить") {
+                    Button(L("common.save")) {
                         store.targetLevel = level
                         store.examDate = date
                         dismiss()
@@ -204,7 +204,7 @@ struct ExamSetupSheet: View {
     private var officialSessionsSection: some View {
         Section {
             if upcomingForLevel.isEmpty {
-                Text("Нет ближайших официальных сессий \(level.title). Поставь свою дату ниже.")
+                Text(L("exam.no_sessions_fmt", level.title))
                     .font(.footnote).foregroundColor(.secondary)
             } else {
                 ForEach(upcomingForLevel) { session in
@@ -222,9 +222,9 @@ struct ExamSetupSheet: View {
                 }
             }
         } header: {
-            Text("Официальные сессии")
+            Text(L("exam.official_sessions"))
         } footer: {
-            Text("Даты — государственный экзамен сертификатовый (certyfikatpolski.pl). Запись открывается ~за 2 месяца, уточняй в центре.")
+            Text(L("exam.sessions_footer"))
         }
     }
 

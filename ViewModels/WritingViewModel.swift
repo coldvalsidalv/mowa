@@ -73,9 +73,9 @@ final class WritingViewModel: ObservableObject {
 
     private func humanMessage(for error: Error) -> String {
         if case let APIError.serverError(code, message) = error {
-            if code == 401 { return "Нужно войти в аккаунт, чтобы проверять письма." }
-            return message ?? "Сервер недоступен (\(code))."
+            if code == 401 { return L("writing.err_auth") }
+            return message ?? L("writing.err_server_fmt", code)
         }
-        return "Не удалось проверить. Проверь соединение и попробуй ещё раз."
+        return L("writing.err_generic")
     }
 }

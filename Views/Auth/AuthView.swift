@@ -24,8 +24,8 @@ struct AuthView: View {
                 header
 
                 Picker("", selection: $mode) {
-                    Text("Войти").tag(Mode.signIn)
-                    Text("Регистрация").tag(Mode.signUp)
+                    Text(L("auth.sign_in")).tag(Mode.signIn)
+                    Text(L("auth.tab_signup")).tag(Mode.signUp)
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal, 32)
@@ -73,7 +73,7 @@ struct AuthView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .shadow(color: .black.opacity(0.12), radius: 8, y: 4)
 
-            Text(mode == .signIn ? "С возвращением" : "Создай аккаунт")
+            Text(mode == .signIn ? L("auth.welcome_back") : L("auth.create_account"))
                 .font(.system(size: 24, weight: .bold, design: .rounded))
         }
         .padding(.top, 64)
@@ -82,7 +82,7 @@ struct AuthView: View {
     private var form: some View {
         VStack(spacing: 12) {
             if mode == .signUp {
-                TextField("Имя (необязательно)", text: $name)
+                TextField(L("auth.name_placeholder"), text: $name)
                     .textContentType(.name)
                     .focused($focus, equals: .name)
                     .submitLabel(.next)
@@ -100,7 +100,7 @@ struct AuthView: View {
                 .onSubmit { focus = .password }
                 .modifier(AuthFieldStyle())
 
-            SecureField("Пароль (минимум 8 символов)", text: $password)
+            SecureField(L("auth.password_placeholder"), text: $password)
                 .textContentType(mode == .signIn ? .password : .newPassword)
                 .focused($focus, equals: .password)
                 .submitLabel(.go)
@@ -113,7 +113,7 @@ struct AuthView: View {
     // MARK: - Logic
 
     private var submitTitle: String {
-        mode == .signIn ? "Войти" : "Зарегистрироваться"
+        mode == .signIn ? L("auth.sign_in") : L("auth.btn_signup")
     }
 
     private var isFormValid: Bool {
@@ -139,7 +139,7 @@ struct AuthView: View {
             } catch let error as AuthError {
                 errorMessage = error.errorDescription
             } catch {
-                errorMessage = "Что-то пошло не так: \(error.localizedDescription)"
+                errorMessage = L("error.unknown", error.localizedDescription)
             }
             isSubmitting = false
         }

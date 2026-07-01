@@ -69,39 +69,39 @@ struct ReviewSelectionView: View {
                         .padding(.top, 20)
                     
                     VStack(alignment: .leading, spacing: 16) {
-                        SectionTitle(icon: "text.book.closed.fill", title: "Словарь", color: .blue)
+                        SectionTitle(icon: "text.book.closed.fill", title: L("review.vocabulary"), color: .blue)
                         
                         VStack(spacing: 12) {
                             NavigationLink(destination: FlashcardView(tier: .weak, context: context)) {
                                 ReviewCategoryCard(
-                                    title: "Слабые слова",
-                                    subtitle: "Частые ошибки",
+                                    title: L("review.weak"),
+                                    subtitle: L("review.weak_sub"),
                                     itemCount: weakWordsCount,
                                     icon: "exclamationmark.triangle.fill",
                                     color: .red,
-                                    itemLabel: "слова"
+                                    itemLabel: L("review.label_words")
                                 )
                             }
 
                             NavigationLink(destination: FlashcardView(tier: .medium, context: context)) {
                                 ReviewCategoryCard(
-                                    title: "Средние слова",
-                                    subtitle: "Нужна практика",
+                                    title: L("review.medium"),
+                                    subtitle: L("review.medium_sub"),
                                     itemCount: mediumWordsCount,
                                     icon: "hourglass",
                                     color: .orange,
-                                    itemLabel: "слова"
+                                    itemLabel: L("review.label_words")
                                 )
                             }
 
                             NavigationLink(destination: FlashcardView(tier: .strong, context: context)) {
                                 ReviewCategoryCard(
-                                    title: "Сильные слова",
-                                    subtitle: "Надёжно в памяти",
+                                    title: L("review.strong"),
+                                    subtitle: L("review.strong_sub"),
                                     itemCount: strongWordsCount,
                                     icon: "checkmark.circle.fill",
                                     color: .green,
-                                    itemLabel: "слова"
+                                    itemLabel: L("review.label_words")
                                 )
                             }
                         }
@@ -109,51 +109,51 @@ struct ReviewSelectionView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 16) {
-                        SectionTitle(icon: "function", title: "Грамматика", color: .purple)
+                        SectionTitle(icon: "function", title: L("review.grammar"), color: .purple)
 
                         VStack(spacing: 12) {
                             NavigationLink(destination: GrammarDueListView(
-                                title: "Сложные правила",
+                                title: L("review.rules_hard"),
                                 items: weakGrammar,
                                 allLessons: allGrammarLessons
                             )) {
                                 ReviewCategoryCard(
-                                    title: "Сложные правила",
-                                    subtitle: "Требуют внимания",
+                                    title: L("review.rules_hard"),
+                                    subtitle: L("review.rules_hard_sub"),
                                     itemCount: weakGrammar.count,
                                     icon: "xmark.octagon.fill",
                                     color: .red,
-                                    itemLabel: "правила"
+                                    itemLabel: L("review.label_rules")
                                 )
                             }
 
                             NavigationLink(destination: GrammarDueListView(
-                                title: "В процессе",
+                                title: L("review.rules_progress"),
                                 items: mediumGrammar,
                                 allLessons: allGrammarLessons
                             )) {
                                 ReviewCategoryCard(
-                                    title: "В процессе",
-                                    subtitle: "Иногда путаешь",
+                                    title: L("review.rules_progress"),
+                                    subtitle: L("review.rules_progress_sub"),
                                     itemCount: mediumGrammar.count,
                                     icon: "arrow.triangle.2.circlepath",
                                     color: .orange,
-                                    itemLabel: "правила"
+                                    itemLabel: L("review.label_rules")
                                 )
                             }
 
                             NavigationLink(destination: GrammarDueListView(
-                                title: "Усвоенные темы",
+                                title: L("review.rules_learned"),
                                 items: strongGrammar,
                                 allLessons: allGrammarLessons
                             )) {
                                 ReviewCategoryCard(
-                                    title: "Усвоенные темы",
-                                    subtitle: "Закрепление",
+                                    title: L("review.rules_learned"),
+                                    subtitle: L("review.rules_learned_sub"),
                                     itemCount: strongGrammar.count,
                                     icon: "star.fill",
                                     color: .green,
-                                    itemLabel: "правила"
+                                    itemLabel: L("review.label_rules")
                                 )
                             }
                         }
@@ -185,12 +185,12 @@ struct MemoryHealthHeader: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
-                Text("Что повторим?")
+                Text(L("review.title"))
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Text("Умный алгоритм подобрал слова, которые ты скоро забудешь.")
+                Text(L("review.subtitle"))
                     .font(.body)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -210,7 +210,7 @@ struct MemoryHealthHeader: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Здоровье памяти")
+                        Text(L("review.memory_health"))
                             .font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.primary)
@@ -252,7 +252,7 @@ struct ReviewCategoryCard: View {
     let itemCount: Int
     let icon: String
     let color: Color
-    var itemLabel: String = "слова"
+    var itemLabel: String = L("review.label_words")
     
     var isCleared: Bool {
         return itemCount == 0 && (color == .red || color == .orange)
@@ -274,13 +274,13 @@ struct ReviewCategoryCard: View {
             }
             
             VStack(alignment: .leading, spacing: 3) {
-                Text(isCleared ? "Отличная работа!" : title)
+                Text(isCleared ? L("flashcard.finish_title") : title)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 
-                Text(isCleared ? "Ошибок нет" : subtitle)
+                Text(isCleared ? L("review.no_errors") : subtitle)
                     .font(.subheadline)
                     .foregroundColor(isCleared ? .orange : .secondary)
                     .lineLimit(1)
@@ -363,7 +363,7 @@ struct GrammarDueListView: View {
                             .font(.system(size: 48))
                             .foregroundColor(.green)
                             .padding(.top, 60)
-                        Text("Нет уроков к повторению")
+                        Text(L("review.no_grammar"))
                             .font(.headline)
                             .foregroundColor(.secondary)
                     }
@@ -385,7 +385,7 @@ struct GrammarDueListView: View {
                                                 .background(Color.purple.opacity(0.1))
                                                 .foregroundColor(.purple)
                                                 .cornerRadius(6)
-                                            Text("Результат: \(Int(progress.lastScore * 100))%")
+                                            Text(L("review.lesson_result", Int(progress.lastScore * 100)))
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
                                         }
@@ -422,7 +422,7 @@ struct SmartReviewFAB: View {
             HStack(spacing: 12) {
                 Image(systemName: "play.fill")
                     .font(.title3)
-                Text("Умный микс")
+                Text(L("review.smart_mix"))
                     .font(.headline)
                     .fontWeight(.bold)
             }

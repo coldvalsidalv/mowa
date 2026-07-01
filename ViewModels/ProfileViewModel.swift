@@ -107,26 +107,26 @@ final class ProfileViewModel: ObservableObject {
             let unlocked = threshold > 0 && currentValue >= threshold
             let progress = threshold > 0 ? min(Double(currentValue) / Double(threshold), 1.0) : 0
             return Achievement(
-                title: spec.title,
-                description: spec.description,
+                title: L(spec.title),
+                description: L(spec.description),
                 icon: spec.icon,
                 color: spec.color,
                 unlocked: unlocked,
                 progress: progress,
-                progressLabel: "\(currentValue) / \(threshold) \(spec.unit)"
+                progressLabel: L("ach.progress_fmt", currentValue, threshold, L(spec.unit))
             )
         }
 
         // ── Special: the composite achievement doesn't reduce to a single metric ──
         result.append(
             Achievement(
-                title: "Разносторонний",
-                description: "50 слов и 3 урока грамматики",
+                title: L("ach.versatile_title"),
+                description: L("ach.versatile_desc"),
                 icon: "square.grid.2x2.fill",
                 color: .mint,
                 unlocked: totalLearnedWords >= 50 && grammar >= 3,
                 progress: min(Double(min(totalLearnedWords, 50)) / 50 * 0.5 + Double(min(grammar, 3)) / 3 * 0.5, 1.0),
-                progressLabel: totalLearnedWords < 50 ? "\(totalLearnedWords) / 50 слов" : "\(grammar) / 3 урока"
+                progressLabel: totalLearnedWords < 50 ? L("ach.versatile_label_words", totalLearnedWords) : L("ach.versatile_label_grammar", grammar)
             )
         )
         return result
@@ -149,7 +149,7 @@ final class ProfileViewModel: ObservableObject {
     }
 
     var displayName: String {
-        userName.isEmpty ? "Пользователь" : userName
+        userName.isEmpty ? L("profile.default_name") : userName
     }
 
     var currentLeague: UserLeague {
@@ -229,7 +229,7 @@ final class ProfileViewModel: ObservableObject {
             try await AccountService.shared.deleteAccount()
             clearLocalProfile()
         } catch {
-            accountDeletionError = "Не удалось удалить аккаунт. Проверь соединение и попробуй ещё раз."
+            accountDeletionError = L("error.delete_account")
         }
     }
 
@@ -257,48 +257,52 @@ private enum AchievementThreshold {
 
 /// Declarative description of a threshold achievement. Adding a new achievement is
 /// a new element in `achievementSpecs`, not an edit to `makeAchievements` (OCP).
+/// `title`/`description`/`unit` hold localization keys, resolved via `L(...)` inside
+/// `makeAchievements` (not here) so runtime language switching stays live — this is a
+/// global `let`, evaluated once, so calling `L(...)` at this point would freeze the
+/// strings to the launch language.
 private struct AchievementSpec {
-    let title: String
-    let description: String
+    let title: String        // L() key
+    let description: String   // L() key
     let icon: String
     let color: Color
     let metric: AchievementMetric
     let threshold: AchievementThreshold
-    let unit: String   // suffix for progressLabel: "слов" / "дней" / "XP" / "уроков"
+    let unit: String         // L() key for the progressLabel suffix
 }
 
 /// Immutable Sendable constant — read from the nonisolated `makeAchievements`.
 private let achievementSpecs: [AchievementSpec] = [
     // ── Vocabulary ──────────────────────────────────────────
-    .init(title: "Первое слово", description: "Выучи своё первое слово",
-          icon: "hand.raised.fill", color: .blue, metric: .words, threshold: .fixed(1), unit: "слово"),
-    .init(title: "Десятка", description: "Выучи 10 слов",
-          icon: "sparkles", color: .cyan, metric: .words, threshold: .fixed(10), unit: "слов"),
-    .init(title: "Сотня", description: "Выучи 100 слов",
-          icon: "graduationcap.fill", color: .indigo, metric: .words, threshold: .fixed(100), unit: "слов"),
-    .init(title: "Полиглот", description: "Выучи 500 слов",
-          icon: "globe.europe.africa.fill", color: .green, metric: .words, threshold: .fixed(500), unit: "слов"),
-    .init(title: "Мастер слов", description: "Выучи 2000 слов",
-          icon: "crown.fill", color: .yellow, metric: .words, threshold: .fixed(2000), unit: "слов"),
+    .init(title: "ach.first_word_title", description: "ach.first_word_desc",
+          icon: "hand.raised.fill", color: .blue, metric: .words, threshold: .fixed(1), unit: "ach.unit_word"),
+    .init(title: "ach.tens_title", description: "ach.tens_desc",
+          icon: "sparkles", color: .cyan, metric: .words, threshold: .fixed(10), unit: "ach.unit_words"),
+    .init(title: "ach.hundred_title", description: "ach.hundred_desc",
+          icon: "graduationcap.fill", color: .indigo, metric: .words, threshold: .fixed(100), unit: "ach.unit_words"),
+    .init(title: "ach.polyglot_title", description: "ach.polyglot_desc",
+          icon: "globe.europe.africa.fill", color: .green, metric: .words, threshold: .fixed(500), unit: "ach.unit_words"),
+    .init(title: "ach.word_master_title", description: "ach.word_master_desc",
+          icon: "crown.fill", color: .yellow, metric: .words, threshold: .fixed(2000), unit: "ach.unit_words"),
     // ── Day streak ───────────────────────────────────────────────
-    .init(title: "Привычка", description: "3 дня занятий подряд",
-          icon: "flame", color: .orange, metric: .streak, threshold: .fixed(3), unit: "дня"),
-    .init(title: "Огонь", description: "7 дней занятий подряд",
-          icon: "flame.fill", color: .red, metric: .streak, threshold: .fixed(7), unit: "дней"),
-    .init(title: "Несгораемый", description: "30 дней занятий подряд",
-          icon: "bolt.fill", color: .pink, metric: .streak, threshold: .fixed(30), unit: "дней"),
+    .init(title: "ach.habit_title", description: "ach.habit_desc",
+          icon: "flame", color: .orange, metric: .streak, threshold: .fixed(3), unit: "ach.unit_day"),
+    .init(title: "ach.fire_title", description: "ach.fire_desc",
+          icon: "flame.fill", color: .red, metric: .streak, threshold: .fixed(7), unit: "ach.unit_days"),
+    .init(title: "ach.unstoppable_title", description: "ach.unstoppable_desc",
+          icon: "bolt.fill", color: .pink, metric: .streak, threshold: .fixed(30), unit: "ach.unit_days"),
     // ── Experience (XP) ──────────────────────────────────────────
-    .init(title: "Первые очки", description: "Набери 100 XP",
-          icon: "star.fill", color: .blue, metric: .xp, threshold: .fixed(100), unit: "XP"),
-    .init(title: "Чемпион", description: "Набери 1000 XP",
-          icon: "trophy.fill", color: .orange, metric: .xp, threshold: .fixed(1000), unit: "XP"),
-    .init(title: "Легенда", description: "Набери 5000 XP",
-          icon: "medal.fill", color: .purple, metric: .xp, threshold: .fixed(5000), unit: "XP"),
+    .init(title: "ach.first_points_title", description: "ach.first_points_desc",
+          icon: "star.fill", color: .blue, metric: .xp, threshold: .fixed(100), unit: "ach.unit_xp"),
+    .init(title: "ach.champion_title", description: "ach.champion_desc",
+          icon: "trophy.fill", color: .orange, metric: .xp, threshold: .fixed(1000), unit: "ach.unit_xp"),
+    .init(title: "ach.legend_title", description: "ach.legend_desc",
+          icon: "medal.fill", color: .purple, metric: .xp, threshold: .fixed(5000), unit: "ach.unit_xp"),
     // ── Grammar ────────────────────────────────────────────────
-    .init(title: "Первый урок", description: "Пройди первый урок грамматики",
-          icon: "pencil.and.list.clipboard", color: .teal, metric: .grammar, threshold: .fixed(1), unit: "урок"),
-    .init(title: "Грамматик", description: "Пройди 5 уроков грамматики",
-          icon: "text.book.closed.fill", color: .green, metric: .grammar, threshold: .fixed(5), unit: "уроков"),
-    .init(title: "Профессор", description: "Пройди все уроки грамматики",
-          icon: "brain.head.profile", color: .purple, metric: .grammar, threshold: .totalGrammarLessons, unit: "уроков"),
+    .init(title: "ach.first_lesson_title", description: "ach.first_lesson_desc",
+          icon: "pencil.and.list.clipboard", color: .teal, metric: .grammar, threshold: .fixed(1), unit: "ach.unit_lesson"),
+    .init(title: "ach.grammarian_title", description: "ach.grammarian_desc",
+          icon: "text.book.closed.fill", color: .green, metric: .grammar, threshold: .fixed(5), unit: "ach.unit_lessons"),
+    .init(title: "ach.professor_title", description: "ach.professor_desc",
+          icon: "brain.head.profile", color: .purple, metric: .grammar, threshold: .totalGrammarLessons, unit: "ach.unit_lessons"),
 ]

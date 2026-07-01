@@ -17,9 +17,9 @@ struct DailyChallenge: Identifiable, Equatable, Codable {
     var timeLeft: String {
         let calendar = Calendar.current
         let now = Date()
-        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now)) else { return "0ч 0мин" }
+        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now)) else { return L("challenge.time_left_fmt", 0, 0) }
         let diff = calendar.dateComponents([.hour, .minute], from: now, to: tomorrow)
-        return "\(diff.hour ?? 0)ч \(diff.minute ?? 0)мин"
+        return L("challenge.time_left_fmt", diff.hour ?? 0, diff.minute ?? 0)
     }
     
     var progress: Double { min(Double(currentProgress) / Double(target), 1.0) }

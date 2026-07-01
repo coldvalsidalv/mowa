@@ -102,14 +102,14 @@ struct StreakView: View {
                         .foregroundColor(.white)
                         .shadow(color: manager.hasPracticedToday ? .orange.opacity(0.5) : .blue.opacity(0.5), radius: 15)
                     
-                    Text(manager.hasPracticedToday ? "ДНЕЙ В ОГНЕ" : "СТРИК ЗАМЕРЗАЕТ")
+                    Text(manager.hasPracticedToday ? L("streak.on_fire") : L("streak.freezing"))
                         .font(.title3)
                         .fontWeight(.heavy)
                         .foregroundColor(.white)
                         .kerning(1.5)
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                     
-                    Text(manager.hasPracticedToday ? "Ты неудержим! 🔥" : "Пройди урок, чтобы растопить лед!")
+                    Text(manager.hasPracticedToday ? L("streak.unstoppable") : L("streak.melt"))
                         .font(.body)
                         .foregroundColor(.white.opacity(0.9))
                         .padding(.top, 4)
@@ -126,7 +126,7 @@ struct StreakView: View {
                             }
                         }
                     }) {
-                        Text(manager.hasPracticedToday ? "Отлично!" : "Начать урок")
+                        Text(manager.hasPracticedToday ? L("streak.cta_done") : L("streak.cta_start"))
                             .font(.headline)
                             .bold()
                             .foregroundColor(.white)

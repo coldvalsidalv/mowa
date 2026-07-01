@@ -25,11 +25,11 @@ struct GrammarLessonView: View {
         .onAppear {
             viewModel.configure(context: modelContext)
         }
-        .alert("Выйти из урока?", isPresented: $showExitAlert) {
-            Button("Продолжить", role: .cancel) {}
-            Button("Выйти", role: .destructive) { dismiss() }
+        .alert(L("flashcard.exit_title"), isPresented: $showExitAlert) {
+            Button(L("common.continue"), role: .cancel) {}
+            Button(L("common.exit"), role: .destructive) { dismiss() }
         } message: {
-            Text("Прогресс урока не будет сохранён.")
+            Text(L("grammar.exit_message"))
         }
     }
 
@@ -90,7 +90,7 @@ struct GrammarLessonView: View {
                     HStack {
                         Image(systemName: viewModel.isAnswerCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
                             .foregroundColor(viewModel.isAnswerCorrect ? .green : .red)
-                        Text(viewModel.isAnswerCorrect ? "Правильно!" : "Неверно, попробуй еще раз")
+                        Text(viewModel.isAnswerCorrect ? L("grammar.correct") : L("grammar.wrong"))
                             .font(.headline)
                             .foregroundColor(viewModel.isAnswerCorrect ? .green : .red)
                         Spacer()
@@ -103,7 +103,7 @@ struct GrammarLessonView: View {
                 Button(action: {
                     viewModel.nextStep()
                 }) {
-                    Text(viewModel.isLastStep ? "Завершить" : "Далее")
+                    Text(viewModel.isLastStep ? L("grammar.finish") : L("grammar.next"))
                         .font(.headline)
                         .bold()
                         .foregroundColor(.white)
@@ -131,11 +131,11 @@ struct GrammarLessonView: View {
             }
             
             VStack(spacing: 12) {
-                Text("Урок завершен!")
+                Text(L("grammar.done_title"))
                     .font(.largeTitle.bold())
-                
+
                 if viewModel.totalQuizSteps > 0 {
-                    Text("Результат теста: \(viewModel.correctAnswersCount) из \(viewModel.totalQuizSteps)")
+                    Text(L("grammar.result", viewModel.correctAnswersCount, viewModel.totalQuizSteps))
                         .font(.headline)
                         .foregroundColor(.gray)
                 }
@@ -152,7 +152,7 @@ struct GrammarLessonView: View {
                 viewModel.finishLesson()
                 dismiss()
             }) {
-                Text("Отлично")
+                Text(L("grammar.done_btn"))
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)

@@ -65,7 +65,7 @@ struct QuizView: View {
     
     private func questionCard(for question: QuizQuestion) -> some View {
         VStack(spacing: 16) {
-            Text("Как переводится?")
+            Text(L("quiz.question"))
                 .font(.subheadline)
                 .foregroundColor(.gray)
                 .textCase(.uppercase)
@@ -123,7 +123,7 @@ struct QuizView: View {
     
     private var actionButton: some View {
         Button(action: { viewModel.nextQuestion() }) {
-            Text(viewModel.isLastQuestion ? "Завершить" : "Далее")
+            Text(viewModel.isLastQuestion ? L("quiz.finish") : L("quiz.next"))
                 .font(.headline)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
@@ -145,14 +145,14 @@ struct QuizView: View {
             }
             
             VStack(spacing: 12) {
-                Text("Викторина пройдена!")
+                Text(L("quiz.done_title"))
                     .font(.title.bold())
-                Text("Ваш результат: \(viewModel.score) из \(viewModel.totalQuestions)")
+                Text(L("quiz.score", viewModel.score, viewModel.totalQuestions))
                     .foregroundColor(.gray)
             }
             
             Button(action: { dismiss() }) {
-                Text("Вернуться")
+                Text(L("common.back"))
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
@@ -168,7 +168,7 @@ struct QuizView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-            Text("Подготовка вопросов...")
+            Text(L("quiz.loading"))
                 .foregroundColor(.gray)
         }
     }
