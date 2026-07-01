@@ -89,7 +89,7 @@ struct CategoryDetailView: View {
     }
 }
 
-// MARK: - Строка слова
+// MARK: - Word row
 
 struct WordRowView: View {
     let word: VocabItem
@@ -97,7 +97,7 @@ struct WordRowView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Цветная полоска статуса
+            // Colored status stripe
             RoundedRectangle(cornerRadius: 2)
                 .fill(statusColor)
                 .frame(width: 3)

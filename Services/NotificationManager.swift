@@ -18,7 +18,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         UNUserNotificationCenter.current().delegate = self
     }
     
-    // 1. Запрос разрешения
+    // 1. Request permission
     func requestAuthorization(completion: (@Sendable (Bool) -> Void)? = nil) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if let error = error {
@@ -34,7 +34,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
     
-    // 2. Универсальная функция планирования
+    // 2. Generic scheduling function
     func scheduleNotification(type: NotificationType, title: String, body: String, timeInterval: TimeInterval) {
         let content = UNMutableNotificationContent()
         content.title = title
@@ -53,7 +53,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
     
-    // 3. Планирование по календарю
+    // 3. Calendar-based scheduling
     func scheduleDailyNotification(type: NotificationType, title: String, body: String, hour: Int, minute: Int) {
         let content = UNMutableNotificationContent()
         content.title = title
@@ -76,21 +76,21 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
     
-    // 4. Отмена уведомлений
+    // 4. Cancel notifications
     func cancelNotification(type: NotificationType) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [type.rawValue])
     }
     
-    // 5. Обработка уведомления, когда приложение открыто
+    // 5. Handle a notification while the app is open
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound])
     }
 }
 
-// MARK: - API ДЛЯ БИЗНЕС-ЛОГИКИ
+// MARK: - API FOR BUSINESS LOGIC
 extension NotificationManager {
-    /// Ежедневное напоминание в выбранное юзером время (Профиль → Уведомления).
-    /// Перезаписывает предыдущее расписание (одинаковый identifier).
+    /// Daily reminder at the user-chosen time (Profile → Notifications).
+    /// Overwrites the previous schedule (same identifier).
     func scheduleDailyReminder(at time: Date) {
         let comps = Calendar.current.dateComponents([.hour, .minute], from: time)
         scheduleDailyNotification(

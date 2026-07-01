@@ -1,27 +1,27 @@
 import Foundation
 
-// Тип слайда: Теория или Тест
+// Slide type: Theory or Quiz
 enum GrammarStepType: String, Codable {
     case theory
     case quiz
 }
 
-// Один шаг (слайд) урока
+// A single lesson step (slide)
 struct GrammarStep: Identifiable, Codable, Hashable, Sendable {
     var id: String = UUID().uuidString
     let type: GrammarStepType
-    
-    // Поля для теории
+
+    // Theory fields
     let title: String
     let content: String
-    
-    // Поля для квиза
+
+    // Quiz fields
     let question: String?
     let answers: [String]?
     let correctAnswer: String?
 }
 
-// Модель самого урока
+// The lesson model itself
 struct GrammarLesson: Identifiable, Codable, Hashable, Sendable {
     let id: String
     let title: String

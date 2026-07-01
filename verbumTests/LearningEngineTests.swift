@@ -3,13 +3,13 @@ import Foundation
 import SwiftData
 @testable import Verbum
 
-/// Unit-тесты на LearningEngine.processAnswer — стали возможны после инъекции
-/// зависимостей (StreakTracking / ReviewLogSyncing) в init. Раньше метод был
-/// прибит к StreakManager.shared (UserDefaults) и ReviewLogSyncService.shared
-/// (сеть), поэтому не тестировался.
+/// Unit tests for LearningEngine.processAnswer — made possible after injecting
+/// dependencies (StreakTracking / ReviewLogSyncing) into init. The method used to be
+/// nailed to StreakManager.shared (UserDefaults) and ReviewLogSyncService.shared
+/// (network), so it wasn't testable.
 ///
-/// Swift Testing (а не XCTest) — требуется инстанс движка + ModelContainer,
-/// см. правило в IntegrationTests.swift.
+/// Swift Testing (not XCTest) — an engine instance + ModelContainer are required,
+/// see the rule in IntegrationTests.swift.
 
 // MARK: - Test doubles
 
@@ -114,8 +114,8 @@ struct LearningEngineTests {
                                     reviewLogSync: sync)
         engine.buildSession()
 
-        // cap = VerbumConfig.fsrsMaxAgainRepeatsPerSession (3): первые 3 .again
-        // возвращают карточку, 4-й — уже нет.
+        // cap = VerbumConfig.fsrsMaxAgainRepeatsPerSession (3): the first 3 .again
+        // requeue the card, the 4th no longer does.
         let cap = VerbumConfig.fsrsMaxAgainRepeatsPerSession
         for _ in 0..<cap {
             engine.processAnswer(item: word, rating: .again, timeSpentMs: 500)

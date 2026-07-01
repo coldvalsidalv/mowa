@@ -1,22 +1,22 @@
 import Foundation
 import Security
 
-/// Тонкая обёртка над Security/Keychain для хранения чувствительных строк
-/// (JWT-токен, refresh-токен). Сервис — bundle id, чтобы не пересекаться с другими приложениями.
-/// Все методы nonisolated — Security framework thread-safe.
+/// Thin wrapper over Security/Keychain for storing sensitive strings
+/// (JWT token, refresh token). The service is the bundle id, to avoid clashing with other apps.
+/// All methods are nonisolated — the Security framework is thread-safe.
 nonisolated enum KeychainHelper {
     private static let service: String = Bundle.main.bundleIdentifier ?? "com.verbum.app"
 
     static func save(_ value: String, for key: String) {
         guard let data = value.data(using: .utf8) else { return }
-        // Сначала удаляем существующее значение — иначе SecItemAdd вернёт duplicate.
+        // Delete the existing value first — otherwise SecItemAdd returns a duplicate.
         delete(key)
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: key,
             kSecValueData as String: data,
-            // afterFirstUnlock — токен переживает рестарт устройства, но недоступен в locked.
+            // afterFirstUnlock — the token survives a device restart but is unavailable while locked.
             kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         ]
         let status = SecItemAdd(query as CFDictionary, nil)

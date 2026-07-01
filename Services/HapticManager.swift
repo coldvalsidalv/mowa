@@ -3,7 +3,7 @@ import UIKit
 class HapticManager {
     static let instance = HapticManager()
     
-    private init() {} // Приватный инициализатор для синглтона
+    private init() {} // Private initializer for the singleton
     
     func impact(style: UIImpactFeedbackGenerator.FeedbackStyle) {
         let generator = UIImpactFeedbackGenerator(style: style)

@@ -1,14 +1,14 @@
 import Foundation
 import SwiftData
 
-/// Оценки ответа пользователя
+/// User's answer ratings
 enum FSRSRating: Int, Codable {
     case again = 1
     case hard = 2
     case good = 3
     case easy = 4
 
-    /// Конвертирует результат грамматического теста в рейтинг FSRS
+    /// Converts a grammar quiz result into an FSRS rating
     static func from(score: Double) -> FSRSRating {
         switch score {
         case 0.9...: return .easy
@@ -19,7 +19,7 @@ enum FSRSRating: Int, Codable {
     }
 }
 
-/// Состояния карточки
+/// Card states
 enum FSRSState: Int, Codable {
     case new = 0
     case learning = 1
@@ -27,7 +27,7 @@ enum FSRSState: Int, Codable {
     case relearning = 3
 }
 
-/// Структура DSR для карточки (SwiftData Model)
+/// DSR data for a card (SwiftData Model)
 @Model
 final class FSRSCardData {
     var state: FSRSState
@@ -37,7 +37,7 @@ final class FSRSCardData {
     var lapses: Int
     var lastReview: Date?
     var due: Date
-    /// Текущий learning/relearning step. nil для .new и .review.
+    /// Current learning/relearning step. nil for .new and .review.
     var step: Int?
 
     init() {
@@ -51,9 +51,9 @@ final class FSRSCardData {
     }
 }
 
-/// Иммутабельный снимок FSRSCardData для расчётов.
-/// FSRSCardData — @Model (ссылочный тип), что делает scheduler-функцию
-/// случайно мутирующей. Снимок изолирует чистую математику от ORM.
+/// Immutable snapshot of FSRSCardData for calculations.
+/// FSRSCardData is an @Model (reference type), which makes the scheduler function
+/// accidentally mutating. The snapshot isolates the pure math from the ORM.
 struct FSRSCardSnapshot {
     var state: FSRSState
     var difficulty: Double
@@ -91,23 +91,23 @@ extension FSRSCardData {
     }
 }
 
-/// Модель лексической единицы. Объединяет контент и алгоритмические метаданные.
+/// Lexical-item model. Combines content and algorithmic metadata.
 @Model
 final class VocabItem {
     @Attribute(.unique) var id: UUID
-    /// UUID из Teenybase — используется для upsert при синхронизации
+    /// Teenybase UUID — used for upsert during sync
     var remoteId: String?
     var polish: String
     var translation: String
     var partOfSpeech: String
     var example: String
     var category: String
-    /// Порядок внутри категории по частотности (1 = самое частое)
+    /// Order within a category by frequency (1 = most frequent)
     var rank: Int = 0
-    /// Ключевые флексии: {"1sg":"czytam","3sg":"czyta","past":"czytał","imp":"czytaj"}
+    /// Key inflections: {"1sg":"czytam","3sg":"czyta","past":"czytał","imp":"czytaj"}
     var inflections: String = "{}"
     
-    // Педагогическая стратегия: фаза обучения (single-word -> cloze-test)
+    // Pedagogical strategy: learning phase (single-word -> cloze-test)
     var isClozeUnlocked: Bool
     
     @Relationship(deleteRule: .cascade)
@@ -128,7 +128,7 @@ final class VocabItem {
     }
 }
 
-/// FSRS прогресс по грамматическому уроку
+/// FSRS progress for a grammar lesson
 @Model
 final class GrammarProgress {
     @Attribute(.unique) var lessonId: String
@@ -148,16 +148,16 @@ final class GrammarProgress {
     }
 }
 
-/// Лог ответов для аналитики и тренировки ML моделей (KARL)
+/// Answer log for analytics and training ML models (KARL)
 @Model
 final class ReviewLog {
     var cardId: UUID
     var rating: FSRSRating
     var reviewDate: Date
     var reviewDurationMs: Int
-    /// Teenybase id юзера, под которым сделан ответ. Без него при смене аккаунта
-    /// на одном устройстве логи юзера A синкались бы на сервер под user_id юзера B.
-    /// Optional ради lightweight-миграции старых записей.
+    /// Teenybase user id the answer was made under. Without it, when switching accounts
+    /// on one device, user A's logs would sync to the server under user B's user_id.
+    /// Optional for a lightweight migration of old records.
     var userId: String?
 
     init(cardId: UUID, rating: FSRSRating, reviewDate: Date, duration: Int, userId: String? = nil) {

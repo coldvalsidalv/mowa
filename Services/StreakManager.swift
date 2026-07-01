@@ -16,7 +16,7 @@ final class StreakManager: ObservableObject {
     @Published var hasPracticedToday: Bool = false
     
     private init() {
-        // Установка дефолтных значений при первом запуске
+        // Set default values on first launch
         defaults.register(defaults: [
             StorageKeys.dayStreak: 0,
             StorageKeys.streakFreezes: 2,
@@ -29,8 +29,8 @@ final class StreakManager: ObservableObject {
         processCalendarLogic()
     }
 
-    /// Пересчёт смены дня. iOS держит приложение в памяти днями, поэтому
-    /// init-логики недостаточно — вызывается также на scenePhase == .active.
+    /// Recompute the day rollover. iOS keeps the app in memory for days, so
+    /// init logic isn't enough — this is also called on scenePhase == .active.
     func refreshDayRollover() {
         processCalendarLogic()
     }
@@ -61,9 +61,9 @@ final class StreakManager: ObservableObject {
                     if streakFreezes >= missedDays {
                         streakFreezes -= missedDays
                     } else {
-                        // Сброс стрика, так как заморозок не хватило
+                        // Reset the streak, since there weren't enough freezes
                         dayStreak = 0
-                        streakFreezes = 2 // Выдача новых заморозок после сброса (опционально)
+                        streakFreezes = 2 // Grant new freezes after a reset (optional)
                     }
                 }
             }

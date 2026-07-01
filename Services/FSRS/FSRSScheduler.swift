@@ -1,32 +1,32 @@
 import Foundation
 
-/// FSRS-6 алгоритм. Порт из open-spaced-repetition/py-fsrs v6.3.1.
-/// Чистая функция над FSRSCardSnapshot, не зависит от SwiftData.
+/// FSRS-6 algorithm. Ported from open-spaced-repetition/py-fsrs v6.3.1.
+/// A pure function over FSRSCardSnapshot, independent of SwiftData.
 ///
-/// Ключевые отличия от v4.5:
-/// • 21 параметр (был 17). w[20] = adaptive decay.
-/// • Short-term stability формула для same-day повторов.
-/// • Linear damping в next_difficulty (плавнее у пределов).
-/// • Явные learning_steps / relearning_steps вместо мгновенного перехода в .review.
-/// • Forget stability — min(long_term, short_term), чтобы не "награждать" ошибку.
+/// Key differences from v4.5:
+/// • 21 parameters (was 17). w[20] = adaptive decay.
+/// • Short-term stability formula for same-day repeats.
+/// • Linear damping in next_difficulty (smoother near the bounds).
+/// • Explicit learning_steps / relearning_steps instead of an instant jump to .review.
+/// • Forget stability — min(long_term, short_term), so an error isn't "rewarded".
 final class FSRSScheduler {
 
     // MARK: - Defaults (FSRS-6, py-fsrs v6.3.1)
 
-    /// 21 параметр модели. w[20] = adaptive decay.
+    /// 21 model parameters. w[20] = adaptive decay.
     static let defaultParameters: [Double] = [
         0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001,
         1.8722, 0.1666, 0.796, 1.4835, 0.0614, 0.2629, 1.6483, 0.6014,
         1.8729, 0.5425, 0.0912, 0.0658, 0.1542
     ]
 
-    /// Шаги обучения новой карточки (секунды). По умолчанию 1 мин и 10 мин.
+    /// Learning steps for a new card (seconds). Default 1 min and 10 min.
     static let defaultLearningSteps: [TimeInterval] = [60, 600]
 
-    /// Шаги переучивания после ошибки в review (секунды). По умолчанию 10 мин.
+    /// Relearning steps after an error in review (seconds). Default 10 min.
     static let defaultRelearningSteps: [TimeInterval] = [600]
 
-    /// Минимальное и максимальное значения stability/difficulty.
+    /// Minimum and maximum stability/difficulty values.
     private static let stabilityMin: Double = 0.001
     private static let difficultyMin: Double = 1.0
     private static let difficultyMax: Double = 10.0
@@ -39,7 +39,7 @@ final class FSRSScheduler {
     private let relearningSteps: [TimeInterval]
     private let maximumInterval: Int
 
-    /// Производные: decay = -w[20], factor = 0.9^(1/decay) - 1.
+    /// Derived: decay = -w[20], factor = 0.9^(1/decay) - 1.
     private let decay: Double
     private let factor: Double
 
@@ -62,7 +62,7 @@ final class FSRSScheduler {
 
     // MARK: - Public API
 
-    /// Чистая функция: возвращает новый снимок без мутации входа.
+    /// Pure function: returns a new snapshot without mutating the input.
     func schedule(card: FSRSCardSnapshot, rating: FSRSRating, now: Date) -> FSRSCardSnapshot {
         var next = card
         next.lastReview = now
@@ -72,14 +72,14 @@ final class FSRSScheduler {
 
         switch card.state {
         case .new:
-            // Первое касание: инициализируем DSR и заходим в learning.
+            // First touch: initialize DSR and enter learning.
             next.stability = initialStability(rating: rating)
             next.difficulty = clampDifficulty(initialDifficulty(rating: rating, clamp: false))
             scheduleStep(card: card, next: &next, rating: rating,
                          steps: learningSteps, targetState: .learning, now: now)
 
         case .learning, .relearning:
-            // Обновление DSR
+            // Update DSR
             if let elapsed = elapsedDays, elapsed < 1.0 {
                 next.stability = shortTermStability(stability: card.stability, rating: rating)
             } else {
@@ -97,7 +97,7 @@ final class FSRSScheduler {
                          steps: steps, targetState: card.state, now: now)
 
         case .review:
-            // Обновление DSR
+            // Update DSR
             if let elapsed = elapsedDays, elapsed < 1.0 {
                 next.stability = shortTermStability(stability: card.stability, rating: rating)
             } else {
@@ -130,9 +130,9 @@ final class FSRSScheduler {
 
     // MARK: - Step scheduling (Learning / Relearning)
 
-    /// Логика learning/relearning steps по py-fsrs.
-    /// targetState — состояние, в которое уходит карта если остаётся в шагах
-    /// (учим → .learning, переучиваем → .relearning).
+    /// learning/relearning step logic per py-fsrs.
+    /// targetState — the state the card goes to if it stays in the steps
+    /// (learning → .learning, relearning → .relearning).
     private func scheduleStep(card: FSRSCardSnapshot,
                               next: inout FSRSCardSnapshot,
                               rating: FSRSRating,
@@ -141,7 +141,7 @@ final class FSRSScheduler {
                               now: Date) {
         let currentStep = (card.state == .new) ? 0 : (card.step ?? 0)
 
-        // Edge: нет шагов или мы уже за последним и не Again → сразу в review.
+        // Edge: no steps, or we're past the last one and not Again → straight to review.
         if steps.isEmpty || (currentStep >= steps.count && rating != .again) {
             promoteToReview(next: &next, now: now)
             return
@@ -193,13 +193,13 @@ final class FSRSScheduler {
         clampStability(parameters[rating.rawValue - 1])
     }
 
-    /// `clamp = false` нужен для arg_1 в mean reversion (Easy без обрезки).
+    /// `clamp = false` is needed for arg_1 in mean reversion (Easy without clamping).
     private func initialDifficulty(rating: FSRSRating, clamp: Bool) -> Double {
         let raw = parameters[4] - exp(parameters[5] * Double(rating.rawValue - 1)) + 1.0
         return clamp ? clampDifficulty(raw) : raw
     }
 
-    /// v6: linear damping + mean reversion. Плавнее у границ [1, 10].
+    /// v6: linear damping + mean reversion. Smoother near the bounds [1, 10].
     private func nextDifficulty(difficulty: Double, rating: FSRSRating) -> Double {
         let delta = -(parameters[6] * Double(rating.rawValue - 3))
         let damped = (10.0 - difficulty) * delta / 9.0
@@ -242,8 +242,8 @@ final class FSRSScheduler {
         )
     }
 
-    /// v6: forget stability — минимум long-term и short-term, чтобы ошибка не
-    /// давала "бонус" по сравнению с правильным same-day ответом.
+    /// v6: forget stability — the minimum of long-term and short-term, so an error
+    /// doesn't give a "bonus" over a correct same-day answer.
     private func nextForgetStability(difficulty: Double, stability: Double,
                                      retrievability: Double) -> Double {
         let longTerm = parameters[11]
@@ -254,7 +254,7 @@ final class FSRSScheduler {
         return min(longTerm, shortTerm)
     }
 
-    /// v6: новая формула для same-day повторов в learning/review/relearning.
+    /// v6: new formula for same-day repeats in learning/review/relearning.
     private func shortTermStability(stability: Double, rating: FSRSRating) -> Double {
         var increase = exp(parameters[17] * (Double(rating.rawValue - 3) + parameters[18]))
                        * pow(stability, -parameters[19])
@@ -264,7 +264,7 @@ final class FSRSScheduler {
         return clampStability(stability * increase)
     }
 
-    /// Интервал между review в днях для карточки в .review.
+    /// Interval between reviews in days for a card in .review.
     private func nextIntervalDays(stability: Double) -> Int {
         let raw = (stability / factor) * (pow(desiredRetention, 1.0 / decay) - 1.0)
         let rounded = Int(raw.rounded())

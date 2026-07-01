@@ -25,7 +25,7 @@ enum AuthError: LocalizedError {
     }
 }
 
-// MARK: - DTOs (соответствуют teenybase /auth/*)
+// MARK: - DTOs (match teenybase /auth/*)
 
 private struct SignUpBody: Encodable {
     let username: String
@@ -56,8 +56,8 @@ private struct AuthResponse: Decodable {
 
 // MARK: - AuthManager
 
-/// Управление JWT-сессией. Single source of truth для статуса авторизации.
-/// `isAuthenticated` — true когда в Keychain лежит валидный access token.
+/// JWT session management. Single source of truth for auth status.
+/// `isAuthenticated` — true when a valid access token is in the Keychain.
 @MainActor
 final class AuthManager: ObservableObject {
     static let shared = AuthManager()
@@ -86,9 +86,9 @@ final class AuthManager: ObservableObject {
         try validateEmail(trimmed)
         try validatePassword(password)
 
-        // teenybase требует username по regex ^[a-zA-Z][a-zA-Z0-9_]*$.
-        // Email не подходит из-за @ и точек. Генерируем случайный — он внутренний,
-        // юзер его не видит. Email — единственный публичный identity.
+        // teenybase requires a username matching regex ^[a-zA-Z][a-zA-Z0-9_]*$.
+        // Email doesn't fit because of @ and dots. We generate a random one — it's internal,
+        // the user never sees it. Email is the only public identity.
         let body = SignUpBody(
             username: Self.generateUsername(),
             email: trimmed,
@@ -105,7 +105,7 @@ final class AuthManager: ObservableObject {
     private static func generateUsername() -> String {
         let alphabet = Array("abcdefghijklmnopqrstuvwxyz0123456789")
         let tail = (0..<15).map { _ in alphabet.randomElement()! }
-        return "u" + String(tail) // 16 символов, начинается с буквы
+        return "u" + String(tail) // 16 chars, starts with a letter
     }
 
     func signIn(email: String, password: String) async throws {
@@ -124,19 +124,19 @@ final class AuthManager: ObservableObject {
         KeychainHelper.delete(KeychainKeys.userId)
         isAuthenticated = false
         currentEmail = nil
-        // Сбросить FSRS-параметры — они привязаны к юзеру.
+        // Reset FSRS params — they're tied to the user.
         FSRSParamStore.shared.reset()
     }
 
-    /// Используется APIClient'ом для подстановки в Authorization-заголовок.
-    /// nonisolated, потому что Keychain thread-safe и нам не нужен хоп на главный actor.
+    /// Used by APIClient to fill the Authorization header.
+    /// nonisolated because the Keychain is thread-safe and we don't need a hop to the main actor.
     nonisolated func currentAccessToken() -> String? {
         KeychainHelper.load(KeychainKeys.accessToken)
     }
 
-    /// Освежает токен по refresh_token. Бросает .noRefreshToken если refresh отсутствует.
-    /// При успехе — обновляет токены в Keychain. При неудаче — НЕ делает signOut автоматически
-    /// (это решение принимает caller).
+    /// Refreshes the token using refresh_token. Throws .noRefreshToken if no refresh token exists.
+    /// On success — updates the tokens in the Keychain. On failure — does NOT sign out automatically
+    /// (the caller makes that decision).
     func refresh() async throws {
         // Single-flight: if a refresh is already running, await it instead of starting a second.
         if let existing = refreshTask {
@@ -208,7 +208,7 @@ final class AuthManager: ObservableObject {
             }
         }
 
-        // Парсим серверную ошибку
+        // Parse the server error
         let serverMessage = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?
             .flatMap { dict -> String? in
                 if let m = dict["message"] as? String { return m }
@@ -229,7 +229,7 @@ final class AuthManager: ObservableObject {
     }
 
     private func validateEmail(_ email: String) throws {
-        // Минимальная проверка: есть @ и точка после @.
+        // Minimal check: there's an @ and a dot after the @.
         let parts = email.split(separator: "@")
         guard parts.count == 2, parts[1].contains(".") else {
             throw AuthError.validation("Неверный формат email")

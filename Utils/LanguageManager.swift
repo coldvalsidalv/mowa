@@ -20,7 +20,7 @@ final class LanguageManager: ObservableObject {
         currentLanguage = code
         UserDefaults.standard.set(code, forKey: StorageKeys.appLanguage)
         Bundle.setLanguage(code)
-        // Уведомляем все подписчики что язык изменился
+        // Notify all subscribers that the language changed
         objectWillChange.send()
         NotificationCenter.default.post(name: .languageChanged, object: code)
     }
@@ -30,7 +30,7 @@ extension Notification.Name {
     static let languageChanged = Notification.Name("languageChanged")
 }
 
-// MARK: - Bundle swizzle для runtime смены языка
+// MARK: - Bundle swizzle for runtime language switching
 
 private var bundleKey: UInt8 = 0
 
@@ -45,7 +45,7 @@ final class LanguageBundle: Bundle, @unchecked Sendable {
 
 extension Bundle {
     static func setLanguage(_ language: String) {
-        // Маппинг кодов приложения → коды iOS локалей
+        // Map app language codes → iOS locale codes
         let iOSCode: String
         switch language {
         case "en": iOSCode = "en"
@@ -59,7 +59,7 @@ extension Bundle {
 
         guard let path = Bundle.main.path(forResource: iOSCode, ofType: "lproj"),
               let bundle = Bundle(path: path) else {
-            // Если языковой пакет не найден — сбрасываем на основной
+            // If the language pack isn't found — fall back to the main bundle
             objc_setAssociatedObject(
                 Bundle.main, &bundleKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
             )
@@ -71,7 +71,7 @@ extension Bundle {
     }
 }
 
-// MARK: - Удобный доступ к строкам
+// MARK: - Convenient string access
 
 func L(_ key: String, _ args: CVarArg...) -> String {
     let format = Bundle.main.localizedString(forKey: key, value: key, table: nil)

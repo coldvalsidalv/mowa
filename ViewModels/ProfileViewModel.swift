@@ -5,8 +5,8 @@ import Combine
 final class ProfileViewModel: ObservableObject {
     @AppStorage(StorageKeys.userName) var userName: String = ""
     @AppStorage(StorageKeys.userEmail) var userEmail: String = ""
-    /// Source of truth — БД. Заполняется loadStats(context:).
-    /// Порог «знаю»: stability ≥ 3 дня (см. CLAUDE.md).
+    /// Source of truth — the DB. Populated by loadStats(context:).
+    /// "Known" threshold: stability ≥ 3 days (see CLAUDE.md).
     @Published var totalLearnedWords: Int = 0
     @AppStorage(StorageKeys.dayStreak) var dayStreak: Int = 0
     @AppStorage(StorageKeys.dailyGoal) var dailyGoal: Int = 10
@@ -22,17 +22,17 @@ final class ProfileViewModel: ObservableObject {
     @Published var showDeleteAccountAlert = false
     @Published var accountDeletionError: String?
 
-    // Активность за 7 дней — заполняется из ReviewLog через loadActivity()
+    // 7-day activity — populated from ReviewLog via loadActivity()
     @Published var activityData: [ActivityData] = []
 
-    /// Кэш достижений. Пересчитывается через recomputeAchievements() — вызывается
-    /// из loadStats/loadActivity/resetAllProgress. Раньше был computed property,
-    /// что пересоздавало 15 структур на каждый body re-render.
+    /// Achievements cache. Recomputed via recomputeAchievements() — called
+    /// from loadStats/loadActivity/resetAllProgress. It used to be a computed property,
+    /// which rebuilt 15 structs on every body re-render.
     ///
-    /// ⚠️ КОНТРАКТ: если ты добавляешь новый код-путь, который мутирует
+    /// ⚠️ CONTRACT: if you add a new code path that mutates
     /// totalLearnedWords / userXP / dayStreak / completedGrammarLessons —
-    /// обязан вызвать recomputeAchievements() сразу после. Иначе UI
-    /// показывает stale ачивки до следующего .onAppear.
+    /// you must call recomputeAchievements() right after. Otherwise the UI
+    /// shows stale achievements until the next .onAppear.
     @Published var achievements: [Achievement] = []
 
     /// Total grammar lessons — threshold for the "Профессор" achievement.
@@ -158,8 +158,8 @@ final class ProfileViewModel: ObservableObject {
 
     // MARK: - Stats from DB
 
-    /// Считает выученные слова (stability ≥ 3 дня) напрямую из БД.
-    /// Вызывать в .onAppear: после сессий счётчик обновится сам.
+    /// Counts learned words (stability ≥ 3 days) directly from the DB.
+    /// Call in .onAppear: after sessions the counter updates itself.
     func loadStats(context: ModelContext) {
         let threshold = 3.0
         let descriptor = FetchDescriptor<VocabItem>(
@@ -191,7 +191,7 @@ final class ProfileViewModel: ObservableObject {
         activityData = days.map { day in
             let nextDay = calendar.date(byAdding: .day, value: 1, to: day)!
             let dayLogs = logs.filter { $0.reviewDate >= day && $0.reviewDate < nextDay }
-            let xp = dayLogs.count * 5 // ~5 XP за карточку
+            let xp = dayLogs.count * 5 // ~5 XP per card
             let label = formatter.string(from: day).capitalized
             return ActivityData(day: label, xp: xp)
         }
@@ -217,8 +217,8 @@ final class ProfileViewModel: ObservableObject {
         UserDefaults.standard.removeObject(forKey: StorageKeys.completedGrammarLessons)
         UserDefaults.standard.removeObject(forKey: StorageKeys.currentChallenges)
         UserDefaults.standard.removeObject(forKey: StorageKeys.lastChallengeDate)
-        // totalLearnedWords отражает БД и обновится из loadStats при следующем onAppear.
-        // Сброс прогресса FSRS-карточек намеренно не делаем — это разрушительная операция.
+        // totalLearnedWords reflects the DB and will refresh from loadStats on the next onAppear.
+        // We deliberately don't reset FSRS card progress — that's a destructive operation.
         recomputeAchievements()
     }
 

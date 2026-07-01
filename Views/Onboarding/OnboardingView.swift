@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - Координатор онбординга
+// MARK: - Onboarding coordinator
 
 struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
@@ -39,7 +39,7 @@ struct OnboardingView: View {
         hasCompletedOnboarding = true
     }
 
-    /// Определяет язык интерфейса по системным настройкам iOS
+    /// Detects the UI language from iOS system settings
     static func detectedLanguage() -> String {
         let preferred = Locale.preferredLanguages.first ?? "ru"
         if preferred.hasPrefix("uk") { return "uk" }
@@ -47,7 +47,7 @@ struct OnboardingView: View {
         return "ru"
     }
 
-    /// Слова, отмеченные как знакомые, получают начальную стабильность FSRS
+    /// Words marked as familiar get an initial FSRS stability
     private func applyPlacementResults() {
         guard !knownWordIDs.isEmpty else { return }
 
@@ -72,7 +72,7 @@ struct OnboardingView: View {
     }
 }
 
-// MARK: - Шаг 1: Welcome
+// MARK: - Step 1: Welcome
 
 struct WelcomeStep: View {
     let onNext: () -> Void
@@ -117,7 +117,7 @@ struct WelcomeStep: View {
     }
 }
 
-// MARK: - Шаг 2: Язык интерфейса
+// MARK: - Step 2: UI language
 
 struct LanguageStep: View {
     @Binding var selected: String
@@ -171,7 +171,7 @@ struct LanguageStep: View {
     }
 }
 
-// MARK: - Шаг 3: Placement test
+// MARK: - Step 3: Placement test
 
 struct PlacementTestStep: View {
     @Binding var knownIDs: Set<Int>
@@ -181,7 +181,7 @@ struct PlacementTestStep: View {
     @State private var cardOffset: CGFloat = 0
     @State private var cardOpacity: Double = 1
 
-    // A1 → A2 → B1, чтобы реально определить уровень
+    // A1 → A2 → B1, to actually determine the level
     static let testWords: [(id: Int, polish: String, translation: String)] = [
         (0, "mama", "мама"),
         (1, "dom", "дом"),
@@ -333,7 +333,7 @@ struct PlacementTestStep: View {
     }
 }
 
-// MARK: - Шаг 4: Дневная цель
+// MARK: - Step 4: Daily goal
 
 struct GoalStep: View {
     @Binding var selected: Int
@@ -388,7 +388,7 @@ struct GoalStep: View {
     }
 }
 
-// MARK: - Шаг 5: Готов
+// MARK: - Step 5: Ready
 
 struct ReadyStep: View {
     let onFinish: () -> Void
@@ -432,7 +432,7 @@ struct ReadyStep: View {
     }
 }
 
-// MARK: - Переиспользуемые компоненты
+// MARK: - Reusable components
 
 struct OnboardingHeader: View {
     let step: Int

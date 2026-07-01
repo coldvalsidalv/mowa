@@ -65,29 +65,29 @@ final class HomeViewModel: ObservableObject {
         completeChallenge(challenge)
     }
     
-    /// Основной метод синхронизации UI с реальной базой данных.
-    /// Вызывается из .onAppear в HomeView.
+    /// Main method for syncing the UI with the real database.
+    /// Called from .onAppear in HomeView.
     func refreshStats(context: ModelContext) {
         checkAndResetDailyStateIfNeeded()
 
-        // XP пишут также QuizViewModel и GrammarLessonViewModel напрямую в UserDefaults —
-        // перечитываем, иначе лига и счёт на главном отстают до перезапуска.
+        // XP is also written by QuizViewModel and GrammarLessonViewModel directly to UserDefaults —
+        // re-read it, otherwise the league and score on Home lag until a restart.
         userXP = UserDefaults.standard.integer(forKey: StorageKeys.userXP)
 
         let startOfDay = calendar.startOfDay(for: Date())
         
-        // Запрос всех логов за сегодня
+        // Fetch all of today's logs
         let descriptor = FetchDescriptor<ReviewLog>(
             predicate: #Predicate { $0.reviewDate >= startOfDay }
         )
         
         do {
             let todaysLogs = try context.fetch(descriptor)
-            // Считаем уникальные карточки, которые были изучены сегодня
+            // Count the unique cards studied today
             let uniqueCards = Set(todaysLogs.map { $0.cardId })
             self.wordsLearnedToday = uniqueCards.count
             
-            // Синхронизируем прогресс вызова типа .words
+            // Sync the progress of the .words challenge
             updateChallengeProgress(type: .words, progress: uniqueCards.count)
             
         } catch {
@@ -128,7 +128,7 @@ final class HomeViewModel: ObservableObject {
         UserDefaults.standard.set(userXP, forKey: StorageKeys.userXP)
     }
     
-    // MARK: - Управление ежедневным состоянием
+    // MARK: - Daily state management
     
     private func loadDailyState() {
         let todayString = getTodayDateString()

@@ -1,8 +1,8 @@
 import SwiftUI
 import SwiftData
 
-/// Карточка подготовки к экзамену на главном экране: обратный отсчёт + дневной
-/// план + CTA на сессию слов целевого уровня. Аддитивна — обычные темы не трогает.
+/// Exam-prep card on the home screen: countdown + daily plan + a CTA to a
+/// word session at the target level. Additive — it doesn't touch regular topics.
 struct ExamCard: View {
     @ObservedObject var store: ExamPlanStore
     let onSetup: () -> Void
@@ -21,8 +21,8 @@ struct ExamCard: View {
         }
         .padding(.horizontal)
         .onAppear(perform: refreshRemaining)
-        // Словарь сидится асинхронно (VocabSyncService) — на первом запуске
-        // onAppear считает остаток до сидинга. Пересчитываем по сигналу.
+        // The vocabulary is seeded asynchronously (VocabSyncService) — on first launch
+        // onAppear counts the remainder before seeding. Recompute on the signal.
         .onReceive(NotificationCenter.default.publisher(for: .vocabularyDidChange)) { _ in
             refreshRemaining()
         }
@@ -125,7 +125,7 @@ struct ExamCard: View {
     }
 }
 
-/// Лист настройки цели: уровень + дата (с быстрым выбором официальных сессий).
+/// Goal setup sheet: level + date (with quick-pick of official sessions).
 struct ExamSetupSheet: View {
     @ObservedObject var store: ExamPlanStore
     @Environment(\.dismiss) private var dismiss
@@ -140,7 +140,7 @@ struct ExamSetupSheet: View {
         _date = State(initialValue: store.examDate ?? Date())
     }
 
-    /// Будущие официальные сессии, на которых сдаётся выбранный уровень.
+    /// Upcoming official sessions where the selected level is offered.
     private var upcomingForLevel: [ExamSession] {
         let today = Calendar.current.startOfDay(for: Date())
         return sessions
@@ -179,8 +179,8 @@ struct ExamSetupSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 sessions = await DataManager.shared.loadExamSessionsAsync()
-                // Без явной даты дефолтим на ближайшую официальную сессию, иначе
-                // "Сохранить" без выбора даты записал бы сегодня (daysLeft == 0).
+                // Without an explicit date, default to the nearest official session, otherwise
+                // "Save" without picking a date would record today (daysLeft == 0).
                 if store.examDate == nil, let first = upcomingForLevel.first {
                     date = first.startDate
                 }
@@ -234,14 +234,14 @@ struct ExamSetupSheet: View {
         return f
     }()
 
-    /// "27–28 июня 2026". Локаль следует за языком приложения (рантайм-свизл),
-    /// а не за локалью устройства.
+    /// "27–28 June 2026". The locale follows the app language (runtime swizzle),
+    /// not the device locale.
     private static func rangeText(_ s: ExamSession) -> String {
         let f = rangeFormatter
         f.locale = Locale(identifier: LanguageManager.shared.currentLanguage)
         let endStr = f.string(from: s.endDate)
         let startDay = Calendar.current.component(.day, from: s.startDate)
-        // Сессия всегда в одном месяце (сб–вс) — показываем "27–28 <месяц> <год>".
+        // A session is always within one month (Sat–Sun) — show "27–28 <month> <year>".
         return "\(startDay)–\(endStr)"
     }
 }

@@ -120,7 +120,7 @@ struct StreakView: View {
                     Button(action: {
                         dismiss()
                         if !manager.hasPracticedToday {
-                            // Небольшая задержка, чтобы UI не дергался при закрытии модального окна
+                            // A small delay so the UI doesn't jump when the modal closes
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 onStartLesson?()
                             }
@@ -154,7 +154,7 @@ struct StreakView: View {
     }
 }
 
-// Рендеринг частиц (Оптимизировано для GPU)
+// Particle rendering (GPU-optimized)
 struct DeterministicParticleCanvas: View {
     let isFire: Bool
     let particleCount = 40

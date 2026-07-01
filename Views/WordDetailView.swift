@@ -16,7 +16,7 @@ struct WordDetailView: View {
         return dict
     }
 
-    // Порядок и названия флексий
+    // Order and labels of inflections
     private let inflectionKeys: [(key: String, label: String)] = [
         ("1sg", "я"),
         ("3sg", "он/она"),
@@ -29,7 +29,7 @@ struct WordDetailView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // ── Шапка ─────────────────────────────────────────────────────
+            // ── Header ─────────────────────────────────────────────────────
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(word.category)
@@ -53,7 +53,7 @@ struct WordDetailView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    // ── Слово + транскрипция + аудио ──────────────────────
+                    // ── Word + transcription + audio ──────────────────────
                     HStack(alignment: .top) {
                         VStack(alignment: .leading, spacing: 6) {
                             Text(word.polish)
@@ -89,13 +89,13 @@ struct WordDetailView: View {
 
                     Divider()
 
-                    // ── Перевод ───────────────────────────────────────────
+                    // ── Translation ───────────────────────────────────────────
                     Text(word.translation)
                         .font(.system(size: 28, weight: .bold))
                         .padding(.horizontal, 20)
                         .padding(.vertical, 20)
 
-                    // ── Пример ────────────────────────────────────────────
+                    // ── Example ────────────────────────────────────────────
                     if !word.example.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("PRZYKŁAD")
@@ -117,7 +117,7 @@ struct WordDetailView: View {
                         .padding(.bottom, 20)
                     }
 
-                    // ── Флексии ───────────────────────────────────────────
+                    // ── Inflections ───────────────────────────────────────────
                     if !inflections.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("ФОРМЫ")
@@ -157,7 +157,7 @@ struct WordDetailView: View {
 
             Divider()
 
-            // ── Действия ──────────────────────────────────────────────────
+            // ── Actions ──────────────────────────────────────────────────
             VStack(spacing: 0) {
                 actionRow(icon: "arrow.counterclockwise", label: "Сбросить прогресс по слову", color: .primary) {
                     showResetAlert = true

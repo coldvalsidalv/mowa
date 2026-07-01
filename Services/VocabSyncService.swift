@@ -1,8 +1,8 @@
 import Foundation
 import SwiftData
 
-/// Синхронизирует словарь из Teenybase в локальный SwiftData.
-/// Первый запуск: полная загрузка. Последующие: delta по updated timestamp.
+/// Syncs the vocabulary from Teenybase into local SwiftData.
+/// First launch: full load. Subsequent ones: delta by updated timestamp.
 @MainActor
 final class VocabSyncService {
     static let shared = VocabSyncService()
@@ -20,8 +20,8 @@ final class VocabSyncService {
     // MARK: - Internal
 
     private func sync(context: ModelContext) async {
-        // HomeView.onAppear дёргает sync на каждое переключение таба —
-        // без guard'а конкурентные full sync вставляют дубликаты.
+        // HomeView.onAppear triggers sync on every tab switch —
+        // without the guard, concurrent full syncs insert duplicates.
         guard !isSyncing else { return }
         isSyncing = true
         defer { isSyncing = false }
@@ -63,9 +63,9 @@ final class VocabSyncService {
                 item.remoteId.map { ($0, item) }
             })
 
-            // Bundle-слова (remoteId == nil) матчим по polish, чтобы не потерять
-            // fsrsData-прогресс юзера, начавшего offline. Неоднозначные polish
-            // (омонимы) не матчим — пойдут через insert/delete.
+            // Bundle words (remoteId == nil) are matched by polish so we don't lose
+            // fsrsData progress of a user who started offline. Ambiguous polish
+            // (homonyms) aren't matched — they go through insert/delete.
             let bundleItems = allItems.filter { $0.remoteId == nil }
             var byPolish: [String: VocabItem] = [:]
             for (polish, group) in Dictionary(grouping: bundleItems, by: \.polish) where group.count == 1 {
@@ -85,7 +85,7 @@ final class VocabSyncService {
                     inserted += 1
                 }
             }
-            // Adopted items получили remoteId выше и сюда не попадают.
+            // Adopted items got a remoteId above and don't reach this point.
             let stale = allItems.filter { $0.remoteId == nil }
             stale.forEach { context.delete($0) }
             if !stale.isEmpty {
@@ -119,8 +119,8 @@ final class VocabSyncService {
     }
 
     private func fallbackToBundle(context: ModelContext) {
-        // Seed только в пустую базу: sync вызывается на каждый onAppear HomeView,
-        // и без этой проверки каждый offline-вызов вставлял бы бандл заново.
+        // Seed only into an empty database: sync is called on every HomeView onAppear,
+        // and without this check each offline call would re-insert the bundle.
         let existingCount = (try? context.fetchCount(FetchDescriptor<VocabItem>())) ?? 0
         guard existingCount == 0 else { return }
 
@@ -179,7 +179,7 @@ private extension VocabItem {
 }
 
 extension Notification.Name {
-    /// Постится после успешного VocabSyncService.upsert (когда что-то изменилось).
-    /// LessonsView подписан и перезагружает категории.
+    /// Posted after a successful VocabSyncService.upsert (when something changed).
+    /// LessonsView subscribes and reloads categories.
     static let vocabularyDidChange = Notification.Name("vocabularyDidChange")
 }

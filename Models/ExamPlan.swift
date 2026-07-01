@@ -1,8 +1,8 @@
 import Combine
 import Foundation
 
-/// Целевой уровень госэкзамена (B1/B2). Выводится из префикса VocabItem.category
-/// ("B1 · 4"); A2 как госэкзамен не сдаётся.
+/// Target state-exam level (B1/B2). Derived from the VocabItem.category prefix
+/// ("B1 · 4"); A2 isn't taken as a state exam.
 enum ExamLevel: String, CaseIterable, Identifiable {
     case b1 = "B1"
     case b2 = "B2"
@@ -12,26 +12,26 @@ enum ExamLevel: String, CaseIterable, Identifiable {
 }
 
 extension VocabItem {
-    /// Уровень CEFR, выведенный из category ("B1 · 4" -> "B1").
-    /// Словарь размечен так, что category всегда начинается с уровня —
-    /// отдельное поле в модели не нужно.
+    /// CEFR level derived from category ("B1 · 4" -> "B1").
+    /// The vocabulary is tagged so that category always starts with the level —
+    /// no separate field in the model is needed.
     var cefrLevel: String {
         String(category.prefix(while: { $0 != " " }))
     }
 }
 
-/// Официальная сессия госэкзамена. Даты публикует Państwowa Komisja раз в год;
-/// официального API нет — датасет поддерживается вручную (бэкенд + bundle-фоллбэк).
+/// Official state-exam session. Państwowa Komisja publishes the dates once a year;
+/// there's no official API — the dataset is maintained manually (backend + bundle fallback).
 struct ExamSession: Identifiable, Hashable, Sendable {
-    let id: String            // session_id, напр. "2026-10"
-    let startDate: Date       // первый день сессии (суббота)
-    let endDate: Date         // второй день (воскресенье)
-    let levels: [String]      // уровни для взрослых на этой сессии: ["B1","B2"]
+    let id: String            // session_id, e.g. "2026-10"
+    let startDate: Date       // first day of the session (Saturday)
+    let endDate: Date         // second day (Sunday)
+    let levels: [String]      // adult levels for this session: ["B1","B2"]
 
     func offers(_ level: ExamLevel) -> Bool { levels.contains(level.rawValue) }
 }
 
-/// DTO из bundle (levels — нативный массив).
+/// Bundle DTO (levels is a native array).
 struct BundleExamSession: Decodable, Sendable {
     let session_id: String
     let start_date: String
@@ -51,8 +51,8 @@ enum ExamSessionParser {
     }
 }
 
-/// Хранит цель подготовки к экзамену (уровень + дата). UserDefaults-backed,
-/// без изменений модели/БД. Обратный отсчёт и дневной план считаются поверх.
+/// Stores the exam-prep goal (level + date). UserDefaults-backed, with no model/DB
+/// changes. The countdown and daily plan are computed on top of it.
 @MainActor
 final class ExamPlanStore: ObservableObject {
     @Published var targetLevel: ExamLevel? {
@@ -78,7 +78,7 @@ final class ExamPlanStore: ObservableObject {
 
     var isConfigured: Bool { targetLevel != nil && examDate != nil }
 
-    /// Полных дней до экзамена (0 = сегодня, отрицательное = прошёл).
+    /// Full days until the exam (0 = today, negative = passed).
     var daysLeft: Int? {
         guard let examDate else { return nil }
         let cal = Calendar.current

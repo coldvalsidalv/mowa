@@ -1,7 +1,7 @@
 import Foundation
 
-/// Синхронизирует XP и имя текущего юзера в публичную таблицу leaderboard.
-/// Throttle: не чаще раза в 5 минут. Fire-and-forget.
+/// Syncs the current user's XP and name into the public leaderboard table.
+/// Throttle: at most once every 5 minutes. Fire-and-forget.
 @MainActor
 final class LeaderboardSyncService {
     static let shared = LeaderboardSyncService()

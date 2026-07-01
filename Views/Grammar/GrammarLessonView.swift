@@ -33,10 +33,10 @@ struct GrammarLessonView: View {
         }
     }
 
-    // MARK: - Основной контент урока
+    // MARK: - Main lesson content
     private var lessonContentView: some View {
         VStack(spacing: 0) {
-            // 1. ХЕДЕР
+            // 1. HEADER
             HStack(spacing: 12) {
                 Button(action: { showExitAlert = true }) {
                     Image(systemName: "xmark")
@@ -56,7 +56,7 @@ struct GrammarLessonView: View {
             }
             .padding()
             
-            // 2. КОНТЕНТ (Слайды)
+            // 2. CONTENT (Slides)
             TabView(selection: $viewModel.currentStepIndex) {
                 ForEach(Array(viewModel.lesson.steps.enumerated()), id: \.offset) { index, step in
                     VStack {
@@ -84,7 +84,7 @@ struct GrammarLessonView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .animation(.easeInOut, value: viewModel.currentStepIndex)
             
-            // 3. НИЖНЯЯ ПАНЕЛЬ
+            // 3. BOTTOM BAR
             VStack {
                 if viewModel.currentStep.type == .quiz && viewModel.showQuizFeedback {
                     HStack {
@@ -118,7 +118,7 @@ struct GrammarLessonView: View {
         }
     }
     
-    // MARK: - Экран результатов теста
+    // MARK: - Quiz results screen
     private var resultsView: some View {
         VStack(spacing: 30) {
             Spacer()

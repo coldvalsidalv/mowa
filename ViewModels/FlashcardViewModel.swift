@@ -12,12 +12,12 @@ final class FlashcardViewModel: ObservableObject {
     private let engine: LearningEngine
     private var sessionStartTime: Date
     private var category: String?
-    /// Целевой уровень экзамена. Когда задан — сессия строится по уровню,
-    /// а не по категории.
+    /// Target exam level. When set — the session is built by level,
+    /// not by category.
     private var level: String?
     private let batchSize = 20
 
-    /// Обычный режим — по категориям + новые карточки
+    /// Normal mode — by categories + new cards
     init(categories: [String], isReviewMode: Bool, context: ModelContext) {
         self.engine = LearningEngine(context: context)
         self.sessionStartTime = Date()
@@ -32,7 +32,7 @@ final class FlashcardViewModel: ObservableObject {
         updateRemaining()
     }
 
-    /// Экзаменационный режим — все слова целевого уровня CEFR ("A2"/"B1"/"B2")
+    /// Exam mode — all words at the target CEFR level ("A2"/"B1"/"B2")
     init(level: String, context: ModelContext) {
         self.engine = LearningEngine(context: context)
         self.sessionStartTime = Date()
@@ -42,7 +42,7 @@ final class FlashcardViewModel: ObservableObject {
         updateRemaining()
     }
 
-    /// Режим повторения по FSRS-уровню (weak / medium / strong)
+    /// Review mode by FSRS level (weak / medium / strong)
     init(tier: ReviewTier, context: ModelContext) {
         self.engine = LearningEngine(context: context)
         self.sessionStartTime = Date()

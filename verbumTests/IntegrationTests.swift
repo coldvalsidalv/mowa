@@ -3,18 +3,18 @@ import Foundation
 import SwiftData
 @testable import Verbum
 
-/// Интеграционные тесты на Swift Testing (`@Test`), а не XCTest.
+/// Integration tests on Swift Testing (`@Test`), not XCTest.
 ///
-/// Зачем отдельный фреймворк: XCTest под Swift 6 default-MainActor isolation
-/// крашит runtime при освобождении `ProfileViewModel`/`LessonsViewModel`
-/// (`BUG_IN_CLIENT_OF_LIBMALLOC` в `swift_task_deinitOnExecutorImpl`).
-/// Swift Testing корректно работает с isolated deinit — `@MainActor`
-/// на тесте/suite держит весь жизненный цикл инстанса на main, и release
-/// объекта проходит без хопа на чужой executor.
+/// Why a separate framework: under Swift 6 default-MainActor isolation, XCTest
+/// crashes the runtime when releasing `ProfileViewModel`/`LessonsViewModel`
+/// (`BUG_IN_CLIENT_OF_LIBMALLOC` in `swift_task_deinitOnExecutorImpl`).
+/// Swift Testing handles isolated deinit correctly — `@MainActor` on the
+/// test/suite keeps the whole instance lifecycle on main, and the object's
+/// release happens without a hop to a foreign executor.
 ///
-/// **Правило проекта:** unit-тесты на чистые функции — XCTest (см.
-/// LessonsViewModelTests, ProfileViewModelTests). Тесты, требующие
-/// инстанс VM или ModelContainer — Swift Testing, как здесь.
+/// **Project rule:** unit tests for pure functions — XCTest (see
+/// LessonsViewModelTests, ProfileViewModelTests). Tests that need a
+/// VM instance or a ModelContainer — Swift Testing, like here.
 
 // MARK: - LessonsViewModel.loadCategories
 
@@ -40,8 +40,8 @@ struct LessonsViewModelIntegration {
         return w
     }
 
-    /// Ждём пока `vm.categories` станет непустым (loadCategories асинхронна).
-    /// Поллим, потому что @Published.sink + confirmation усложняет тест без выгоды.
+    /// Wait until `vm.categories` becomes non-empty (loadCategories is async).
+    /// We poll because @Published.sink + confirmation complicates the test with no benefit.
     private func waitForCategories(_ vm: LessonsViewModel, timeoutMs: Int = 3000) async {
         let stepMs = 50
         for _ in 0..<(timeoutMs / stepMs) {
@@ -73,9 +73,9 @@ struct LessonsViewModelIntegration {
 
     @Test("loadCategories survives VM release without isolated-deinit crash")
     func vmReleaseNoCrash() async throws {
-        // Главное что проверяем — что vm уйдёт из scope в конце test и
-        // его deinit отработает без libmalloc-краша. Под XCTest этот же
-        // сценарий валит runtime; под Swift Testing — должен пройти.
+        // The key thing we check — that the vm leaves scope at the end of the test and
+        // its deinit runs without a libmalloc crash. Under XCTest this same
+        // scenario crashes the runtime; under Swift Testing it should pass.
         let container = try makeContainer()
         let ctx = ModelContext(container)
         ctx.insert(makeWord("X"))
@@ -86,7 +86,7 @@ struct LessonsViewModelIntegration {
             vm.loadCategories(container: container)
             await waitForCategories(vm)
             #expect(vm.categories.count == 1)
-        } // vm.deinit здесь
+        } // vm.deinit here
     }
 
     @Test("empty database yields empty categories")
@@ -96,7 +96,7 @@ struct LessonsViewModelIntegration {
 
         vm.loadCategories(container: container)
 
-        // Дожидаемся завершения Task.detached даже если он ничего не публикует.
+        // Wait for the Task.detached to finish even if it publishes nothing.
         try await Task.sleep(for: .milliseconds(300))
         #expect(vm.categories.isEmpty)
     }

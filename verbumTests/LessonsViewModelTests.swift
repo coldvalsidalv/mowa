@@ -2,10 +2,10 @@ import XCTest
 import SwiftData
 @testable import Verbum
 
-/// Тесты pure-логики группировки слов в категории.
-/// Integration-тест с реальным LessonsViewModel + ModelContainer не делаем —
-/// под Swift 6 isolated-deinit XCTest крашит runtime при освобождении VM.
-/// Pure static func даёт детерминизм и не зависит от async/actor-инфраструктуры.
+/// Tests of the pure category-grouping logic.
+/// We don't do an integration test with a real LessonsViewModel + ModelContainer —
+/// under Swift 6 isolated-deinit, XCTest crashes the runtime when the VM is released.
+/// A pure static func gives determinism and doesn't depend on async/actor infrastructure.
 final class LessonsViewModelTests: XCTestCase {
 
     private func makeWord(category: String, state: FSRSState = .new) -> VocabItem {
@@ -40,8 +40,8 @@ final class LessonsViewModelTests: XCTestCase {
     }
 
     func test_learnedCount_isStateNotNew() {
-        // "Выучено" в этом UI = "уже не .new" (learning/review/relearning).
-        // Это согласовано с card progress на экране "Учить".
+        // "Learned" in this UI = "no longer .new" (learning/review/relearning).
+        // This is consistent with card progress on the "Learn" screen.
         let words = [
             makeWord(category: "X", state: .new),
             makeWord(category: "X", state: .learning),
@@ -63,7 +63,7 @@ final class LessonsViewModelTests: XCTestCase {
     }
 
     func test_consistentIconAndColorAcrossRuns() {
-        // Иконка не должна "прыгать" между запусками — UX-инвариант.
+        // The icon must not "jump" between runs — a UX invariant.
         let a = LessonsViewModel.computeCategories(from: [makeWord(category: "Стабильность")])
         let b = LessonsViewModel.computeCategories(from: [makeWord(category: "Стабильность")])
         XCTAssertEqual(a[0].icon, b[0].icon)
