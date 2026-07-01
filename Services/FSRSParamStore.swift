@@ -1,15 +1,15 @@
 import Foundation
 import Combine
 
-/// Персональные параметры FSRS-6 — то, что приходит из бэкенда после оптимизации.
-/// До первой оптимизации (или если бэкенд недоступен) клиент работает на дефолтах.
+/// Personal FSRS-6 params — what comes from the backend after optimization.
+/// Before the first optimization (or if the backend is unavailable) the client runs on defaults.
 struct FSRSParams: Codable, Equatable {
-    let parameters: [Double]          // 21 вес FSRS-6
-    let desiredRetention: Double      // 0.80–0.95 рекомендованный диапазон
-    let learningSteps: [TimeInterval] // в секундах
+    let parameters: [Double]          // 21 FSRS-6 weights
+    let desiredRetention: Double      // 0.80–0.95 recommended range
+    let learningSteps: [TimeInterval] // in seconds
     let relearningSteps: [TimeInterval]
 
-    /// Дефолтные параметры FSRS-6 (py-fsrs v6.3.1).
+    /// Default FSRS-6 params (py-fsrs v6.3.1).
     static let defaults = FSRSParams(
         parameters: FSRSScheduler.defaultParameters,
         desiredRetention: VerbumConfig.fsrsDesiredRetention,
@@ -17,7 +17,7 @@ struct FSRSParams: Codable, Equatable {
         relearningSteps: FSRSScheduler.defaultRelearningSteps
     )
 
-    /// Валидация формы перед применением: 21 параметр, retention в адекватном диапазоне.
+    /// Shape validation before applying: 21 params, retention in a sane range.
     var isValid: Bool {
         parameters.count == 21
             && desiredRetention >= 0.5 && desiredRetention <= 0.99
@@ -27,13 +27,13 @@ struct FSRSParams: Codable, Equatable {
     }
 }
 
-/// Хранилище текущих параметров FSRS. Дефолты вшиты; персональные подгружаются
-/// при signIn / app foreground через `FSRSParamSyncService`, кэшируются в UserDefaults
-/// чтобы пережить рестарт без обращения к сети.
+/// Store of the current FSRS params. Defaults are baked in; personal ones are loaded
+/// on signIn / app foreground via `FSRSParamSyncService` and cached in UserDefaults
+/// to survive a restart without hitting the network.
 ///
-/// LearningEngine берёт `current` в init и создаёт FSRSScheduler с этими параметрами —
-/// новая сессия = свежий снимок параметров. Hot-reload в середине сессии намеренно
-/// не делаем: оптимизатор работает раз в неделю, лишний риск не нужен.
+/// LearningEngine takes `current` in init and creates an FSRSScheduler with those params —
+/// a new session = a fresh param snapshot. We deliberately avoid a mid-session hot-reload:
+/// the optimizer runs once a week, the extra risk isn't worth it.
 @MainActor
 final class FSRSParamStore: ObservableObject {
     static let shared = FSRSParamStore()
@@ -51,8 +51,8 @@ final class FSRSParamStore: ObservableObject {
         }
     }
 
-    /// Применить и закэшировать новые параметры. Невалидные молча отбрасываются —
-    /// безопаснее остаться на старых, чем сломать математику.
+    /// Apply and cache new params. Invalid ones are silently dropped —
+    /// safer to keep the old ones than to break the math.
     func update(_ params: FSRSParams) {
         guard params.isValid else {
             verbumLog("⚠️ FSRSParamStore: rejecting invalid params \(params)")
@@ -65,16 +65,16 @@ final class FSRSParamStore: ObservableObject {
         }
     }
 
-    /// Сбросить на дефолты (например, при signOut).
+    /// Reset to defaults (e.g. on signOut).
     func reset() {
         current = .defaults
         lastFetchedAt = nil
         UserDefaults.standard.removeObject(forKey: cacheKey)
     }
 
-    /// Fire-and-forget pull персональных параметров. Вызывать после signIn /
-    /// при app foreground. Молча игнорирует ошибки сети и отсутствие записи —
-    /// клиент продолжает работать на дефолтах/кэше.
+    /// Fire-and-forget pull of personal params. Call after signIn / on app foreground.
+    /// Silently ignores network errors and a missing record — the client keeps
+    /// running on defaults/cache.
     func refreshIfNeeded() {
         Task { await refreshFromBackend() }
     }
@@ -86,7 +86,7 @@ final class FSRSParamStore: ObservableObject {
                 update(params)
                 verbumLog("✅ FSRSParamStore: applied personal params")
             }
-            // params == nil — оптимизатор ещё не отработал, остаёмся на дефолтах/кэше
+            // params == nil — the optimizer hasn't run yet, stay on defaults/cache
         } catch {
             verbumLog("⚠️ FSRSParamStore: fetch failed — \(error)")
         }

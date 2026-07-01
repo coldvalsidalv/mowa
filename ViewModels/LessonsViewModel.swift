@@ -49,7 +49,7 @@ final class LessonsViewModel: ObservableObject {
         }
     }
     
-    /// Загружает грамматику: парс бандла на фоновом потоке, API обновляет в фоне
+    /// Loads grammar: parse the bundle on a background thread, the API refreshes in the background
     func loadGrammar() {
         Task.detached(priority: .userInitiated) { [weak self] in
             let bundleLessons = DataManager.shared.loadGrammar()
@@ -64,8 +64,8 @@ final class LessonsViewModel: ObservableObject {
         }
     }
 
-    /// Загружает категории на background ModelContext, чтобы не материализовать
-    /// 500 VocabItem на main thread (раньше @Query в LessonsView давал ~1s фриз).
+    /// Loads categories on a background ModelContext to avoid materializing
+    /// 500 VocabItems on the main thread (a @Query in LessonsView used to cause a ~1s freeze).
     func loadCategories(container: ModelContainer) {
         Task.detached(priority: .userInitiated) {
             var descriptor = FetchDescriptor<VocabItem>()
@@ -79,8 +79,8 @@ final class LessonsViewModel: ObservableObject {
         }
     }
 
-    /// Чистая функция, считается на background — никаких обращений к UI.
-    /// Internal вместо private — чтобы покрыть тестами без хрупкой async-инфраструктуры.
+    /// Pure function, computed on the background — no UI access.
+    /// Internal instead of private — so it can be covered by tests without fragile async infrastructure.
     nonisolated static func computeCategories(from words: [VocabItem]) -> [CategoryStat] {
         let colors: [Color] = [.orange, .blue, .green, .pink, .purple, .teal]
         let icons = ["text.book.closed.fill", "graduationcap.fill", "lightbulb.fill", "globe.europe.africa.fill", "bubble.left.and.bubble.right.fill"]
@@ -152,7 +152,7 @@ final class LessonsViewModel: ObservableObject {
         allGrammarLessons.filter { $0.level == groupID }
     }
     
-    // MARK: - Вспомогательные статические методы
+    // MARK: - Helper static methods
 
     private static func getColor(for level: String) -> Color {
         switch level {

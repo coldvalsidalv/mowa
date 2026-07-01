@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 import Charts
 
-// MARK: - Root: онбординг или основной экран
+// MARK: - Root: onboarding or main screen
 
 struct RootView: View {
     @AppStorage(StorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
@@ -29,14 +29,14 @@ struct ContentView: View {
     @State private var triggerLessonsEditMode = false
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
-    // Подписка на смену языка — перерисовывает TabView с новыми строками
+    // Subscribe to language changes — re-renders the TabView with new strings
     @StateObject private var languageManager = LanguageManager.shared
 
     var body: some View {
         ZStack {
-            // Прогрев Charts: первая инициализация фреймворка тяжёлая (~200–500 ms),
-            // если делать её при открытии ProfileView. Кладём невидимый Chart в корне,
-            // чтобы SwiftUI инициализировал фреймворк один раз при старте приложения.
+            // Charts warmup: the framework's first initialization is heavy (~200–500 ms)
+            // if done when opening ProfileView. We put an invisible Chart at the root
+            // so SwiftUI initializes the framework once at app launch.
             ChartsWarmup()
 
             tabs
@@ -74,7 +74,7 @@ struct ContentView: View {
                 .tag(3)
         }
         .tint(.purple)
-        // Перерисовываем при смене языка
+        // Re-render on language change
         .id(languageManager.currentLanguage)
         .onAppear {
             ReviewLogSyncService.shared.syncIfNeeded(context: modelContext)
@@ -91,8 +91,8 @@ struct ContentView: View {
     }
 }
 
-/// Скрытый Chart для one-time прогрева Charts framework при старте.
-/// Без этого первое открытие ProfileView лагает на ~200–500 ms.
+/// Hidden Chart for a one-time warmup of the Charts framework at launch.
+/// Without it, the first ProfileView open lags by ~200–500 ms.
 private struct ChartsWarmup: View {
     @State private var done = false
 

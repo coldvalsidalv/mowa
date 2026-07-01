@@ -6,8 +6,8 @@ import SwiftUI
 // MARK: - Review Tier
 
 enum ReviewTier {
-    case all            // умный микс: due + new
-    case category(String) // конкретная тема
+    case all            // smart mix: due + new
+    case category(String) // a specific topic
     case weak           // state == relearning || difficulty > 7
     case medium         // review, stability < 14
     case strong         // review, stability >= 14
@@ -31,13 +31,13 @@ protocol ReviewLogSyncing {
 extension StreakManager: StreakTracking {}
 extension ReviewLogSyncService: ReviewLogSyncing {}
 
-/// Сервис уровня бизнес-логики. Оркестрирует выборку из БД и работу FSRS.
+/// Business-logic-level service. Orchestrates fetching from the DB and running FSRS.
 @MainActor
 final class LearningEngine: ObservableObject {
     private let modelContext: ModelContext
-    /// Снимок FSRS-параметров на момент создания engine (т.е. начала сессии).
-    /// Hot-reload в середине сессии намеренно не делаем — оптимизатор перезаписывает
-    /// параметры асинхронно, в середине сессии менять мат-модель опасно.
+    /// Snapshot of FSRS params at engine creation (i.e. the start of the session).
+    /// We deliberately avoid a mid-session hot-reload — the optimizer rewrites the
+    /// params asynchronously, and changing the math model mid-session is risky.
     private let scheduler: FSRSScheduler
     private let streakTracker: StreakTracking
     private let reviewLogSync: ReviewLogSyncing
@@ -45,8 +45,8 @@ final class LearningEngine: ObservableObject {
     @Published var sessionQueue: [VocabItem] = []
     @Published var sessionProgress: CGFloat = 0.0
     private var totalInSession: Int = 0
-    /// Сколько раз карточку уже повторяли в текущей сессии после .again.
-    /// Нужно, чтобы не вернуть её в очередь больше cap-раз.
+    /// How many times a card has been repeated in the current session after .again.
+    /// Needed so we don't put it back in the queue more than cap times.
     private var againRetryCount: [UUID: Int] = [:]
 
     /// Dependencies are optional with a nil default (rather than `= .shared` in the
@@ -70,7 +70,7 @@ final class LearningEngine: ObservableObject {
 
     // MARK: - Session builders
 
-    /// Стандартная сессия: due-карточки + новые из категории
+    /// Standard session: due cards + new ones from a category
     func buildSession(category: String? = nil, newCardsLimit: Int = 10) {
         let now = Date()
 
@@ -80,14 +80,14 @@ final class LearningEngine: ObservableObject {
         )
         var dueCards = (try? modelContext.fetch(dueDescriptor)) ?? []
 
-        // Фильтруем по категории если задана
+        // Filter by category if one is given
         if let cat = category {
             dueCards = dueCards.filter { $0.category == cat }
         }
 
         var newDescriptor = FetchDescriptor<VocabItem>(
-            // Новые карточки — по частотности (rank 1 = самое частое слово),
-            // иначе SwiftData возвращает произвольный порядок.
+            // New cards — by frequency (rank 1 = most frequent word),
+            // otherwise SwiftData returns an arbitrary order.
             sortBy: [SortDescriptor(\.rank, order: .forward)]
         )
         if let cat = category {
@@ -104,9 +104,9 @@ final class LearningEngine: ObservableObject {
         self.againRetryCount.removeAll()
     }
 
-    /// Экзаменационная сессия: due + новые слова целевого уровня CEFR ("B1"/"B2").
-    /// Фильтруем по префиксу category в самом #Predicate ("B1 " матчит "B1 · 4"),
-    /// что позволяет вернуть fetchLimit на новых и не материализовать весь словарь.
+    /// Exam session: due + new words at the target CEFR level ("B1"/"B2").
+    /// We filter by the category prefix inside the #Predicate itself ("B1 " matches "B1 · 4"),
+    /// which lets us apply fetchLimit to the new ones and avoid materializing the whole vocabulary.
     func buildSession(level: String, newCardsLimit: Int = 20) {
         let now = Date()
         let prefix = level + " "
@@ -134,12 +134,12 @@ final class LearningEngine: ObservableObject {
         self.againRetryCount.removeAll()
     }
 
-    /// Сессия повторения по FSRS-уровню (weak/medium/strong/all)
+    /// Review session by FSRS level (weak/medium/strong/all)
     func buildReviewSession(tier: ReviewTier) {
         let now = Date()
 
-        // Получаем все due-карточки из памяти, фильтруем по tier в Swift
-        // (SwiftData не поддерживает предикаты на enum .rawValue в nested @Model)
+        // Fetch all due cards into memory and filter by tier in Swift
+        // (SwiftData doesn't support predicates on enum .rawValue in a nested @Model)
         let descriptor = FetchDescriptor<VocabItem>(
             predicate: #Predicate { $0.fsrsData.reps > 0 && $0.fsrsData.due <= now },
             sortBy: [SortDescriptor(\.fsrsData.due, order: .forward)]
@@ -187,9 +187,9 @@ final class LearningEngine: ObservableObject {
         return (try? modelContext.fetchCount(descriptor)) ?? 0
     }
 
-    /// Сколько новых (ещё не показанных) слов осталось на целевом уровне.
-    /// Нужно для дневного плана подготовки к экзамену. fetchCount + префиксный
-    /// предикат — без материализации словаря в память.
+    /// How many new (not-yet-shown) words remain at the target level.
+    /// Needed for the daily exam-prep plan. fetchCount + a prefix predicate —
+    /// without materializing the vocabulary into memory.
     func countRemainingNew(level: String) -> Int {
         let prefix = level + " "
         let descriptor = FetchDescriptor<VocabItem>(
@@ -225,7 +225,7 @@ final class LearningEngine: ObservableObject {
                 sessionQueue.append(item)
                 totalInSession += 1
             }
-            // Иначе карточка получила forget-обновление и уйдёт в next due; в текущей сессии больше не показываем.
+            // Otherwise the card got a forget update and moves to its next due; we don't show it again this session.
         } else {
             streakTracker.completeLesson()
         }
@@ -238,7 +238,7 @@ final class LearningEngine: ObservableObject {
             verbumLog("❌ LearningEngine: failed to save context — \(error)")
         }
 
-        // Конец сессии — отправляем накопленные ReviewLog'и на бэкенд.
+        // End of session — send the accumulated ReviewLogs to the backend.
         if sessionQueue.isEmpty {
             reviewLogSync.syncIfNeeded(context: modelContext)
         }

@@ -135,7 +135,7 @@ struct AuthView: View {
                     try await auth.signUp(email: email, password: password,
                                           name: name.isEmpty ? nil : name)
                 }
-                // При успехе RootView перерисуется по isAuthenticated, дёргать ничего не надо.
+                // On success RootView re-renders via isAuthenticated, no need to trigger anything.
             } catch let error as AuthError {
                 errorMessage = error.errorDescription
             } catch {

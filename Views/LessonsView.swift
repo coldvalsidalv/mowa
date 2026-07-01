@@ -74,8 +74,8 @@ struct LessonsView: View {
                     triggerEditMode = false
                 }
             }
-            // Восстанавливаем live-обновление после удаления @Query: когда
-            // VocabSyncService подгрузит новые слова — перечитываем категории.
+            // Restore live updates after removing @Query: when VocabSyncService
+            // loads new words — reload the categories.
             .onReceive(NotificationCenter.default.publisher(for: .vocabularyDidChange)) { _ in
                 viewModel.loadCategories(container: modelContext.container)
             }
@@ -90,7 +90,7 @@ struct LessonsView: View {
         }
     }
     
-    // MARK: - UI Компоненты
+    // MARK: - UI Components
     
     private var pickerView: some View {
         Picker("Тип", selection: $selectedTab) {
@@ -171,7 +171,7 @@ struct LessonsView: View {
     }
 }
 
-// MARK: - Карточка Категории Слов
+// MARK: - Word Category Card
 struct CategoryCardView: View {
     let stat: CategoryStat
     let isSelected: Bool
@@ -227,7 +227,7 @@ struct CategoryCardView: View {
     }
 }
 
-// MARK: - Карточка Уровня Грамматики
+// MARK: - Grammar Level Card
 struct GrammarLevelCardView: View {
     let group: GrammarGroupUI
     
@@ -269,7 +269,7 @@ struct GrammarLevelCardView: View {
     }
 }
 
-// MARK: - Карточка Экзамена B1
+// MARK: - B1 Exam Card
 struct ExamLevelCardView: View {
     let group: GrammarGroupUI
     
@@ -310,7 +310,7 @@ struct ExamLevelCardView: View {
     }
 }
 
-// MARK: - Список Уроков Уровня
+// MARK: - Level Lesson List
 struct GrammarLevelListView: View {
     let title: String
     let lessons: [GrammarLesson]
@@ -343,7 +343,7 @@ struct GrammarLevelListView: View {
     }
 }
 
-// MARK: - Строка Урока Грамматики
+// MARK: - Grammar Lesson Row
 struct GrammarRowView: View {
     let lesson: GrammarLesson
     let isCompleted: Bool

@@ -26,7 +26,7 @@ struct WritingTask: Codable, Identifiable, Hashable, Sendable {
 // MARK: - LLM feedback (response of /writing/grade)
 
 struct WritingFeedback: Codable, Sendable {
-    /// Официальные критерии B1 Pisanie (Państwowa Komisja), каждый 0–4.
+    /// Official B1 Pisanie criteria (Państwowa Komisja), each 0–4.
     struct Scores: Codable, Sendable {
         let wykonanieZadania: Int
         let poprawnoscGramatyczna: Int
@@ -75,7 +75,7 @@ final class WritingAttempt {
     var date: Date
     var overallPercent: Int
     var passedEstimate: Bool
-    /// Полный фидбэк JSON — чтобы перерисовать историю без повторного запроса.
+    /// Full feedback JSON — to re-render history without another request.
     var feedbackJSON: String
 
     init(taskId: String, userText: String, feedback: WritingFeedback, feedbackJSON: String) {

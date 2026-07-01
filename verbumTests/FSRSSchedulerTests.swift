@@ -1,9 +1,9 @@
 import XCTest
 @testable import Verbum
 
-/// Тесты математического ядра FSRS-6.
-/// Порт из py-fsrs v6.3.1. Тихая регрессия здесь = пользователи учат
-/// слова слишком часто или слишком редко, не понимая почему.
+/// Tests of the FSRS-6 math core.
+/// Ported from py-fsrs v6.3.1. A silent regression here = users review
+/// words too often or too rarely without understanding why.
 final class FSRSSchedulerTests: XCTestCase {
 
     var scheduler: FSRSScheduler!
@@ -15,13 +15,13 @@ final class FSRSSchedulerTests: XCTestCase {
         now = Date(timeIntervalSince1970: 1_700_000_000)
     }
 
-    // MARK: - Новые карточки: переходы состояний
+    // MARK: - New cards: state transitions
 
     func test_newCard_again_staysInLearningAtStepZero() {
         let result = scheduler.schedule(card: makeNewCard(), rating: .again, now: now)
         XCTAssertEqual(result.state, .learning)
         XCTAssertEqual(result.step, 0)
-        // Первый learning step = 60 секунд
+        // First learning step = 60 seconds
         XCTAssertEqual(result.due.timeIntervalSince(now), 60, accuracy: 0.1)
     }
 
@@ -29,7 +29,7 @@ final class FSRSSchedulerTests: XCTestCase {
         let result = scheduler.schedule(card: makeNewCard(), rating: .hard, now: now)
         XCTAssertEqual(result.state, .learning)
         XCTAssertEqual(result.step, 0)
-        // С двумя learning steps: avg(60, 600) = 330
+        // With two learning steps: avg(60, 600) = 330
         XCTAssertEqual(result.due.timeIntervalSince(now), 330, accuracy: 0.1)
     }
 
@@ -37,7 +37,7 @@ final class FSRSSchedulerTests: XCTestCase {
         let result = scheduler.schedule(card: makeNewCard(), rating: .good, now: now)
         XCTAssertEqual(result.state, .learning)
         XCTAssertEqual(result.step, 1)
-        // Второй learning step = 600 секунд
+        // Second learning step = 600 seconds
         XCTAssertEqual(result.due.timeIntervalSince(now), 600, accuracy: 0.1)
     }
 
@@ -45,7 +45,7 @@ final class FSRSSchedulerTests: XCTestCase {
         let result = scheduler.schedule(card: makeNewCard(), rating: .easy, now: now)
         XCTAssertEqual(result.state, .review)
         XCTAssertNil(result.step)
-        // due — в днях вперёд, минимум сутки
+        // due — days ahead, at least one day
         XCTAssertGreaterThanOrEqual(result.due.timeIntervalSince(now), 86400)
     }
 
@@ -68,7 +68,7 @@ final class FSRSSchedulerTests: XCTestCase {
         XCTAssertEqual(card.difficulty, originalDifficulty)
     }
 
-    // MARK: - Stability / Difficulty: новые карточки
+    // MARK: - Stability / Difficulty: new cards
 
     func test_newCard_stabilityPositive() {
         for rating in [FSRSRating.again, .hard, .good, .easy] {
@@ -103,19 +103,19 @@ final class FSRSSchedulerTests: XCTestCase {
         XCTAssertGreaterThan(again.difficulty, easy.difficulty)
     }
 
-    // MARK: - Learning steps: продвижение и возврат
+    // MARK: - Learning steps: advancement and reset
 
     func test_learningStepOne_good_promotesToReview() {
         var card = makeNewCard()
         card = scheduler.schedule(card: card, rating: .good, now: now)
         XCTAssertEqual(card.step, 1)
 
-        // Через 10 минут (как раз learning step) — ещё один Good
+        // After 10 minutes (exactly the learning step) — another Good
         let nextNow = now.addingTimeInterval(600)
         card = scheduler.schedule(card: card, rating: .good, now: nextNow)
         XCTAssertEqual(card.state, .review)
         XCTAssertNil(card.step)
-        // due теперь в днях
+        // due is now in days
         XCTAssertGreaterThanOrEqual(card.due.timeIntervalSince(nextNow), 86400)
     }
 
@@ -131,7 +131,7 @@ final class FSRSSchedulerTests: XCTestCase {
         XCTAssertEqual(card.due.timeIntervalSince(nextNow), 60, accuracy: 0.1)
     }
 
-    // MARK: - Review карточки
+    // MARK: - Review cards
 
     func test_reviewCard_again_goesToRelearning() {
         let result = scheduler.schedule(card: makeReviewCard(), rating: .again, now: now)
@@ -170,7 +170,7 @@ final class FSRSSchedulerTests: XCTestCase {
         XCTAssertGreaterThan(easy.stability, good.stability)
     }
 
-    // MARK: - Интервалы
+    // MARK: - Intervals
 
     func test_dueInFutureForAllRatings() {
         for rating in [FSRSRating.again, .hard, .good, .easy] {
@@ -180,7 +180,7 @@ final class FSRSSchedulerTests: XCTestCase {
     }
 
     func test_reviewIntervalGrowsWithRepeatedGood() {
-        // Стартуем уже в review, чтобы тест не зависел от learning-step переходов.
+        // Start already in review so the test doesn't depend on learning-step transitions.
         var card = makeReviewCard()
         var reviewDate = now!
         var prevDue = reviewDate
@@ -197,18 +197,18 @@ final class FSRSSchedulerTests: XCTestCase {
     // MARK: - Short-term stability (v6 specific)
 
     func test_sameDay_goodIncreasesStability() {
-        // Same-day повтор Good должен поднимать stability (short_term формула)
+        // A same-day Good repeat should raise stability (short_term formula)
         var card = makeReviewCard()
         let initialStability = card.stability
-        // Сразу же Good (elapsedDays = 0 от last_review к now? нет, last_review был 10 дней назад)
-        // Нужен other scenario: учим карточку, через 5 секунд Good
-        card.lastReview = now.addingTimeInterval(-10) // 10 секунд назад
+        // Good right away (elapsedDays = 0 from last_review to now? no, last_review was 10 days ago)
+        // We need another scenario: study the card, then Good 5 seconds later
+        card.lastReview = now.addingTimeInterval(-10) // 10 seconds ago
         let result = scheduler.schedule(card: card, rating: .good, now: now)
         XCTAssertGreaterThanOrEqual(result.stability, initialStability,
                                     "Same-day Good clamp >= 1.0 → stability не падает")
     }
 
-    // MARK: - Граничные случаи
+    // MARK: - Edge cases
 
     func test_difficultyNeverExceedsBounds() {
         var card = makeReviewCard()
@@ -250,11 +250,11 @@ final class FSRSSchedulerTests: XCTestCase {
         XCTAssertEqual(FSRSRating.from(score: 0.7), .good)
     }
 
-    // MARK: - Cross-validation против py-fsrs v6.3.1
+    // MARK: - Cross-validation against py-fsrs v6.3.1
     //
-    // Фикстуры сгенерированы скриптом /tmp/gen_fixtures.py через python -m fsrs==6.3.1
-    // на дефолтных параметрах с disabled fuzzing. Если Swift расходится с эталонной
-    // имплементацией хоть на 1e-9 в stability/difficulty — тест падает.
+    // Fixtures generated by the /tmp/gen_fixtures.py script via python -m fsrs==6.3.1
+    // on default params with fuzzing disabled. If Swift diverges from the reference
+    // implementation by even 1e-9 in stability/difficulty — the test fails.
 
     func test_v6_matches_pyFsrs_fixtures() throws {
         let fixtures = try loadFixtures()
@@ -319,7 +319,7 @@ final class FSRSSchedulerTests: XCTestCase {
             stability: 10.0,
             reps: 3,
             lapses: 0,
-            lastReview: now.addingTimeInterval(-10 * 86400), // 10 дней назад
+            lastReview: now.addingTimeInterval(-10 * 86400), // 10 days ago
             due: now,
             step: nil
         )

@@ -4,39 +4,39 @@ import SwiftData
 struct ReviewSelectionView: View {
     @Environment(\.modelContext) private var context
     
-    // Реактивная выборка всех карточек, которые уже находятся в процессе изучения (reps > 0)
+    // Reactive fetch of all cards already in progress (reps > 0)
     @Query(filter: #Predicate<VocabItem> { $0.fsrsData.reps > 0 })
     private var studiedWords: [VocabItem]
     
-    // Динамический расчет карточек, ожидающих повторения прямо сейчас
+    // Dynamically compute the cards due for review right now
     private var dueWords: [VocabItem] {
         let now = Date()
         return studiedWords.filter { $0.fsrsData.due <= now }
     }
     
-    // Слабые: карточки на этапе переобучения или с высокой сложностью FSRS
+    // Weak: cards in relearning or with high FSRS difficulty
     private var weakWordsCount: Int {
         dueWords.filter { $0.fsrsData.state == .relearning || $0.fsrsData.difficulty > 7.0 }.count
     }
     
-    // Средние: стандартные карточки со стабильностью менее 2 недель
+    // Medium: standard cards with stability under 2 weeks
     private var mediumWordsCount: Int {
         dueWords.filter { $0.fsrsData.state == .review && $0.fsrsData.difficulty <= 7.0 && $0.fsrsData.stability < 14.0 }.count
     }
     
-    // Сильные: стабильно закрепленные в памяти (интервал > 14 дней)
+    // Strong: firmly retained in memory (interval > 14 days)
     private var strongWordsCount: Int {
         dueWords.filter { $0.fsrsData.state == .review && $0.fsrsData.stability >= 14.0 }.count
     }
     
-    // Индекс здоровья памяти: соотношение карточек с нормальной стабильностью ко всем изученным
+    // Memory-health index: ratio of cards with normal stability to all studied ones
     private var memoryHealth: Double {
         guard !studiedWords.isEmpty else { return 1.0 }
         let healthyCount = studiedWords.filter { $0.fsrsData.state == .review && $0.fsrsData.stability > 3.0 }.count
         return Double(healthyCount) / Double(studiedWords.count)
     }
     
-    // Грамматика: реальные данные из SwiftData
+    // Grammar: real data from SwiftData
     @Query(filter: #Predicate<GrammarProgress> { $0.fsrsData.reps > 0 })
     private var studiedGrammar: [GrammarProgress]
 
@@ -172,7 +172,7 @@ struct ReviewSelectionView: View {
     }
 }
 
-// MARK: - КОМПОНЕНТ: ХЕДЕР ЗДОРОВЬЯ
+// MARK: - COMPONENT: HEALTH HEADER
 struct MemoryHealthHeader: View {
     let health: Double
     
@@ -245,7 +245,7 @@ struct MemoryHealthHeader: View {
     }
 }
 
-// MARK: - КОМПОНЕНТ: КАРТОЧКА КАТЕГОРИИ
+// MARK: - COMPONENT: CATEGORY CARD
 struct ReviewCategoryCard: View {
     let title: String
     let subtitle: String
@@ -323,7 +323,7 @@ struct ReviewCategoryCard: View {
     }
 }
 
-// MARK: - ЗАГОЛОВОК СЕКЦИИ
+// MARK: - SECTION HEADER
 struct SectionTitle: View {
     let icon: String
     let title: String
@@ -348,7 +348,7 @@ struct SectionTitle: View {
     }
 }
 
-// MARK: - СПИСОК ГРАММАТИЧЕСКИХ УРОКОВ К ПОВТОРЕНИЮ
+// MARK: - GRAMMAR LESSONS DUE FOR REVIEW LIST
 struct GrammarDueListView: View {
     let title: String
     let items: [GrammarProgress]
@@ -413,7 +413,7 @@ struct GrammarDueListView: View {
     }
 }
 
-// MARK: - FAB (КНОПКА УМНЫЙ МИКС)
+// MARK: - FAB (SMART MIX BUTTON)
 struct SmartReviewFAB: View {
     let context: ModelContext
     

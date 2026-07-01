@@ -1,13 +1,13 @@
 import Foundation
 
-// hashValue нельзя: Swift рандомизирует seed на каждый запуск процесса.
+// Can't use hashValue: Swift randomizes the seed on every process launch.
 func stableHashOf(_ s: String) -> Int {
     var hash: UInt64 = 0xcbf29ce484222325
     for byte in s.utf8 {
         hash ^= UInt64(byte)
         hash = hash &* 0x100000001b3
     }
-    // Маска до неотрицательного Int — индексация массивов без abs (abs(Int.min) трапается).
+    // Mask to a non-negative Int — array indexing without abs (abs(Int.min) traps).
     return Int(hash & 0x7fffffffffffffff)
 }
 

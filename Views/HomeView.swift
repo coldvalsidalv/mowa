@@ -86,7 +86,7 @@ struct HomeView: View {
         }
     }
     
-    // MARK: - Секции
+    // MARK: - Sections
     
     private var headerView: some View {
         HStack {
@@ -163,7 +163,7 @@ struct HomeView: View {
     }
     
     private var reviewLinkView: some View {
-        // Если ReviewSelectionView переписан под SwiftData, ему тоже нужен context
+        // If ReviewSelectionView is rewritten for SwiftData, it needs a context too
         NavigationLink(destination: ReviewSelectionView()) {
             HStack {
                 ZStack {
@@ -268,7 +268,7 @@ struct HomeView: View {
         }
     }
     
-    // MARK: - Утилиты UI и Логика
+    // MARK: - UI utilities and logic
     
     private func getTheme(for category: String) -> (icon: String, color: Color) {
         let hash = category.stableHash
@@ -323,7 +323,7 @@ struct HomeView: View {
     }
 }
 
-// MARK: - Компоненты UI
+// MARK: - UI Components
 
 struct DailyGoalCard: View {
     let progress: Double
@@ -379,7 +379,7 @@ struct DailyGoalCard: View {
 }
 
 
-// MARK: - DailyChallengeRow: навигация к заданию + анимация при выполнении
+// MARK: - DailyChallengeRow: navigation to the challenge + animation on completion
 
 struct DailyChallengeRow<Destination: View>: View {
     let challenge: DailyChallenge
@@ -410,7 +410,7 @@ struct DailyChallengeRow<Destination: View>: View {
             }
         }
         .frame(height: 100)
-        // Анимация запускается когда задание выполнено (прогресс достиг цели)
+        // The animation starts when the challenge is completed (progress reached the target)
         .onChange(of: challenge.isCompleted) { _, completed in
             guard completed, !isAnimatingCompletion else { return }
             withAnimation(.easeInOut(duration: 0.3)) { isAnimatingCompletion = true }

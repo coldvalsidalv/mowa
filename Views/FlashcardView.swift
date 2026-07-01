@@ -19,14 +19,14 @@ struct FlashcardView: View {
         ))
     }
 
-    /// Экзаменационный режим — слова целевого уровня CEFR
+    /// Exam mode — words at the target CEFR level
     init(level: String, context: ModelContext) {
         self.categories = []
         self.isReviewMode = false
         _viewModel = StateObject(wrappedValue: FlashcardViewModel(level: level, context: context))
     }
 
-    /// Инициализация через ReviewTier для экрана повторения
+    /// Init via ReviewTier for the review screen
     init(tier: ReviewTier, context: ModelContext) {
         self.categories = []
         self.isReviewMode = true
@@ -144,7 +144,7 @@ struct FlashcardView: View {
             
             Spacer()
             
-            // FSRS БЛОК КНОПОК
+            // FSRS BUTTON BLOCK
             HStack(spacing: 10) {
                 ratingButton(title: "Снова", color: Color(red: 0.85, green: 0.18, blue: 0.18), rating: .again)
                 ratingButton(title: "Трудно", color: Color(red: 0.90, green: 0.50, blue: 0.10), rating: .hard)
@@ -171,7 +171,7 @@ struct FlashcardView: View {
     }
 }
 
-// MARK: - Вспомогательные компоненты
+// MARK: - Helper components
 struct FinishView: View {
     let remainingNewCards: Int
     let onContinue: () -> Void

@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 import Combine
 
-/// Модель вопроса викторины. Использует актуальную сущность VocabItem.
+/// Quiz question model. Uses the live VocabItem entity.
 struct QuizQuestion {
     let word: VocabItem
     let options: [String]
@@ -34,8 +34,8 @@ final class QuizViewModel: ObservableObject {
         currentIndex == questions.count - 1
     }
     
-    /// Инициализация сессии: выборка слов из SwiftData и генерация дистракторов.
-    /// Требует передачи контекста для доступа к локальной БД.
+    /// Session init: fetch words from SwiftData and generate distractors.
+    /// Requires a context to access the local DB.
     func startSession(context: ModelContext) {
         let totalCount = (try? context.fetchCount(FetchDescriptor<VocabItem>())) ?? 0
         guard totalCount >= 4 else {
@@ -53,8 +53,8 @@ final class QuizViewModel: ObservableObject {
 
         let questionWords = Array(pool.shuffled().prefix(10))
         self.questions = questionWords.map { word in
-            // Дистракторы сравниваем по тексту перевода, а не по id:
-            // синонимы с одинаковым переводом давали бы два «правильных» варианта.
+            // Compare distractors by translation text, not by id:
+            // synonyms with the same translation would produce two "correct" options.
             var options = [word.translation]
             var seen: Set<String> = [word.translation]
             for candidate in pool.shuffled() {
@@ -104,7 +104,7 @@ final class QuizViewModel: ObservableObject {
 
         StreakManager.shared.completeLesson()
 
-        // Сообщаем HomeViewModel что квиз завершён
+        // Tell HomeViewModel the quiz is finished
         let isPerfect = score == totalQuestions
         NotificationCenter.default.post(
             name: .quizCompleted,

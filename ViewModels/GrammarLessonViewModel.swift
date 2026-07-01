@@ -26,7 +26,7 @@ final class GrammarLessonViewModel: ObservableObject {
         )
     }
 
-    /// Вызывается из GrammarLessonView.onAppear — передаёт контекст SwiftData
+    /// Called from GrammarLessonView.onAppear — passes the SwiftData context
     func configure(context: ModelContext) {
         self.context = context
     }
@@ -75,11 +75,11 @@ final class GrammarLessonViewModel: ObservableObject {
             return
         }
 
-        // Рейтинг FSRS на основе результата теста (для теоретических уроков — good по умолчанию)
+        // FSRS rating based on the quiz result (for theory lessons — good by default)
         let score = totalQuizSteps > 0 ? Double(correctAnswersCount) / Double(totalQuizSteps) : 1.0
         let rating = FSRSRating.from(score: score)
 
-        // Найти или создать запись прогресса
+        // Find or create the progress record
         let lessonId = lesson.id
         let descriptor = FetchDescriptor<GrammarProgress>(
             predicate: #Predicate { $0.lessonId == lessonId }
@@ -92,13 +92,13 @@ final class GrammarLessonViewModel: ObservableObject {
             context.insert(grammarProgress)
         }
 
-        // Применить FSRS
+        // Apply FSRS
         let updated = scheduler.schedule(card: grammarProgress.fsrsData.snapshot(), rating: rating, now: Date())
         grammarProgress.fsrsData.apply(updated)
         grammarProgress.lastScore = score
 
-        // Пометить урок завершённым — это читают LessonsViewModel (прогресс уровней)
-        // и ProfileViewModel (ачивки).
+        // Mark the lesson completed — read by LessonsViewModel (level progress)
+        // and ProfileViewModel (achievements).
         var completed = UserDefaults.standard.stringArray(forKey: StorageKeys.completedGrammarLessons) ?? []
         if !completed.contains(lesson.id) {
             completed.append(lesson.id)

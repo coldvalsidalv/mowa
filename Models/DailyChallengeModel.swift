@@ -13,7 +13,7 @@ struct DailyChallenge: Identifiable, Equatable, Codable {
     let reward: Int
     let type: ChallengeType
     
-    // Динамический расчет времени до конца дня (полночи)
+    // Dynamically compute the time until end of day (midnight)
     var timeLeft: String {
         let calendar = Calendar.current
         let now = Date()

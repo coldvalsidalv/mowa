@@ -1,6 +1,6 @@
 import Foundation
 
-/// Структура для декодирования words.json из бандла (offline fallback).
+/// Struct for decoding words.json from the bundle (offline fallback).
 struct BundleWord: Decodable, Sendable {
     let polish: String
     let translation: String
@@ -16,7 +16,7 @@ final class DataManager: Sendable {
     nonisolated static let shared = DataManager()
     nonisolated private init() {}
 
-    // MARK: - Vocabulary (offline fallback для VocabSyncService)
+    // MARK: - Vocabulary (offline fallback for VocabSyncService)
 
     func loadWordsFromBundle() -> [BundleWord] {
         guard let url = Bundle.main.url(forResource: "words", withExtension: "json"),
@@ -80,7 +80,7 @@ final class DataManager: Sendable {
         return raw.compactMap(ExamSessionParser.from)
     }
 
-    /// API-first с фоллбэком на бандл (даты экзаменов синхронизируются с бэкенда).
+    /// API-first with a bundle fallback (exam dates are synced from the backend).
     func loadExamSessionsAsync() async -> [ExamSession] {
         do {
             let sessions = try await APIClient.shared.fetchAllExamSessions()

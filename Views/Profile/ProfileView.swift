@@ -22,7 +22,7 @@ struct Achievement: Identifiable {
     let color: Color
     let unlocked: Bool
     let progress: Double       // 0.0–1.0
-    let progressLabel: String  // "28 / 500 слов"
+    let progressLabel: String  // "28 / 500 слов" (UI string, stays localized)
 }
 
 struct ProfileView: View {
@@ -38,7 +38,7 @@ struct ProfileView: View {
             List {
                 headerSection
                 
-                // MARK: Активность
+                // MARK: Activity
                 let hasActivity = viewModel.activityData.contains { $0.xp > 0 }
                 if hasActivity {
                     Section("Активность") {
@@ -54,7 +54,7 @@ struct ProfileView: View {
                     }
                 }
 
-                // MARK: Достижения
+                // MARK: Achievements
                 Section {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -84,7 +84,7 @@ struct ProfileView: View {
                     .padding(.vertical, 8)
                 }
 
-                // MARK: Аккаунт
+                // MARK: Account
                 Section("Аккаунт") {
                     NavigationLink(value: ProfileRoute.personalData) {
                         Label { Text("Персональные данные") } icon: {
@@ -103,7 +103,7 @@ struct ProfileView: View {
                     }
                 }
 
-                // MARK: Настройки
+                // MARK: Settings
                 Section("Внешний вид") {
                     Toggle("Системная тема", isOn: $viewModel.useSystemTheme)
                         .onChange(of: viewModel.useSystemTheme) { _, newValue in
@@ -220,7 +220,7 @@ struct ProfileView: View {
     private var headerSection: some View {
         Section {
             VStack(spacing: 20) {
-                // Аватарка + имя
+                // Avatar + name
                 VStack(spacing: 10) {
                     AvatarView(
                         localImage: avatarManager.avatar,
@@ -238,7 +238,7 @@ struct ProfileView: View {
                     }
                 }
 
-                // Статистика
+                // Stats
                 HStack(spacing: 0) {
                     ProfileStatItem(icon: "flame.fill", color: .orange,
                                     value: "\(viewModel.dayStreak)", label: "Дней")

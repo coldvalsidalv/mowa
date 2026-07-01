@@ -1,10 +1,10 @@
 import XCTest
 @testable import Verbum
 
-/// Тесты pure-логики достижений.
-/// Создание ProfileViewModel в XCTest под Swift 6 isolated-deinit крашит runtime
-/// (BUG_IN_CLIENT_OF_LIBMALLOC при swift_task_deinitOnExecutorImpl), поэтому
-/// проверяем фабрику напрямую — это и так чище: pure → детерминизм.
+/// Tests of the pure achievements logic.
+/// Creating a ProfileViewModel in XCTest under Swift 6 isolated-deinit crashes the runtime
+/// (BUG_IN_CLIENT_OF_LIBMALLOC in swift_task_deinitOnExecutorImpl), so we
+/// test the factory directly — which is cleaner anyway: pure → deterministic.
 final class ProfileViewModelTests: XCTestCase {
 
     private func make(words: Int = 0, streak: Int = 0, xp: Int = 0, grammar: Int = 0, totalGrammarLessons: Int = 6) -> [Achievement] {
@@ -17,7 +17,7 @@ final class ProfileViewModelTests: XCTestCase {
         )
     }
 
-    // MARK: - Базовые инварианты
+    // MARK: - Basic invariants
 
     func test_zeroProgress_allAchievementsLocked() {
         let all = make()
@@ -39,7 +39,7 @@ final class ProfileViewModelTests: XCTestCase {
         XCTAssertTrue(all.allSatisfy { $0.unlocked })
     }
 
-    // MARK: - Пороги по словам
+    // MARK: - Word thresholds
 
     func test_firstWord_unlocksAt1() {
         XCTAssertFalse(make(words: 0).first { $0.title == "Первое слово" }!.unlocked)
@@ -69,7 +69,7 @@ final class ProfileViewModelTests: XCTestCase {
         }
     }
 
-    // MARK: - Пороги по XP
+    // MARK: - XP thresholds
 
     func test_xpThresholds() {
         let all1k = make(xp: 1000)
@@ -80,7 +80,7 @@ final class ProfileViewModelTests: XCTestCase {
         XCTAssertTrue(make(xp: 5000).first { $0.title == "Легенда" }!.unlocked)
     }
 
-    // MARK: - Пороги по streak
+    // MARK: - Streak thresholds
 
     func test_streakThresholds() {
         let all7 = make(streak: 7)
@@ -91,7 +91,7 @@ final class ProfileViewModelTests: XCTestCase {
         XCTAssertTrue(make(streak: 30).first { $0.title == "Несгораемый" }!.unlocked)
     }
 
-    // MARK: - Грамматика
+    // MARK: - Grammar
 
     func test_grammarThresholds() {
         XCTAssertTrue(make(grammar: 1).first { $0.title == "Первый урок" }!.unlocked)
@@ -106,14 +106,14 @@ final class ProfileViewModelTests: XCTestCase {
         XCTAssertTrue(make(grammar: 10, totalGrammarLessons: 10).first { $0.title == "Профессор" }!.unlocked)
     }
 
-    // MARK: - Композитная ачивка "Разносторонний"
+    // MARK: - Composite achievement "Разносторонний"
 
     func test_composite_requiresBothWordsAndGrammar() {
-        // Только слова — закрыто
+        // Words only — locked
         XCTAssertFalse(make(words: 50, grammar: 2).first { $0.title == "Разносторонний" }!.unlocked)
-        // Только грамматика — закрыто
+        // Grammar only — locked
         XCTAssertFalse(make(words: 49, grammar: 3).first { $0.title == "Разносторонний" }!.unlocked)
-        // Оба порога — открыто
+        // Both thresholds — unlocked
         XCTAssertTrue(make(words: 50, grammar: 3).first { $0.title == "Разносторонний" }!.unlocked)
     }
 }

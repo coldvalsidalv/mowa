@@ -13,17 +13,17 @@ struct VerbumApp: App {
 
         ThemeApplier.applyTheme(useSystemTheme: useSystemTheme, isDarkMode: isDarkMode, animated: false)
         _ = NotificationManager.shared
-        _ = LanguageManager.shared  // инициализирует языковой бандл при старте
+        _ = LanguageManager.shared  // initializes the language bundle at launch
     }
     
     var body: some Scene {
         WindowGroup {
             RootView()
         }
-        // Инициализация локальной базы данных (SwiftData)
+        // Initialize the local database (SwiftData)
         .modelContainer(for: [VocabItem.self, ReviewLog.self, GrammarProgress.self, WritingAttempt.self])
         .onChange(of: scenePhase) { oldPhase, newPhase in
-            // ... логика уведомлений
+            // ... notifications logic
         }
     }
 }
