@@ -155,9 +155,9 @@ final class HomeViewModel: ObservableObject {
     
     private func generateNewDailyChallenges() {
         self.challenges = [
-            DailyChallenge(title: L("challenge.morning_title"), description: L("challenge.morning_desc"), target: 10, reward: 50, type: .words),
-            DailyChallenge(title: L("challenge.grammar_title"), description: L("challenge.grammar_desc"), target: 1, reward: 75, type: .grammar),
-            DailyChallenge(title: L("challenge.streak_title"), description: L("challenge.streak_desc"), target: 1, reward: 100, type: .quiz)
+            DailyChallenge(target: 10, reward: 50, type: .words),
+            DailyChallenge(target: 1, reward: 75, type: .grammar),
+            DailyChallenge(target: 1, reward: 100, type: .quiz)
         ]
 
         self.lastUpdateDate = getTodayDateString()

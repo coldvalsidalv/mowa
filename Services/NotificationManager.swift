@@ -16,6 +16,11 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     private override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
+        // Notification content is baked in at schedule time, so re-schedule the
+        // enabled recurring reminders when the app language changes at runtime.
+        NotificationCenter.default.addObserver(forName: .languageChanged, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in self?.rescheduleForCurrentLanguage() }
+        }
     }
     
     // 1. Запрос разрешения
@@ -156,5 +161,13 @@ extension NotificationManager {
     private func scheduleReminderWithStreak(at time: Date) {
         scheduleDailyReminder(at: time)
         scheduleStreakProtection()
+    }
+
+    /// Re-schedules the enabled recurring reminders (daily reminder + streak) so
+    /// their baked-in text reflects the current app language after a runtime switch.
+    private func rescheduleForCurrentLanguage() {
+        guard UserDefaults.standard.bool(forKey: StorageKeys.notificationsEnabled) else { return }
+        let stored = UserDefaults.standard.object(forKey: StorageKeys.notificationTime) as? Double ?? 32400
+        scheduleReminderWithStreak(at: Date(timeIntervalSince1970: stored))
     }
 }
