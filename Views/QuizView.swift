@@ -30,8 +30,10 @@ struct QuizView: View {
         }
         .navigationBarHidden(true)
         .onAppear {
-            // Передача контекста обязательна для выборки слов из БД
             viewModel.startSession(context: modelContext)
+        }
+        .onDisappear {
+            SpeechService.shared.stop()
         }
     }
     
@@ -82,9 +84,10 @@ struct QuizView: View {
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
+            .disabled(viewModel.showFeedback)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 40)
+        .padding(.vertical, 24)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(24)
         .shadow(color: Color.black.opacity(0.05), radius: 10, y: 5)
