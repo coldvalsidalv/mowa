@@ -3,9 +3,9 @@ import Foundation
 // MARK: - Review Logs
 
 extension APIClient {
-    /// Загружает один ReviewLog на бэкенд. Идемпотентно — при коллизии
-    /// (user_id, card_id, review_date) сервер вернёт 4xx, мы трактуем это как success.
-    /// `cardId` — Teenybase UUID карточки (remoteId), не локальный SwiftData UUID.
+    /// Uploads a single ReviewLog to the backend. Idempotent — on a collision
+    /// (user_id, card_id, review_date) the server returns 4xx, which we treat as success.
+    /// `cardId` is the Teenybase card UUID (remoteId), not the local SwiftData UUID.
     func insertReviewLog(userId: String,
                          cardId: String,
                          rating: Int,
@@ -24,9 +24,9 @@ extension APIClient {
             let _: TeenyEmpty = try await post(path: "/api/v1/table/review_logs/insert", body: body)
         } catch APIError.serverError(let code, let message)
             where code == 409 || (code == 400 && message?.localizedCaseInsensitiveContains("unique") == true) {
-            // Unique constraint (user_id, card_id, review_date) — повторный синк того же
-            // лога, трактуем как success. Любые другие ошибки (401, валидация и т.д.)
-            // пробрасываем: caller не должен продвигать cursor, иначе лог потерян навсегда.
+            // Unique constraint (user_id, card_id, review_date) — re-syncing the same
+            // log, treated as success. Any other error (401, validation, etc.) is
+            // rethrown: the caller must not advance the cursor, or the log is lost forever.
         }
     }
 }

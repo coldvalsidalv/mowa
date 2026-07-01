@@ -7,9 +7,9 @@ nonisolated struct TeenyListResponse<T: Decodable>: Decodable, @unchecked Sendab
     let total: Int
 }
 
-/// Заглушка для endpoint'ов, ответ которых нам не нужен парсить.
-/// Кастомный init принимает любой JSON (объект, массив, скаляр) —
-/// синтезированный падал бы на не-объектах.
+/// Placeholder for endpoints whose response we don't need to parse.
+/// The custom init accepts any JSON (object, array, scalar) — the
+/// synthesized one would fail on non-objects.
 struct TeenyEmpty: Decodable, Sendable {
     init(from decoder: Decoder) throws {}
 }
@@ -25,9 +25,9 @@ enum APIError: Error {
 
 // MARK: - APIClient (transport)
 
-/// Сетевой слой. Здесь — только транспорт (generic POST с auth-токеном и retry на
-/// 401). Доменные методы (vocabulary, fsrs, grammar, leaderboard, …) вынесены в
-/// `APIClient+<Domain>.swift`, каждый со своими Remote-DTO.
+/// Network layer. Only transport lives here (generic POST with auth token and
+/// retry on 401). Domain methods (vocabulary, fsrs, grammar, leaderboard, …) are
+/// split into `APIClient+<Domain>.swift`, each with its own Remote DTOs.
 final class APIClient {
     static let shared = APIClient()
     private init() {}
@@ -37,11 +37,11 @@ final class APIClient {
 
     // MARK: - Generic POST
 
-    /// POST с автоматической подстановкой auth-токена и retry на 401.
-    /// При 401 пытается обновить токен через AuthManager, повторяет запрос один раз.
-    /// Если refresh не удался — signOut() и пробрасывает 401.
+    /// POST that automatically injects the auth token and retries once on 401.
+    /// On 401 it tries to refresh the token via AuthManager and retries the request
+    /// once. If the refresh fails — signOut() and rethrow the 401.
     ///
-    /// Internal (не private): вызывается доменными расширениями в соседних файлах.
+    /// Internal (not private): called by the domain extensions in sibling files.
     func post<T: Decodable>(path: String, body: [String: Any], timeout: TimeInterval = 15) async throws -> T {
         try await postOnce(path: path, body: body, isRetry: false, timeout: timeout)
     }
@@ -54,7 +54,7 @@ final class APIClient {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        // Auth-токен пользователя приоритетнее статического contentReadToken.
+        // The user's auth token takes precedence over the static contentReadToken.
         if let token = AuthManager.shared.currentAccessToken() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else if !VerbumConfig.contentReadToken.isEmpty {
@@ -75,7 +75,7 @@ final class APIClient {
         }
 
         if http.statusCode == 401 && !isRetry {
-            // Пробуем рефреш токена и повторяем запрос один раз.
+            // Try to refresh the token and retry the request once.
             do {
                 try await AuthManager.shared.refresh()
             } catch AuthError.network(let underlying) {
@@ -107,7 +107,7 @@ final class APIClient {
 // MARK: - Helpers
 
 extension ISO8601DateFormatter {
-    /// Формат дат Teenybase: "2026-06-04 19:10:47" (SQLite CURRENT_TIMESTAMP)
+    /// Teenybase date format: "2026-06-04 19:10:47" (SQLite CURRENT_TIMESTAMP)
     static let teenybase: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate, .withSpaceBetweenDateAndTime, .withTime, .withColonSeparatorInTime]

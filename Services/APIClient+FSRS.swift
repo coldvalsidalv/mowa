@@ -2,8 +2,8 @@ import Foundation
 
 // MARK: - DTO
 
-/// Сырой DTO с бэкенда. JSON-столбцы приходят как строки (как inflections в RemoteWord) —
-/// парсим в toParams().
+/// Raw DTO from the backend. JSON columns arrive as strings (like inflections in
+/// RemoteWord) — parsed in toParams().
 struct RemoteFSRSParams: Decodable, Sendable {
     let id: String
     let user_id: String
@@ -32,7 +32,7 @@ struct RemoteFSRSParams: Decodable, Sendable {
 // MARK: - FSRS Params
 
 extension APIClient {
-    /// Тянет персональные FSRS-параметры юзера. nil — записи нет, значит используем дефолты.
+    /// Fetches the user's personal FSRS params. nil — no record exists, so we use defaults.
     func fetchFsrsParams(userId: String) async throws -> FSRSParams? {
         let body: [String: Any] = [
             "where": "user_id == \"\(userId)\"",

@@ -1,19 +1,19 @@
 import Foundation
 
-/// Удаление аккаунта: сеть (Teenybase) + разрушение auth-сессии.
-/// Вынесено из ProfileViewModel, чтобы VM не оркестрировала
-/// APIClient / AuthManager / Keychain напрямую (SRP).
+/// Account deletion: network (Teenybase) + auth-session teardown.
+/// Extracted from ProfileViewModel so the VM doesn't orchestrate
+/// APIClient / AuthManager / Keychain directly (SRP).
 @MainActor
 final class AccountService {
     static let shared = AccountService()
     private init() {}
 
-    /// Удаляет аккаунт на бэкенде (если есть сессия) и разлогинивает.
-    /// Локальную чистку профиля (аватар, прогресс, поля) делает caller —
-    /// это UI-состояние, не зона ответственности сервиса.
+    /// Deletes the account on the backend (if a session exists) and signs out.
+    /// Local profile cleanup (avatar, progress, fields) is the caller's job —
+    /// that's UI state, not this service's responsibility.
     func deleteAccount() async throws {
         guard let userId = KeychainHelper.load(KeychainKeys.userId) else {
-            // Сессии нет — на сервере удалять нечего, просто разлогиниваемся.
+            // No session — nothing to delete server-side, just sign out.
             AuthManager.shared.signOut()
             return
         }

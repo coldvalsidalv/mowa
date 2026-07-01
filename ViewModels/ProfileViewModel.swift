@@ -71,12 +71,12 @@ final class ProfileViewModel: ObservableObject {
         )
     }
 
-    /// Чистая фабрика достижений — без instance-state, тестируема без создания
-    /// ProfileViewModel (что под Swift 6 isolated deinit крашит XCTest).
+    /// Pure achievement factory — no instance state, testable without constructing
+    /// ProfileViewModel (whose isolated deinit crashes XCTest under Swift 6).
     ///
-    /// Пороговые ачивки описаны данными (`achievementSpecs`) и собираются одним
-    /// маппингом: добавление новой = одна строка в списке, без правки логики (OCP).
-    /// Композитная «Разносторонний» не сводится к single-metric модели и добавляется явно.
+    /// Threshold achievements are described as data (`achievementSpecs`) and built by
+    /// a single mapping: adding one = one row in the list, no logic change (OCP).
+    /// The composite "Разносторонний" doesn't fit the single-metric model and is added explicitly.
     nonisolated static func makeAchievements(
         totalLearnedWords: Int,
         dayStreak: Int,
@@ -102,8 +102,8 @@ final class ProfileViewModel: ObservableObject {
         var result = achievementSpecs.map { spec -> Achievement in
             let currentValue = metricValue(spec.metric)
             let threshold = resolvedThreshold(spec.threshold)
-            // threshold == 0 бывает только у «Профессора», пока список уроков не
-            // загружен — тогда ачивка заблокирована (как в исходной guard-логике).
+            // threshold == 0 only happens for "Профессор" while the lesson list isn't
+            // loaded yet — then the achievement is locked (as in the original guard logic).
             let unlocked = threshold > 0 && currentValue >= threshold
             let progress = threshold > 0 ? min(Double(currentValue) / Double(threshold), 1.0) : 0
             return Achievement(
@@ -117,7 +117,7 @@ final class ProfileViewModel: ObservableObject {
             )
         }
 
-        // ── Особые: компаундная ачивка не сводится к одному метрику ──────────
+        // ── Special: the composite achievement doesn't reduce to a single metric ──
         result.append(
             Achievement(
                 title: "Разносторонний",
@@ -222,8 +222,8 @@ final class ProfileViewModel: ObservableObject {
         recomputeAchievements()
     }
 
-    /// Удаляет аккаунт (сеть + разлогин — в AccountService), затем чистит локальный
-    /// профиль. При ошибке сети ничего не чистим — юзер остаётся залогинен и видит alert.
+    /// Deletes the account (network + sign-out live in AccountService), then clears the
+    /// local profile. On a network error we clear nothing — the user stays logged in and sees an alert.
     func deleteAccount() async {
         do {
             try await AccountService.shared.deleteAccount()
@@ -242,21 +242,21 @@ final class ProfileViewModel: ObservableObject {
     }
 }
 
-// MARK: - Achievement specs (данные, а не код)
+// MARK: - Achievement specs (data, not code)
 
-/// Метрика прогресса, к которой привязана пороговая ачивка.
+/// Progress metric a threshold achievement is bound to.
 private enum AchievementMetric {
     case words, streak, xp, grammar
 }
 
-/// Порог разблокировки: фиксированный или динамический (число уроков грамматики).
+/// Unlock threshold: fixed, or dynamic (the grammar lesson count).
 private enum AchievementThreshold {
     case fixed(Int)
     case totalGrammarLessons
 }
 
-/// Декларативное описание пороговой ачивки. Добавление новой ачивки —
-/// это новый элемент `achievementSpecs`, а не правка `makeAchievements` (OCP).
+/// Declarative description of a threshold achievement. Adding a new achievement is
+/// a new element in `achievementSpecs`, not an edit to `makeAchievements` (OCP).
 private struct AchievementSpec {
     let title: String
     let description: String
@@ -264,12 +264,12 @@ private struct AchievementSpec {
     let color: Color
     let metric: AchievementMetric
     let threshold: AchievementThreshold
-    let unit: String   // суффикс для progressLabel: "слов" / "дней" / "XP" / "уроков"
+    let unit: String   // suffix for progressLabel: "слов" / "дней" / "XP" / "уроков"
 }
 
-/// Immutable Sendable-константа — читается из nonisolated `makeAchievements`.
+/// Immutable Sendable constant — read from the nonisolated `makeAchievements`.
 private let achievementSpecs: [AchievementSpec] = [
-    // ── Словарный запас ──────────────────────────────────────────
+    // ── Vocabulary ──────────────────────────────────────────
     .init(title: "Первое слово", description: "Выучи своё первое слово",
           icon: "hand.raised.fill", color: .blue, metric: .words, threshold: .fixed(1), unit: "слово"),
     .init(title: "Десятка", description: "Выучи 10 слов",
@@ -280,21 +280,21 @@ private let achievementSpecs: [AchievementSpec] = [
           icon: "globe.europe.africa.fill", color: .green, metric: .words, threshold: .fixed(500), unit: "слов"),
     .init(title: "Мастер слов", description: "Выучи 2000 слов",
           icon: "crown.fill", color: .yellow, metric: .words, threshold: .fixed(2000), unit: "слов"),
-    // ── Серия дней ───────────────────────────────────────────────
+    // ── Day streak ───────────────────────────────────────────────
     .init(title: "Привычка", description: "3 дня занятий подряд",
           icon: "flame", color: .orange, metric: .streak, threshold: .fixed(3), unit: "дня"),
     .init(title: "Огонь", description: "7 дней занятий подряд",
           icon: "flame.fill", color: .red, metric: .streak, threshold: .fixed(7), unit: "дней"),
     .init(title: "Несгораемый", description: "30 дней занятий подряд",
           icon: "bolt.fill", color: .pink, metric: .streak, threshold: .fixed(30), unit: "дней"),
-    // ── Опыт ─────────────────────────────────────────────────────
+    // ── Experience (XP) ──────────────────────────────────────────
     .init(title: "Первые очки", description: "Набери 100 XP",
           icon: "star.fill", color: .blue, metric: .xp, threshold: .fixed(100), unit: "XP"),
     .init(title: "Чемпион", description: "Набери 1000 XP",
           icon: "trophy.fill", color: .orange, metric: .xp, threshold: .fixed(1000), unit: "XP"),
     .init(title: "Легенда", description: "Набери 5000 XP",
           icon: "medal.fill", color: .purple, metric: .xp, threshold: .fixed(5000), unit: "XP"),
-    // ── Грамматика ────────────────────────────────────────────────
+    // ── Grammar ────────────────────────────────────────────────
     .init(title: "Первый урок", description: "Пройди первый урок грамматики",
           icon: "pencil.and.list.clipboard", color: .teal, metric: .grammar, threshold: .fixed(1), unit: "урок"),
     .init(title: "Грамматик", description: "Пройди 5 уроков грамматики",

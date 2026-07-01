@@ -15,9 +15,9 @@ enum ReviewTier {
 
 // MARK: - Injected collaborators
 
-/// Consumer-owned абстракции (DIP): LearningEngine объявляет узкую поверхность,
-/// которая ему нужна от side-effecting коллабораторов, чтобы тесты могли
-/// подставить no-op/spy вместо синглтонов, лезущих в UserDefaults / Keychain / сеть.
+/// Consumer-owned abstractions (DIP): LearningEngine declares the narrow surface
+/// it needs from its side-effecting collaborators, so tests can substitute
+/// no-op/spy doubles for the singletons that touch UserDefaults / Keychain / network.
 @MainActor
 protocol StreakTracking {
     func completeLesson()
@@ -49,9 +49,9 @@ final class LearningEngine: ObservableObject {
     /// Нужно, чтобы не вернуть её в очередь больше cap-раз.
     private var againRetryCount: [UUID: Int] = [:]
 
-    /// Зависимости опциональны с nil-дефолтом (а не `= .shared` в сигнатуре):
-    /// дефолтный аргумент вычисляется в nonisolated-контексте и не может ссылаться
-    /// на MainActor-isolated синглтоны. Резолвим их в теле init (оно MainActor).
+    /// Dependencies are optional with a nil default (rather than `= .shared` in the
+    /// signature): a default argument is evaluated in a nonisolated context and can't
+    /// reference MainActor-isolated singletons. We resolve them in the init body (MainActor).
     init(context: ModelContext,
          params: FSRSParams? = nil,
          streakTracker: StreakTracking? = nil,

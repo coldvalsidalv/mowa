@@ -43,12 +43,12 @@ extension RemoteWord: Decodable {
 // MARK: - Vocabulary
 
 extension APIClient {
-    /// Загружает все слова (полный sync при первом запуске)
+    /// Loads all words (full sync on first launch).
     func fetchAllWords() async throws -> [RemoteWord] {
         try await fetchWords(updatedSince: nil)
     }
 
-    /// Загружает только слова обновлённые после `since` (delta sync)
+    /// Loads only words updated after `since` (delta sync).
     func fetchWordsDelta(since: Date) async throws -> [RemoteWord] {
         try await fetchWords(updatedSince: since)
     }

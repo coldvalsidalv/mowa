@@ -118,13 +118,13 @@ extension NotificationManager {
         scheduleNotification(type: .content, title: "🆕 Новые слова добавлены", body: "В словаре появились новые темы — иди изучай!", timeInterval: 259200)
     }
 
-    // MARK: - Тумблер уведомлений (флоу из Профиля)
+    // MARK: - Notifications toggle (flow from Profile)
 
-    /// Полный флоу включения из UI: проверка статуса → запрос при необходимости →
-    /// переход в Настройки при прошлом отказе. При успехе планирует ежедневное
-    /// напоминание + защиту стрика. `onResult(true)` — включено и запланировано;
-    /// `onResult(false)` — включить не удалось, вызывающая сторона должна снять тумблер.
-    /// Инкапсулирует UNUserNotificationCenter/UIApplication, чтобы VM их не касалась.
+    /// Full enable flow from the UI: check status → request if needed → jump to
+    /// Settings if previously denied. On success schedules the daily reminder +
+    /// streak protection. `onResult(true)` — enabled and scheduled; `onResult(false)`
+    /// — couldn't enable, the caller should turn the toggle back off.
+    /// Encapsulates UNUserNotificationCenter/UIApplication so the VM doesn't touch them.
     func enableFromSettings(reminderTime: Date, onResult: @escaping @Sendable (Bool) -> Void) {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
@@ -147,7 +147,7 @@ extension NotificationManager {
         }
     }
 
-    /// Выключение тумблера: снять все запланированные и доставленные уведомления.
+    /// Toggle off: remove all pending and delivered notifications.
     func disableAll() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()

@@ -2,8 +2,8 @@ import Foundation
 
 // MARK: - DTO
 
-/// Teenybase возвращает json-поля как строки (как steps у грамматики),
-/// поэтому levels декодируем строкой и парсим вручную.
+/// Teenybase returns JSON fields as strings (like grammar's steps), so we decode
+/// levels as a string and parse it manually.
 struct RemoteExamSession: Decodable, Sendable {
     let session_id: String
     let start_date: String
@@ -23,11 +23,11 @@ extension APIClient {
     }
 }
 
-private func remoteToExamSession(_ r: RemoteExamSession) -> ExamSession? {
-    let levels = (r.levels.data(using: .utf8))
+private func remoteToExamSession(_ remote: RemoteExamSession) -> ExamSession? {
+    let levels = (remote.levels.data(using: .utf8))
         .flatMap { try? JSONDecoder().decode([String].self, from: $0) } ?? []
     let bundle = BundleExamSession(
-        session_id: r.session_id, start_date: r.start_date, end_date: r.end_date, levels: levels
+        session_id: remote.session_id, start_date: remote.start_date, end_date: remote.end_date, levels: levels
     )
     return ExamSessionParser.from(bundle)
 }

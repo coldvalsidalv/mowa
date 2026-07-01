@@ -20,7 +20,7 @@ extension APIClient {
         return resp.items
     }
 
-    /// Upsert: insert → при конфликте unique user_id → update.
+    /// Upsert: insert → on unique user_id conflict → update.
     func upsertLeaderboard(userId: String, displayName: String, xp: Int) async throws {
         let insertBody: [String: Any] = [
             "values": ["user_id": userId, "display_name": displayName, "xp": xp]

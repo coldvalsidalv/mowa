@@ -23,17 +23,17 @@ extension APIClient {
     }
 }
 
-private func remoteToGrammarLesson(_ r: RemoteGrammarLesson) -> GrammarLesson? {
-    guard let data = r.steps.data(using: .utf8),
+private func remoteToGrammarLesson(_ remote: RemoteGrammarLesson) -> GrammarLesson? {
+    guard let data = remote.steps.data(using: .utf8),
           let steps = try? JSONDecoder().decode([GrammarStep].self, from: data) else {
-        verbumLog("❌ APIClient: failed to decode steps for lesson \(r.lesson_id)")
+        verbumLog("❌ APIClient: failed to decode steps for lesson \(remote.lesson_id)")
         return nil
     }
     return GrammarLesson(
-        id: r.lesson_id,
-        title: r.title,
-        description: r.description ?? "",
-        level: r.level,
+        id: remote.lesson_id,
+        title: remote.title,
+        description: remote.description ?? "",
+        level: remote.level,
         steps: steps
     )
 }
