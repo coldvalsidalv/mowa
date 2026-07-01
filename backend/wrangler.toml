@@ -19,3 +19,7 @@ migrations_dir = "migrations"
 [[kv_namespaces]]
 binding = "WRITING_RL"
 id = "d4e2c2246ec6450c91a8ba25a2420544"
+
+[[r2_buckets]]
+binding = "TTS_BUCKET"
+bucket_name = "verbum-tts"

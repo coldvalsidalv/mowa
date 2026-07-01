@@ -111,7 +111,7 @@ struct FlashcardView: View {
                 
                 Spacer()
                 
-                Button(action: { SpeechService.shared.speak(word.polish, language: "pl-PL") }) {
+                Button(action: { SpeechService.shared.speak(word) }) {
                     Image(systemName: "speaker.wave.2.fill")
                         .font(.title2)
                         .padding(14)
