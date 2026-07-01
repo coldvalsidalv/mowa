@@ -18,13 +18,13 @@ struct WordDetailView: View {
 
     // Порядок и названия флексий
     private let inflectionKeys: [(key: String, label: String)] = [
-        ("1sg", "я"),
-        ("3sg", "он/она"),
-        ("past", "прошедшее"),
-        ("imp", "императив"),
-        ("gen", "родительный"),
-        ("pl", "мн. число"),
-        ("fem", "женский род"),
+        ("1sg", L("word.infl_1sg")),
+        ("3sg", L("word.infl_3sg")),
+        ("past", L("word.infl_past")),
+        ("imp", L("word.infl_imp")),
+        ("gen", L("word.infl_gen")),
+        ("pl", L("word.infl_pl")),
+        ("fem", L("word.infl_fem")),
     ]
 
     var body: some View {
@@ -98,7 +98,7 @@ struct WordDetailView: View {
                     // ── Пример ────────────────────────────────────────────
                     if !word.example.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("PRZYKŁAD")
+                            Text(L("flashcard.example"))
                                 .font(.caption2)
                                 .fontWeight(.bold)
                                 .foregroundColor(.secondary)
@@ -120,7 +120,7 @@ struct WordDetailView: View {
                     // ── Флексии ───────────────────────────────────────────
                     if !inflections.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("ФОРМЫ")
+                            Text(L("word.forms_header"))
                                 .font(.caption2)
                                 .fontWeight(.bold)
                                 .foregroundColor(.secondary)
@@ -159,7 +159,7 @@ struct WordDetailView: View {
 
             // ── Действия ──────────────────────────────────────────────────
             VStack(spacing: 0) {
-                actionRow(icon: "arrow.counterclockwise", label: "Сбросить прогресс по слову", color: .primary) {
+                actionRow(icon: "arrow.counterclockwise", label: L("word.reset_action"), color: .primary) {
                     showResetAlert = true
                 }
             }
@@ -170,11 +170,11 @@ struct WordDetailView: View {
         }
         .background(Color(UIColor.systemGroupedBackground))
         .onDisappear { SpeechService.shared.stop() }
-        .alert("Сбросить прогресс?", isPresented: $showResetAlert) {
-            Button("Сбросить", role: .destructive) { resetProgress() }
-            Button("Отмена", role: .cancel) {}
+        .alert(L("word.reset_title"), isPresented: $showResetAlert) {
+            Button(L("word.reset_confirm"), role: .destructive) { resetProgress() }
+            Button(L("common.cancel"), role: .cancel) {}
         } message: {
-            Text("Слово вернётся в статус «Новое».")
+            Text(L("word.reset_message"))
         }
     }
 
@@ -208,10 +208,10 @@ struct WordDetailView: View {
 
     private var statusLabel: String {
         switch word.fsrsData.state {
-        case .new:                          return "Новое"
-        case .learning, .relearning:        return "Учу"
-        case .review where word.fsrsData.stability >= 21: return "Выучено"
-        case .review:                       return "Знаю"
+        case .new:                          return L("word.status_new")
+        case .learning, .relearning:        return L("word.status_learning")
+        case .review where word.fsrsData.stability >= 21: return L("word.status_mastered")
+        case .review:                       return L("word.status_known")
         }
     }
 

@@ -18,7 +18,7 @@ struct WritingTaskListView: View {
             .padding()
         }
         .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
-        .navigationTitle("Письмо B1")
+        .navigationTitle(L("writing.home_title"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { if tasks.isEmpty { tasks = DataManager.shared.loadWritingTasks() } }
     }
@@ -33,7 +33,7 @@ struct WritingTaskListView: View {
                 Text(task.prompt)
                     .font(.subheadline).fontWeight(.medium)
                     .foregroundColor(.primary).lineLimit(2)
-                Text("\(task.level) · \(task.minWords)–\(task.maxWords) слов")
+                Text(L("writing.words_range_fmt", task.level, task.minWords, task.maxWords))
                     .font(.caption).foregroundColor(.gray)
             }
             Spacer()

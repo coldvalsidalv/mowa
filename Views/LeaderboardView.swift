@@ -78,7 +78,7 @@ struct LeaderboardView: View {
                     .padding(.bottom, 20)
                 }
             }
-            .navigationTitle("Ranking")
+            .navigationTitle(L("ranking.title"))
             .sheet(item: $selectedUser) { user in
                 RivalProfileView(user: user)
                     .presentationDetents([.medium])
@@ -100,10 +100,10 @@ struct LeaderboardView: View {
             Image(systemName: "person.3.fill")
                 .font(.system(size: 44))
                 .foregroundColor(.secondary.opacity(0.4))
-            Text("Соперники появятся скоро")
+            Text(L("ranking.coming_soon"))
                 .font(.headline)
                 .foregroundColor(.secondary)
-            Text("Когда другие пользователи зарегистрируются,\nты сможешь соревноваться с ними здесь.")
+            Text(L("ranking.coming_soon_sub"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -118,10 +118,10 @@ struct LeaderboardView: View {
             Image(systemName: "wifi.slash")
                 .font(.system(size: 44))
                 .foregroundColor(.secondary.opacity(0.4))
-            Text("Не удалось загрузить рейтинг")
+            Text(L("ranking.load_error"))
                 .font(.headline)
                 .foregroundColor(.secondary)
-            Button("Повторить") {
+            Button(L("common.retry")) {
                 Task { await loadLeaderboard(force: true) }
             }
             .buttonStyle(.bordered)
@@ -330,7 +330,7 @@ struct RivalProfileView: View {
             Text("\(user.xp) XP").font(.headline).foregroundColor(.secondary)
             Spacer()
             Button { dismiss() } label: {
-                Text("Закрыть")
+                Text(L("common.close"))
                     .font(.headline).foregroundColor(.white).frame(maxWidth: .infinity)
                     .padding().background(Color.blue).cornerRadius(16)
             }
@@ -371,11 +371,11 @@ struct LeagueMapView: View {
                             Text(league.title).font(.headline)
                                 .foregroundColor(league.rawValue <= currentLeague.rawValue ? .primary : .gray)
                             if league.rawValue == currentLeague.rawValue {
-                                Text("Текущая лига").font(.caption).foregroundColor(.blue).bold()
+                                Text(L("league.current")).font(.caption).foregroundColor(.blue).bold()
                             } else if league.rawValue < currentLeague.rawValue {
-                                Text("Пройдено").font(.caption).foregroundColor(.green)
+                                Text(L("league.passed")).font(.caption).foregroundColor(.green)
                             } else {
-                                Text("Заблокировано").font(.caption).foregroundColor(.gray)
+                                Text(L("league.locked")).font(.caption).foregroundColor(.gray)
                             }
                         }
                         Spacer()
@@ -388,8 +388,8 @@ struct LeagueMapView: View {
                     .padding(.vertical, 4)
                 }
             }
-            .navigationTitle("Лиги").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Готово") { dismiss() } } }
+            .navigationTitle(L("league.title")).navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(L("common.done")) { dismiss() } } }
         }
     }
 }

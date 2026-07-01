@@ -16,6 +16,11 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     private override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
+        // Notification content is baked in at schedule time, so re-schedule the
+        // enabled recurring reminders when the app language changes at runtime.
+        NotificationCenter.default.addObserver(forName: .languageChanged, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in self?.rescheduleForCurrentLanguage() }
+        }
     }
     
     // 1. Запрос разрешения
@@ -95,27 +100,27 @@ extension NotificationManager {
         let comps = Calendar.current.dateComponents([.hour, .minute], from: time)
         scheduleDailyNotification(
             type: .vocabulary,
-            title: "🇵🇱 Время заниматься польским",
-            body: "Несколько минут повторения — и слова не забудутся.",
+            title: L("notification.vocab_title"),
+            body: L("notification.vocab_body"),
             hour: comps.hour ?? 9,
             minute: comps.minute ?? 0
         )
     }
 
     func scheduleGrammarReview() {
-        scheduleNotification(type: .grammar, title: "📖 Грамматика ждёт", body: "Пара минут на польскую грамматику — и правила встанут на место.", timeInterval: 172800)
+        scheduleNotification(type: .grammar, title: L("notification.grammar_title"), body: L("notification.grammar_body"), timeInterval: 172800)
     }
 
     func scheduleStreakProtection() {
-        scheduleDailyNotification(type: .streak, title: "🔥 Не дай стриму угаснуть!", body: "Пройди урок до полуночи, чтобы сохранить свою серию.", hour: 20, minute: 0)
+        scheduleDailyNotification(type: .streak, title: L("notification.streak_title"), body: L("notification.streak_body"), hour: 20, minute: 0)
     }
 
     func scheduleDailyChallengeReminder() {
-        scheduleNotification(type: .challenges, title: "🏆 Ежедневные вызовы ждут", body: "Задания обновлены. Выполни их и заработай XP!", timeInterval: 64800)
+        scheduleNotification(type: .challenges, title: L("notification.challenges_title"), body: L("notification.challenges_body"), timeInterval: 64800)
     }
 
     func scheduleNewContent() {
-        scheduleNotification(type: .content, title: "🆕 Новые слова добавлены", body: "В словаре появились новые темы — иди изучай!", timeInterval: 259200)
+        scheduleNotification(type: .content, title: L("notification.content_title"), body: L("notification.content_body"), timeInterval: 259200)
     }
 
     // MARK: - Notifications toggle (flow from Profile)
@@ -156,5 +161,13 @@ extension NotificationManager {
     private func scheduleReminderWithStreak(at time: Date) {
         scheduleDailyReminder(at: time)
         scheduleStreakProtection()
+    }
+
+    /// Re-schedules the enabled recurring reminders (daily reminder + streak) so
+    /// their baked-in text reflects the current app language after a runtime switch.
+    private func rescheduleForCurrentLanguage() {
+        guard UserDefaults.standard.bool(forKey: StorageKeys.notificationsEnabled) else { return }
+        let stored = UserDefaults.standard.object(forKey: StorageKeys.notificationTime) as? Double ?? 32400
+        scheduleReminderWithStreak(at: Date(timeIntervalSince1970: stored))
     }
 }

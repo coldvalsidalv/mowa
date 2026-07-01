@@ -18,7 +18,7 @@ struct WritingEditorView: View {
                     Button {
                         viewModel.phase = .editing
                     } label: {
-                        Label("Новая попытка", systemImage: "arrow.counterclockwise")
+                        Label(L("writing.new_attempt"), systemImage: "arrow.counterclockwise")
                             .frame(maxWidth: .infinity).padding(.vertical, 12)
                     }
                     .buttonStyle(.bordered)
@@ -29,7 +29,7 @@ struct WritingEditorView: View {
             .padding()
         }
         .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
-        .navigationTitle("Письмо")
+        .navigationTitle(L("writing.editor_title"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -66,10 +66,10 @@ struct WritingEditorView: View {
             .cornerRadius(16)
 
             HStack {
-                Text("\(viewModel.wordCount) слов")
+                Text(L("profile.words_count_fmt", viewModel.wordCount))
                     .font(.caption).fontWeight(.medium)
                     .foregroundColor(viewModel.isWithinRange ? .green : .gray)
-                Text("· норма \(viewModel.task.minWords)–\(viewModel.task.maxWords)")
+                Text(L("writing.norm_fmt", viewModel.task.minWords, viewModel.task.maxWords))
                     .font(.caption).foregroundColor(.gray)
                 Spacer()
             }
@@ -85,7 +85,7 @@ struct WritingEditorView: View {
                     if viewModel.phase == .submitting {
                         ProgressView().tint(.white)
                     } else {
-                        Text("Проверить")
+                        Text(L("writing.check"))
                     }
                 }
                 .frame(maxWidth: .infinity).padding(.vertical, 14)

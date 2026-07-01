@@ -25,7 +25,7 @@ struct WritingFeedbackView: View {
             .frame(width: 64, height: 64)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(feedback.passedEstimate ? "Сдал бы экзамен" : "Пока не проходной")
+                Text(feedback.passedEstimate ? L("writing.passed") : L("writing.not_passed"))
                     .font(.headline).foregroundColor(.white)
                 Text(feedback.summary).font(.caption).foregroundColor(.white.opacity(0.9))
             }
@@ -82,7 +82,7 @@ struct WritingFeedbackView: View {
 
     private var errorsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Ошибки (\(feedback.errors.count))").font(.headline)
+            Text(L("writing.errors_fmt", feedback.errors.count)).font(.headline)
             ForEach(feedback.errors.indices, id: \.self) { i in
                 let err = feedback.errors[i]
                 VStack(alignment: .leading, spacing: 4) {
@@ -111,7 +111,7 @@ struct WritingFeedbackView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 8)
         } label: {
-            Label("Образцовый ответ", systemImage: "checkmark.seal.fill")
+            Label(L("writing.model_answer"), systemImage: "checkmark.seal.fill")
                 .font(.headline).foregroundColor(.indigo)
         }
         .padding()

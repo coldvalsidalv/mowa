@@ -21,7 +21,7 @@ struct CategoryDetailView: View {
                 Section {
                     statsRow
                 }
-                Section("Слова") {
+                Section(L("library.words_tab")) {
                     ForEach(words) { word in
                         WordRowView(word: word)
                     }
@@ -43,16 +43,16 @@ struct CategoryDetailView: View {
     private var statsRow: some View {
         HStack(spacing: 0) {
             statCell(count: words.filter { $0.fsrsData.state == .new }.count,
-                     label: "Новых", color: .secondary)
+                     label: L("category.stat_new"), color: .secondary)
             Divider().frame(height: 32)
             statCell(count: words.filter { $0.fsrsData.state == .learning || $0.fsrsData.state == .relearning || ($0.fsrsData.state == .review && $0.fsrsData.stability < 3) }.count,
-                     label: "Учу", color: .orange)
+                     label: L("word.status_learning"), color: .orange)
             Divider().frame(height: 32)
             statCell(count: words.filter { $0.fsrsData.state == .review && $0.fsrsData.stability >= 3 && $0.fsrsData.stability < 21 }.count,
-                     label: "Знаю", color: .blue)
+                     label: L("word.status_known"), color: .blue)
             Divider().frame(height: 32)
             statCell(count: words.filter { $0.fsrsData.state == .review && $0.fsrsData.stability >= 21 }.count,
-                     label: "Выучено", color: .green)
+                     label: L("word.status_mastered"), color: .green)
         }
         .frame(maxWidth: .infinity)
     }
@@ -76,7 +76,7 @@ struct CategoryDetailView: View {
             isReviewMode: false,
             context: modelContext
         )) {
-            Text("Учить")
+            Text(L("tab.learn"))
                 .font(.headline)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
@@ -138,10 +138,10 @@ struct WordRowView: View {
 
     private var statusLabel: String {
         switch word.fsrsData.state {
-        case .new:                          return "Новое"
-        case .learning, .relearning:        return "Учу"
-        case .review where word.fsrsData.stability >= 21: return "Выучено"
-        case .review:                       return "Знаю"
+        case .new:                          return L("word.status_new")
+        case .learning, .relearning:        return L("word.status_learning")
+        case .review where word.fsrsData.stability >= 21: return L("word.status_mastered")
+        case .review:                       return L("word.status_known")
         }
     }
 

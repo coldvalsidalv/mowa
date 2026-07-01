@@ -55,11 +55,11 @@ struct FlashcardView: View {
         }
         .navigationBarHidden(true)
         .onDisappear { SpeechService.shared.stop() }
-        .alert("Выйти из урока?", isPresented: $showExitAlert) {
-            Button("Продолжить", role: .cancel) {}
-            Button("Выйти", role: .destructive) { dismiss() }
+        .alert(L("flashcard.exit_title"), isPresented: $showExitAlert) {
+            Button(L("common.continue"), role: .cancel) {}
+            Button(L("common.exit"), role: .destructive) { dismiss() }
         } message: {
-            Text("Прогресс текущей сессии не будет засчитан.")
+            Text(L("flashcard.exit_message"))
         }
     }
 
@@ -132,7 +132,7 @@ struct FlashcardView: View {
             
             if !word.example.isEmpty {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("PRZYKŁAD").font(.caption2).bold().foregroundColor(.secondary)
+                    Text(L("flashcard.example")).font(.caption2).bold().foregroundColor(.secondary)
                     Text(word.example)
                         .font(.body)
                         .padding()
@@ -146,10 +146,10 @@ struct FlashcardView: View {
             
             // FSRS БЛОК КНОПОК
             HStack(spacing: 10) {
-                ratingButton(title: "Снова", color: Color(red: 0.85, green: 0.18, blue: 0.18), rating: .again)
-                ratingButton(title: "Трудно", color: Color(red: 0.90, green: 0.50, blue: 0.10), rating: .hard)
-                ratingButton(title: "Хорошо", color: Color(red: 0.18, green: 0.70, blue: 0.35), rating: .good)
-                ratingButton(title: "Легко", color: Color(red: 0.05, green: 0.60, blue: 0.75), rating: .easy)
+                ratingButton(title: L("flashcard.again"), color: Color(red: 0.85, green: 0.18, blue: 0.18), rating: .again)
+                ratingButton(title: L("flashcard.hard"), color: Color(red: 0.90, green: 0.50, blue: 0.10), rating: .hard)
+                ratingButton(title: L("flashcard.good"), color: Color(red: 0.18, green: 0.70, blue: 0.35), rating: .good)
+                ratingButton(title: L("flashcard.easy"), color: Color(red: 0.05, green: 0.60, blue: 0.75), rating: .easy)
             }
             .padding(.bottom, 20)
         }
@@ -185,13 +185,13 @@ struct FinishView: View {
                 .foregroundColor(.orange)
 
             VStack(spacing: 10) {
-                Text("Отличная работа!")
+                Text(L("flashcard.finish_title"))
                     .font(.title).bold()
-                Text("Сессия завершена. Интервалы обновлены.")
+                Text(L("flashcard.finish_sub"))
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                 if remainingNewCards > 0 {
-                    Text("Ещё \(remainingNewCards) новых слов в этой теме")
+                    Text(L("flashcard.more_cards_fmt", remainingNewCards))
                         .font(.subheadline)
                         .foregroundColor(.orange)
                 }
@@ -201,14 +201,14 @@ struct FinishView: View {
             VStack(spacing: 12) {
                 if remainingNewCards > 0 {
                     Button(action: onContinue) {
-                        Text("Продолжить")
+                        Text(L("common.continue"))
                             .font(.headline).foregroundColor(.white)
                             .frame(maxWidth: .infinity).frame(height: 58)
                             .background(Color.orange).cornerRadius(29)
                     }
                 }
                 Button(action: { dismiss() }) {
-                    Text("Завершить")
+                    Text(L("flashcard.finish_btn"))
                         .font(.headline)
                         .foregroundColor(remainingNewCards > 0 ? .secondary : .white)
                         .frame(maxWidth: .infinity).frame(height: 58)

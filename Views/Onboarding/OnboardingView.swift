@@ -94,7 +94,7 @@ struct WelcomeStep: View {
                         .font(.system(size: 42, weight: .bold, design: .serif))
                         .foregroundColor(.primary)
 
-                    Text("Выучи польский язык.\nБыстро и по-настоящему.")
+                    Text(L("onboarding.welcome_tagline"))
                         .font(.title3)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -105,9 +105,9 @@ struct WelcomeStep: View {
             Spacer()
 
             VStack(spacing: 16) {
-                OnboardingPrimaryButton(title: "Начать", action: onNext)
+                OnboardingPrimaryButton(title: L("onboarding.start"), action: onNext)
 
-                Text("Займёт 2 минуты")
+                Text(L("onboarding.takes"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -131,7 +131,7 @@ struct LanguageStep: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            OnboardingHeader(step: 1, total: 3, title: "Выбери язык", subtitle: "На каком языке тебе объяснять?")
+            OnboardingHeader(step: 1, total: 3, title: L("onboarding.language_title"), subtitle: L("onboarding.language_sub"))
 
             Spacer()
 
@@ -164,7 +164,7 @@ struct LanguageStep: View {
 
             Spacer()
 
-            OnboardingPrimaryButton(title: "Далее", action: onNext)
+            OnboardingPrimaryButton(title: L("onboarding.next"), action: onNext)
                 .padding(.horizontal, 32)
                 .padding(.bottom, 48)
         }
@@ -207,8 +207,8 @@ struct PlacementTestStep: View {
             OnboardingHeader(
                 step: 2,
                 total: 3,
-                title: "Что ты уже знаешь?",
-                subtitle: "Пропустим то, что тебе знакомо"
+                title: L("onboarding.placement_title"),
+                subtitle: L("onboarding.placement_sub")
             )
 
             if isFinished {
@@ -226,7 +226,7 @@ struct PlacementTestStep: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
-                Button("Пропустить") { onNext() }
+                Button(L("onboarding.skip")) { onNext() }
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -262,7 +262,7 @@ struct PlacementTestStep: View {
                 Button(action: { respond(known: false) }) {
                     VStack(spacing: 6) {
                         Image(systemName: "xmark").font(.title2.bold())
-                        Text("Не знаю").font(.subheadline.bold())
+                        Text(L("onboarding.dont_know")).font(.subheadline.bold())
                     }
                     .foregroundColor(.red)
                     .frame(maxWidth: .infinity)
@@ -274,7 +274,7 @@ struct PlacementTestStep: View {
                 Button(action: { respond(known: true) }) {
                     VStack(spacing: 6) {
                         Image(systemName: "checkmark").font(.title2.bold())
-                        Text("Знаю").font(.subheadline.bold())
+                        Text(L("onboarding.know")).font(.subheadline.bold())
                     }
                     .foregroundColor(.green)
                     .frame(maxWidth: .infinity)
@@ -294,13 +294,13 @@ struct PlacementTestStep: View {
             Image(systemName: "checkmark.seal.fill")
                 .font(.system(size: 72))
                 .foregroundColor(.blue)
-            Text("Знаешь \(knownIDs.count) из \(Self.testWords.count) слов")
+            Text(L("onboarding.placement_result", knownIDs.count, Self.testWords.count))
                 .font(.title2.bold())
             Text(levelLabel)
                 .font(.headline)
                 .foregroundColor(.secondary)
             Spacer()
-            OnboardingPrimaryButton(title: "Далее", action: onNext)
+            OnboardingPrimaryButton(title: L("onboarding.next"), action: onNext)
                 .padding(.horizontal, 32)
                 .padding(.bottom, 48)
         }
@@ -308,10 +308,10 @@ struct PlacementTestStep: View {
 
     private var levelLabel: String {
         switch knownIDs.count {
-        case 0..<4:  return "Начинаем с нуля — это нормально 💪"
-        case 4..<8:  return "Уровень A1 — есть база"
-        case 8..<12: return "Уровень A2 — хороший старт"
-        default:     return "Уровень B1+ — сразу к сложному"
+        case 0..<4:  return L("onboarding.level_zero")
+        case 4..<8:  return L("onboarding.level_a1")
+        case 8..<12: return L("onboarding.level_a2")
+        default:     return L("onboarding.level_b1")
         }
     }
 
@@ -340,14 +340,14 @@ struct GoalStep: View {
     let onNext: () -> Void
 
     private let options: [(words: Int, label: String, description: String)] = [
-        (5, "Легко", "5 слов · ~5 минут"),
-        (10, "Нормально", "10 слов · ~10 минут"),
-        (20, "Серьёзно", "20 слов · ~20 минут"),
+        (5, L("onboarding.goal_easy"), L("onboarding.goal_easy_sub")),
+        (10, L("onboarding.goal_normal"), L("onboarding.goal_normal_sub")),
+        (20, L("onboarding.goal_serious"), L("onboarding.goal_serious_sub")),
     ]
 
     var body: some View {
         VStack(spacing: 0) {
-            OnboardingHeader(step: 3, total: 3, title: "Дневная цель", subtitle: "Сколько слов учить каждый день?")
+            OnboardingHeader(step: 3, total: 3, title: L("onboarding.goal_title"), subtitle: L("onboarding.goal_sub"))
 
             Spacer()
 
@@ -381,7 +381,7 @@ struct GoalStep: View {
 
             Spacer()
 
-            OnboardingPrimaryButton(title: "Далее", action: onNext)
+            OnboardingPrimaryButton(title: L("onboarding.next"), action: onNext)
                 .padding(.horizontal, 32)
                 .padding(.bottom, 48)
         }
@@ -413,9 +413,9 @@ struct ReadyStep: View {
                     }
 
                 VStack(spacing: 12) {
-                    Text("Готово!")
+                    Text(L("onboarding.ready_title"))
                         .font(.system(size: 36, weight: .bold, design: .rounded))
-                    Text("Всё настроено.\nНачинаем учить польский.")
+                    Text(L("onboarding.ready_sub"))
                         .font(.title3)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -425,7 +425,7 @@ struct ReadyStep: View {
 
             Spacer()
 
-            OnboardingPrimaryButton(title: "Начать учить", action: onFinish)
+            OnboardingPrimaryButton(title: L("onboarding.start_learning"), action: onFinish)
                 .padding(.horizontal, 32)
                 .padding(.bottom, 48)
         }

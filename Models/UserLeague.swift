@@ -10,19 +10,19 @@ enum UserLeague: Int, CaseIterable, Identifiable {
     
     var title: String {
         switch self {
-        case .bronze: return "Liga Brązowa"
-        case .silver: return "Liga Srebrna"
-        case .gold: return "Liga Złota"
-        case .diamond: return "Liga Diamentowa"
+        case .bronze: return L("league.bronze")
+        case .silver: return L("league.silver")
+        case .gold: return L("league.gold")
+        case .diamond: return L("league.diamond")
         }
     }
 
     var shortTitle: String {
         switch self {
-        case .bronze:  return "Brązowa"
-        case .silver:  return "Srebrna"
-        case .gold:    return "Złota"
-        case .diamond: return "Diamentowa"
+        case .bronze:  return L("league.bronze_short")
+        case .silver:  return L("league.silver_short")
+        case .gold:    return L("league.gold_short")
+        case .diamond: return L("league.diamond_short")
         }
     }
 

@@ -14,13 +14,13 @@ enum AuthError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidCredentials:     return "Неверный email или пароль"
-        case .emailInUse:             return "Этот email уже зарегистрирован"
+        case .invalidCredentials:     return L("error.invalid_credentials")
+        case .emailInUse:             return L("error.email_in_use")
         case .validation(let msg):    return msg
-        case .network:                return "Нет соединения с сервером"
-        case .server(let code, let m): return m ?? "Ошибка сервера (\(code))"
-        case .noRefreshToken:         return "Сессия истекла, войди заново"
-        case .decoding:               return "Не получилось прочитать ответ сервера"
+        case .network:                return L("error.network")
+        case .server(let code, let m): return m ?? L("error.server_fmt", code)
+        case .noRefreshToken:         return L("error.session_expired")
+        case .decoding:               return L("error.decoding")
         }
     }
 }
@@ -232,13 +232,13 @@ final class AuthManager: ObservableObject {
         // Минимальная проверка: есть @ и точка после @.
         let parts = email.split(separator: "@")
         guard parts.count == 2, parts[1].contains(".") else {
-            throw AuthError.validation("Неверный формат email")
+            throw AuthError.validation(L("error.invalid_email"))
         }
     }
 
     private func validatePassword(_ password: String) throws {
         guard password.count >= 8 else {
-            throw AuthError.validation("Пароль минимум 8 символов")
+            throw AuthError.validation(L("error.password_short"))
         }
     }
 }

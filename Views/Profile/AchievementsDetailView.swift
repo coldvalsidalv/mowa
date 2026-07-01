@@ -24,8 +24,8 @@ struct AchievementsDetailView: View {
                 }
                 .padding(.vertical, 4)
             }
-            .navigationTitle("Все достижения")
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Закрыть") { dismiss() } } }
+            .navigationTitle(L("profile.all_achievements"))
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(L("common.close")) { dismiss() } } }
         }
         .presentationDetents([.medium, .large])
     }

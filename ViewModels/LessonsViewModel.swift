@@ -110,7 +110,7 @@ final class LessonsViewModel: ObservableObject {
             let completedCount = levelLessons.filter { completedIDs.contains($0.id) }.count
             return GrammarGroupUI(
                 id: level,
-                title: "Уровень \(level)",
+                title: L("lessons.level_fmt", level),
                 subtitle: Self.getDescription(for: level),
                 iconText: level,
                 iconSymbol: nil,
@@ -125,8 +125,8 @@ final class LessonsViewModel: ObservableObject {
         let examCompleted = examLessons.filter { completedIDs.contains($0.id) }.count
         groups.append(GrammarGroupUI(
             id: "B1_Exam",
-            title: "Экзамен B1",
-            subtitle: "Подготовка к сертификации",
+            title: L("lessons.exam_title"),
+            subtitle: L("lessons.exam_sub"),
             iconText: nil,
             iconSymbol: "graduationcap.fill",
             color: .red,
@@ -166,11 +166,11 @@ final class LessonsViewModel: ObservableObject {
     
     private static func getDescription(for level: String) -> String {
         switch level {
-        case "A0": return "Введение"
-        case "A1": return "Основы"
-        case "A2": return "Базовый"
-        case "B1": return "Средний"
-        case "B2": return "Продвинутый"
+        case "A0": return L("lessons.lvl_a0")
+        case "A1": return L("lessons.lvl_a1")
+        case "A2": return L("lessons.lvl_a2")
+        case "B1": return L("lessons.lvl_b1")
+        case "B2": return L("lessons.lvl_b2")
         default: return ""
         }
     }

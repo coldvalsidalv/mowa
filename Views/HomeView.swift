@@ -92,7 +92,7 @@ struct HomeView: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(userName.isEmpty ? "Cześć!" : "Cześć, \(userName)!").font(.title2).bold()
-                Text("Готов учить польский?").font(.subheadline).foregroundColor(.gray)
+                Text(L("home.greeting")).font(.subheadline).foregroundColor(.gray)
             }
             Spacer()
             
@@ -127,7 +127,7 @@ struct HomeView: View {
                     if !viewModel.challenges.isEmpty {
                         HStack(spacing: 8) {
                             Image(systemName: "target").foregroundColor(.purple).font(.title3)
-                            Text("Ежедневные вызовы").font(.title3).bold()
+                            Text(L("home.daily_challenges")).font(.title3).bold()
                         }
                         .padding(.horizontal)
                         
@@ -149,8 +149,8 @@ struct HomeView: View {
                                 .padding(.top, 10)
                                 .symbolEffect(.bounce, value: viewModel.showAllCompletedMessage)
                             
-                            Text("Все вызовы выполнены!").font(.headline).foregroundColor(.primary)
-                            Text("Отличная работа, так держать!").font(.caption).foregroundColor(.gray)
+                            Text(L("home.all_done")).font(.headline).foregroundColor(.primary)
+                            Text(L("home.all_done_sub")).font(.caption).foregroundColor(.gray)
                         }
                         .frame(maxWidth: .infinity).padding(.vertical, 20)
                         .background(Color(UIColor.secondarySystemGroupedBackground).opacity(0.5))
@@ -171,8 +171,8 @@ struct HomeView: View {
                     Image(systemName: "arrow.clockwise").font(.title2).foregroundColor(.blue)
                 }
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Повторение").font(.headline).foregroundColor(.primary)
-                    Text("Закрепить материал").font(.caption).foregroundColor(.gray)
+                    Text(L("home.review")).font(.headline).foregroundColor(.primary)
+                    Text(L("home.review_sub")).font(.caption).foregroundColor(.gray)
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundColor(.gray.opacity(0.4))
@@ -191,8 +191,8 @@ struct HomeView: View {
                     Image(systemName: "square.and.pencil").font(.title2).foregroundColor(.indigo)
                 }
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Письмо B1").font(.headline).foregroundColor(.primary)
-                    Text("Проверка эссе по критериям экзамена").font(.caption).foregroundColor(.gray)
+                    Text(L("writing.home_title")).font(.headline).foregroundColor(.primary)
+                    Text(L("writing.home_sub")).font(.caption).foregroundColor(.gray)
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundColor(.gray.opacity(0.4))
@@ -205,14 +205,14 @@ struct HomeView: View {
 
     private var quickPracticeView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Быстрая тренировка").font(.title3).bold().padding(.horizontal)
+            Text(L("home.quick_practice")).font(.title3).bold().padding(.horizontal)
             
             HStack(spacing: 16) {
                 NavigationLink(destination: QuizView()) {
-                    PracticeCard(title: "Викторина", subtitle: "Тест", icon: "gamecontroller.fill", color: .purple)
+                    PracticeCard(title: L("home.quiz"), subtitle: L("home.quiz_sub"), icon: "gamecontroller.fill", color: .purple)
                 }
                 NavigationLink(destination: FlashcardView(categories: [], isReviewMode: false, context: modelContext)) {
-                    PracticeCard(title: "Случайное", subtitle: "Микс", icon: "shuffle", color: .blue)
+                    PracticeCard(title: L("home.random"), subtitle: L("home.random_sub"), icon: "shuffle", color: .blue)
                 }
             }
             .padding(.horizontal)
@@ -221,7 +221,7 @@ struct HomeView: View {
     
     private var yourLessonsView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Темы").font(.title3).bold().padding(.horizontal)
+            Text(L("home.topics")).font(.title3).bold().padding(.horizontal)
             
             if storage.items.isEmpty {
                 Button {
@@ -230,7 +230,7 @@ struct HomeView: View {
                 } label: {
                     HStack {
                         Image(systemName: "plus.circle.fill").font(.largeTitle).foregroundColor(.blue)
-                        Text("Добавьте темы для изучения").font(.headline).foregroundColor(.primary)
+                        Text(L("home.add_topics")).font(.headline).foregroundColor(.primary)
                     }
                     .frame(maxWidth: .infinity).padding(30)
                     .background(Color(UIColor.secondarySystemGroupedBackground)).cornerRadius(20)
@@ -246,13 +246,13 @@ struct HomeView: View {
                             let total = stats?.total ?? 0
                             let learned = stats?.learned ?? 0
                             let progress = total > 0 ? Double(learned) / Double(total) : 0.0
-                            let countText = total > 0 ? "\(learned)/\(total)" : "Слова"
+                            let countText = total > 0 ? "\(learned)/\(total)" : L("library.words_tab")
                             let isCompleted = total > 0 && progress >= 1.0
                             
                             NavigationLink(destination: FlashcardView(categories: [category], isReviewMode: false, context: modelContext)) {
                                 LessonCard(
                                     title: category,
-                                    subtitle: isCompleted ? "Завершено" : "Продолжить",
+                                    subtitle: isCompleted ? L("common.completed") : L("common.continue"),
                                     count: countText,
                                     icon: theme.icon,
                                     color: isCompleted ? .green : theme.color,
@@ -348,13 +348,13 @@ struct DailyGoalCard: View {
             .frame(width: 50, height: 50)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(isCompleted ? "Цель выполнена!" : "Дневная цель")
+                Text(isCompleted ? L("home.goal_completed") : L("home.daily_goal"))
                     .font(.headline).foregroundColor(.white)
-                
+
                 if isCompleted {
-                    Text("+50 XP получено").font(.caption).bold().foregroundColor(.yellow)
+                    Text(L("home.xp_earned", 50)).font(.caption).bold().foregroundColor(.yellow)
                 } else {
-                    Text("Выучено: \(wordsLearned) / \(goal) слов")
+                    Text(L("home.words_progress", wordsLearned, goal))
                         .font(.caption).foregroundColor(.white.opacity(0.8))
                 }
             }

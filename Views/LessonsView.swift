@@ -47,7 +47,7 @@ struct LessonsView: View {
                     }
                 }
             }
-            .navigationTitle("Библиотека")
+            .navigationTitle(L("library.title"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     if selectedTab == 0 {
@@ -93,9 +93,9 @@ struct LessonsView: View {
     // MARK: - UI Компоненты
     
     private var pickerView: some View {
-        Picker("Тип", selection: $selectedTab) {
-            Text("Слова").tag(0)
-            Text("Грамматика").tag(1)
+        Picker(L("library.type"), selection: $selectedTab) {
+            Text(L("library.words_tab")).tag(0)
+            Text(L("library.grammar_tab")).tag(1)
         }
         .pickerStyle(SegmentedPickerStyle())
         .padding(.horizontal)
@@ -108,7 +108,7 @@ struct LessonsView: View {
     private var searchBar: some View {
         HStack {
             Image(systemName: "magnifyingglass").foregroundColor(Color(UIColor.systemGray))
-            TextField("Поиск...", text: $viewModel.searchText)
+            TextField(L("library.search"), text: $viewModel.searchText)
             if !viewModel.searchText.isEmpty {
                 Button(action: { viewModel.searchText = "" }) {
                     Image(systemName: "xmark.circle.fill").foregroundColor(Color(UIColor.systemGray2))
@@ -165,7 +165,7 @@ struct LessonsView: View {
     private var loadingView: some View {
         VStack {
             ProgressView().scaleEffect(1.5).padding()
-            Text("Загрузка контента...").foregroundColor(.gray)
+            Text(L("library.loading")).foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity, minHeight: 200)
     }
@@ -204,7 +204,7 @@ struct CategoryCardView: View {
                 
                 VStack(spacing: 6) {
                     HStack {
-                        Text("\(stat.learnedWords)/\(stat.totalWords) слов").font(.caption).foregroundColor(.gray)
+                        Text(L("library.card_words_fmt", stat.learnedWords, stat.totalWords)).font(.caption).foregroundColor(.gray)
                         Spacer()
                         Text("\(Int(stat.progress * 100))%").font(.caption).bold().foregroundColor(stat.color)
                     }
@@ -322,7 +322,7 @@ struct GrammarLevelListView: View {
                 if lessons.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "books.vertical.fill").font(.largeTitle).foregroundColor(.gray)
-                        Text("Уроки скоро появятся").font(.headline).foregroundColor(.gray)
+                        Text(L("library.lessons_soon")).font(.headline).foregroundColor(.gray)
                     }
                     .padding(.top, 60)
                 } else {

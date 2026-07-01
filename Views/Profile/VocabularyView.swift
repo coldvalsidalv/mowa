@@ -12,7 +12,7 @@ struct VocabularyView: View {
             Section {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Всего слов").font(.caption).foregroundColor(.secondary)
+                        Text(L("vocabulary.total")).font(.caption).foregroundColor(.secondary)
                         Text("\(learnedWords.count)").font(.largeTitle).bold().foregroundColor(.blue)
                     }
                     Spacer()
@@ -25,14 +25,14 @@ struct VocabularyView: View {
                 Section {
                     VStack(spacing: 12) {
                         Image(systemName: "book.closed").font(.system(size: 36)).foregroundColor(.secondary)
-                        Text("Ещё нет изученных слов").font(.headline).foregroundColor(.secondary)
-                        Text("Пройди первый урок и слова появятся здесь").font(.caption).foregroundColor(.secondary).multilineTextAlignment(.center)
+                        Text(L("vocabulary.empty")).font(.headline).foregroundColor(.secondary)
+                        Text(L("vocabulary.empty_sub")).font(.caption).foregroundColor(.secondary).multilineTextAlignment(.center)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 24)
                 }
             } else {
-                Section("Изученные слова (\(learnedWords.count))") {
+                Section(L("vocabulary.learned", learnedWords.count)) {
                     ForEach(learnedWords) { word in
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
@@ -56,7 +56,7 @@ struct VocabularyView: View {
                 }
             }
         }
-        .navigationTitle("Мой словарь")
+        .navigationTitle(L("vocabulary.title"))
         .onDisappear { SpeechService.shared.stop() }
     }
 }

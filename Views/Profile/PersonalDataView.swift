@@ -41,23 +41,23 @@ struct PersonalDataView: View {
                 .listRowBackground(Color.clear)
             }
             
-            Section("Основное") {
-                TextField("Ваше имя", text: $userName)
+            Section(L("personal.basic")) {
+                TextField(L("personal.name"), text: $userName)
                 TextField("Email", text: $userEmail)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
             }
-            
-            Section("Безопасность") {
-                NavigationLink("Сменить пароль") { Text("В разработке") }
+
+            Section(L("personal.security")) {
+                NavigationLink(L("personal.change_password")) { Text(L("personal.in_development")) }
             }
-            
-            Section("Синхронизация") {
+
+            Section(L("personal.sync")) {
                 Toggle(isOn: .constant(true)) { Label("iCloud Sync", systemImage: "icloud.fill") }
                 Toggle(isOn: .constant(false)) { Label("Google Sync", systemImage: "g.circle.fill") }
             }
         }
-        .navigationTitle("Персональные данные")
+        .navigationTitle(L("profile.personal_data"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

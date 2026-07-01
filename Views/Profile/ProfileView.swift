@@ -41,7 +41,7 @@ struct ProfileView: View {
                 // MARK: Активность
                 let hasActivity = viewModel.activityData.contains { $0.xp > 0 }
                 if hasActivity {
-                    Section("Активность") {
+                    Section(L("profile.activity")) {
                         Chart(viewModel.activityData) { item in
                             BarMark(x: .value("Day", item.day), y: .value("XP", item.xp))
                                 .foregroundStyle(LinearGradient(colors: [.blue, .purple], startPoint: .bottom, endPoint: .top))
@@ -58,10 +58,10 @@ struct ProfileView: View {
                 Section {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
-                            Text("Достижения").font(.headline)
+                            Text(L("profile.achievements")).font(.headline)
                             Spacer()
                             let unlockedCount = viewModel.achievements.filter { $0.unlocked }.count
-                            Text("\(unlockedCount) из \(viewModel.achievements.count)")
+                            Text(L("profile.ach_progress_fmt", unlockedCount, viewModel.achievements.count))
                                 .font(.subheadline).foregroundColor(.secondary)
                         }
                         LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
@@ -73,7 +73,7 @@ struct ProfileView: View {
                             Button {
                                 showAllAchievements = true
                             } label: {
-                                Text("Показать все")
+                                Text(L("profile.show_all"))
                                     .font(.subheadline.weight(.medium))
                                     .frame(maxWidth: .infinity)
                             }
@@ -85,18 +85,18 @@ struct ProfileView: View {
                 }
 
                 // MARK: Аккаунт
-                Section("Аккаунт") {
+                Section(L("profile.account")) {
                     NavigationLink(value: ProfileRoute.personalData) {
-                        Label { Text("Персональные данные") } icon: {
+                        Label { Text(L("profile.personal_data")) } icon: {
                             Image(systemName: "person.crop.circle").foregroundColor(.blue)
                         }
                     }
                     NavigationLink(value: ProfileRoute.vocabulary) {
                         Label {
                             HStack {
-                                Text("Мой словарь")
+                                Text(L("profile.vocabulary"))
                                 Spacer()
-                                Text("\(viewModel.totalLearnedWords) слов")
+                                Text(L("profile.words_count_fmt", viewModel.totalLearnedWords))
                                     .foregroundColor(.secondary).font(.subheadline)
                             }
                         } icon: { Image(systemName: "book.closed.fill").foregroundColor(.indigo) }
@@ -104,15 +104,15 @@ struct ProfileView: View {
                 }
 
                 // MARK: Настройки
-                Section("Внешний вид") {
-                    Toggle("Системная тема", isOn: $viewModel.useSystemTheme)
+                Section(L("profile.appearance")) {
+                    Toggle(L("profile.system_theme"), isOn: $viewModel.useSystemTheme)
                         .onChange(of: viewModel.useSystemTheme) { _, newValue in
                             ThemeApplier.applyTheme(useSystemTheme: newValue, isDarkMode: viewModel.isDarkMode, animated: true)
                         }
                     if !viewModel.useSystemTheme {
-                        Picker("Тема", selection: $viewModel.isDarkMode) {
-                            Text("Светлая ☀️").tag(false)
-                            Text("Темная 🌙").tag(true)
+                        Picker(L("profile.theme"), selection: $viewModel.isDarkMode) {
+                            Text(L("profile.theme_light")).tag(false)
+                            Text(L("profile.theme_dark")).tag(true)
                         }
                         .pickerStyle(.segmented)
                         .listRowSeparator(.hidden)
@@ -137,32 +137,32 @@ struct ProfileView: View {
                             viewModel.toggleNotifications(isEnabled)
                         }
                     if viewModel.notificationsEnabled {
-                        DatePicker("Время", selection: viewModel.notificationTimeBinding, displayedComponents: .hourAndMinute)
+                        DatePicker(L("profile.time"), selection: viewModel.notificationTimeBinding, displayedComponents: .hourAndMinute)
                     }
                 }
 
-                Section("Обучение") {
-                    Picker("Дневная цель", selection: $viewModel.dailyGoal) {
-                        Text("5 слов").tag(5)
-                        Text("10 слов").tag(10)
-                        Text("20 слов").tag(20)
+                Section(L("profile.learning")) {
+                    Picker(L("profile.daily_goal"), selection: $viewModel.dailyGoal) {
+                        Text(L("profile.words_count_fmt", 5)).tag(5)
+                        Text(L("profile.words_count_fmt", 10)).tag(10)
+                        Text(L("profile.words_count_fmt", 20)).tag(20)
                     }
                     Button(role: .destructive) { viewModel.showResetAlert = true } label: {
-                        Text("Сбросить прогресс")
+                        Text(L("profile.reset"))
                     }
                 }
 
-                Section("Сессия") {
-                    Button("Выйти из аккаунта") { AuthManager.shared.signOut() }
+                Section(L("profile.session")) {
+                    Button(L("profile.sign_out")) { AuthManager.shared.signOut() }
                     Button(role: .destructive) { viewModel.showDeleteAccountAlert = true } label: {
-                        Text("Удалить аккаунт")
+                        Text(L("profile.delete"))
                     }
                 }
 
                 Section {
                     HStack {
                         Spacer()
-                        Text("Версия \(viewModel.appVersion) • Verbum")
+                        Text(L("profile.version_fmt", viewModel.appVersion))
                             .font(.caption2).foregroundColor(.secondary)
                         Spacer()
                     }
@@ -170,7 +170,7 @@ struct ProfileView: View {
                 .listRowBackground(Color.clear)
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Профиль")
+            .navigationTitle(L("profile.title"))
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: ProfileRoute.self) { route in
                 switch route {
@@ -194,19 +194,19 @@ struct ProfileView: View {
                 viewModel.loadActivity(context: modelContext)
                 viewModel.loadStats(context: modelContext)
             }
-            .alert("Сбросить прогресс?", isPresented: $viewModel.showResetAlert) {
-                Button("Отмена", role: .cancel) { }
-                Button("Сбросить", role: .destructive) { viewModel.resetAllProgress() }
+            .alert(L("word.reset_title"), isPresented: $viewModel.showResetAlert) {
+                Button(L("common.cancel"), role: .cancel) { }
+                Button(L("word.reset_confirm"), role: .destructive) { viewModel.resetAllProgress() }
             }
-            .alert("Удалить аккаунт?", isPresented: $viewModel.showDeleteAccountAlert) {
-                Button("Отмена", role: .cancel) { }
-                Button("Удалить", role: .destructive) {
+            .alert(L("profile.delete_confirm_title"), isPresented: $viewModel.showDeleteAccountAlert) {
+                Button(L("common.cancel"), role: .cancel) { }
+                Button(L("common.delete"), role: .destructive) {
                     Task { await viewModel.deleteAccount() }
                 }
             } message: {
-                Text("Аккаунт и доступ к данным на сервере будут удалены безвозвратно.")
+                Text(L("profile.delete_message"))
             }
-            .alert("Ошибка", isPresented: Binding(
+            .alert(L("common.error"), isPresented: Binding(
                 get: { viewModel.accountDeletionError != nil },
                 set: { if !$0 { viewModel.accountDeletionError = nil } }
             )) {
@@ -241,7 +241,7 @@ struct ProfileView: View {
                 // Статистика
                 HStack(spacing: 0) {
                     ProfileStatItem(icon: "flame.fill", color: .orange,
-                                    value: "\(viewModel.dayStreak)", label: "Дней")
+                                    value: "\(viewModel.dayStreak)", label: L("profile.days"))
                     Divider().frame(height: 32)
                     ProfileStatItem(icon: "star.fill", color: .yellow,
                                     value: "\(viewModel.userXP)", label: "XP")
