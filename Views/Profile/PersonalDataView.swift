@@ -16,7 +16,6 @@ struct PersonalDataView: View {
                     PhotosPicker(selection: $selectedItem, matching: .images) {
                         ZStack {
                             AvatarView(
-                                urlString: nil,
                                 localImage: avatarManager.avatar,
                                 name: userName,
                                 color: .blue,
