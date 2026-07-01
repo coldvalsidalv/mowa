@@ -183,6 +183,9 @@ struct ProfileView: View {
             .sheet(isPresented: $showAllAchievements) {
                 AchievementsDetailView(achievements: viewModel.achievements)
             }
+            .task {
+                await viewModel.refreshGrammarLessonsTotal()
+            }
             .onAppear {
                 viewModel.loadActivity(context: modelContext)
                 viewModel.loadStats(context: modelContext)
