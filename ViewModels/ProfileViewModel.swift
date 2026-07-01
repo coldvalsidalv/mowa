@@ -36,7 +36,25 @@ final class ProfileViewModel: ObservableObject {
     /// показывает stale ачивки до следующего .onAppear.
     @Published var achievements: [Achievement] = []
 
+    /// Total grammar lessons — threshold for the "Профессор" achievement.
+    /// The old hardcoded value (20) diverged from actual content (6 lessons),
+    /// making the achievement unreachable — computed dynamically instead.
+    /// `static` so the bundle read happens once per process, not once per
+    /// ProfileViewModel instance.
+    private static var totalGrammarLessonsCache = DataManager.shared.loadGrammar().count
+    private var totalGrammarLessons: Int { Self.totalGrammarLessonsCache }
+
     init() {
+        recomputeAchievements()
+    }
+
+    /// Refreshes the lesson total from the API (falls back to the bundle) so the
+    /// "Профессор" threshold can't drift from what LessonsView actually shows if the
+    /// backend ships a different lesson count than what's bundled in this build.
+    func refreshGrammarLessonsTotal() async {
+        let count = await DataManager.shared.loadGrammarAsync().count
+        guard count > 0, count != Self.totalGrammarLessonsCache else { return }
+        Self.totalGrammarLessonsCache = count
         recomputeAchievements()
     }
 
@@ -49,7 +67,8 @@ final class ProfileViewModel: ObservableObject {
             totalLearnedWords: totalLearnedWords,
             dayStreak: dayStreak,
             userXP: userXP,
-            grammar: completedGrammarCount
+            grammar: completedGrammarCount,
+            totalGrammarLessons: totalGrammarLessons
         )
     }
 
@@ -59,7 +78,8 @@ final class ProfileViewModel: ObservableObject {
         totalLearnedWords: Int,
         dayStreak: Int,
         userXP: Int,
-        grammar: Int
+        grammar: Int,
+        totalGrammarLessons: Int
     ) -> [Achievement] {
         [
             // ── Словарный запас ──────────────────────────────────────────
@@ -188,9 +208,9 @@ final class ProfileViewModel: ObservableObject {
                 description: "Пройди все уроки грамматики",
                 icon: "brain.head.profile",
                 color: .purple,
-                unlocked: grammar >= 20,
-                progress: min(Double(grammar) / 20, 1.0),
-                progressLabel: "\(grammar) / 20 уроков"
+                unlocked: totalGrammarLessons > 0 && grammar >= totalGrammarLessons,
+                progress: totalGrammarLessons > 0 ? min(Double(grammar) / Double(totalGrammarLessons), 1.0) : 0,
+                progressLabel: "\(grammar) / \(totalGrammarLessons) уроков"
             ),
             // ── Особые ───────────────────────────────────────────────────
             .init(
@@ -227,10 +247,6 @@ final class ProfileViewModel: ObservableObject {
 
     var currentLeague: UserLeague {
         UserLeague.determineLeague(for: userXP)
-    }
-
-    var currentLeagueTitle: String {
-        currentLeague.title
     }
 
     // MARK: - Stats from DB

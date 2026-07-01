@@ -10,8 +10,8 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '../..')
 
-const DB_URL = 'http://localhost:8787'
-const TOKEN  = 'verbum-local-admin-token-change-in-prod'
+const DB_URL = process.env.DB_URL ?? 'http://localhost:8787'
+const TOKEN  = process.env.TOKEN  ?? 'verbum-local-admin-token-change-in-prod'
 
 const headers = {
   'Content-Type': 'application/json',

@@ -7,12 +7,13 @@ import XCTest
 /// проверяем фабрику напрямую — это и так чище: pure → детерминизм.
 final class ProfileViewModelTests: XCTestCase {
 
-    private func make(words: Int = 0, streak: Int = 0, xp: Int = 0, grammar: Int = 0) -> [Achievement] {
+    private func make(words: Int = 0, streak: Int = 0, xp: Int = 0, grammar: Int = 0, totalGrammarLessons: Int = 6) -> [Achievement] {
         ProfileViewModel.makeAchievements(
             totalLearnedWords: words,
             dayStreak: streak,
             userXP: xp,
-            grammar: grammar
+            grammar: grammar,
+            totalGrammarLessons: totalGrammarLessons
         )
     }
 
@@ -95,8 +96,14 @@ final class ProfileViewModelTests: XCTestCase {
     func test_grammarThresholds() {
         XCTAssertTrue(make(grammar: 1).first { $0.title == "Первый урок" }!.unlocked)
         XCTAssertTrue(make(grammar: 5).first { $0.title == "Грамматик" }!.unlocked)
-        XCTAssertFalse(make(grammar: 5).first { $0.title == "Профессор" }!.unlocked)
-        XCTAssertTrue(make(grammar: 20).first { $0.title == "Профессор" }!.unlocked)
+        XCTAssertFalse(make(grammar: 5, totalGrammarLessons: 6).first { $0.title == "Профессор" }!.unlocked)
+        XCTAssertTrue(make(grammar: 6, totalGrammarLessons: 6).first { $0.title == "Профессор" }!.unlocked)
+    }
+
+    /// "Профессор" threshold tracks the actual lesson count, not a magic constant.
+    func test_professorAchievement_tracksActualLessonCount() {
+        XCTAssertFalse(make(grammar: 6, totalGrammarLessons: 10).first { $0.title == "Профессор" }!.unlocked)
+        XCTAssertTrue(make(grammar: 10, totalGrammarLessons: 10).first { $0.title == "Профессор" }!.unlocked)
     }
 
     // MARK: - Композитная ачивка "Разносторонний"

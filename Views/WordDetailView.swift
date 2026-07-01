@@ -74,7 +74,7 @@ struct WordDetailView: View {
                         Spacer()
 
                         Button {
-                            SpeechService.shared.speak(word.polish, language: "pl-PL")
+                            SpeechService.shared.speak(word)
                         } label: {
                             Image(systemName: "speaker.wave.2.fill")
                                 .font(.title2)

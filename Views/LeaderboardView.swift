@@ -264,7 +264,7 @@ struct LeaderboardRow: View {
                 .foregroundColor(.secondary)
                 .frame(width: 36, alignment: .center)
 
-            AvatarView(urlString: nil, localImage: user.localImage,
+            AvatarView(localImage: user.localImage,
                        name: user.name, color: user.avatarColor, size: 40)
 
             Text(user.name)
@@ -289,7 +289,6 @@ struct LeaderboardRow: View {
 // MARK: - AVATAR VIEW
 
 struct AvatarView: View {
-    let urlString: String?
     let localImage: UIImage?
     let name: String
     let color: Color
@@ -326,7 +325,7 @@ struct RivalProfileView: View {
     var body: some View {
         VStack(spacing: 24) {
             Capsule().fill(Color.gray.opacity(0.3)).frame(width: 40, height: 5).padding(.top, 10)
-            AvatarView(urlString: nil, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 90)
+            AvatarView(localImage: user.localImage, name: user.name, color: user.avatarColor, size: 90)
             Text(user.name).font(.title2).bold()
             Text("\(user.xp) XP").font(.headline).foregroundColor(.secondary)
             Spacer()
@@ -428,7 +427,7 @@ struct PodiumView: View {
     let user: LeaderboardUser; let height: CGFloat; let color: Color; let isVisible: Bool
     var body: some View {
         VStack {
-            AvatarView(urlString: nil, localImage: user.localImage, name: user.name, color: user.avatarColor, size: 55)
+            AvatarView(localImage: user.localImage, name: user.name, color: user.avatarColor, size: 55)
                 .opacity(isVisible ? 1 : 0)
                 .offset(y: isVisible ? 0 : 20)
                 .animation(.easeOut.delay(0.2), value: isVisible)

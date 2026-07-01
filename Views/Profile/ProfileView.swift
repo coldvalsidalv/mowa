@@ -29,6 +29,9 @@ struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
     @ObservedObject private var avatarManager = AvatarManager.shared
     @Environment(\.modelContext) private var modelContext
+    @State private var showAllAchievements = false
+
+    private static let achievementsPreviewCount = 6
     
     var body: some View {
         NavigationStack {
@@ -62,9 +65,20 @@ struct ProfileView: View {
                                 .font(.subheadline).foregroundColor(.secondary)
                         }
                         LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
-                            ForEach(viewModel.achievements) { item in
+                            ForEach(viewModel.achievements.prefix(Self.achievementsPreviewCount)) { item in
                                 AchievementCardView(item: item)
                             }
+                        }
+                        if viewModel.achievements.count > Self.achievementsPreviewCount {
+                            Button {
+                                showAllAchievements = true
+                            } label: {
+                                Text("Показать все")
+                                    .font(.subheadline.weight(.medium))
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                            .padding(.top, 4)
                         }
                     }
                     .padding(.vertical, 8)
@@ -138,7 +152,7 @@ struct ProfileView: View {
                     }
                 }
 
-                Section("Аккаунт") {
+                Section("Сессия") {
                     Button("Выйти из аккаунта") { AuthManager.shared.signOut() }
                     Button(role: .destructive) { viewModel.showDeleteAccountAlert = true } label: {
                         Text("Удалить аккаунт")
@@ -165,6 +179,12 @@ struct ProfileView: View {
                 case .vocabulary:
                     VocabularyView()
                 }
+            }
+            .sheet(isPresented: $showAllAchievements) {
+                AchievementsDetailView(achievements: viewModel.achievements)
+            }
+            .task {
+                await viewModel.refreshGrammarLessonsTotal()
             }
             .onAppear {
                 viewModel.loadActivity(context: modelContext)
@@ -203,7 +223,6 @@ struct ProfileView: View {
                 // Аватарка + имя
                 VStack(spacing: 10) {
                     AvatarView(
-                        urlString: nil,
                         localImage: avatarManager.avatar,
                         name: viewModel.displayName,
                         color: .blue,

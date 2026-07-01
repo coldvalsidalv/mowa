@@ -116,7 +116,7 @@ struct WordRowView: View {
 
             Spacer()
 
-            Button(action: { SpeechService.shared.speak(word.polish, language: "pl-PL") }) {
+            Button(action: { SpeechService.shared.speak(word) }) {
                 Image(systemName: "speaker.wave.2.fill")
                     .foregroundColor(.blue)
                     .padding(8)
