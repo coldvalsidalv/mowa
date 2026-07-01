@@ -117,4 +117,44 @@ extension NotificationManager {
     func scheduleNewContent() {
         scheduleNotification(type: .content, title: "🆕 Новые слова добавлены", body: "В словаре появились новые темы — иди изучай!", timeInterval: 259200)
     }
+
+    // MARK: - Тумблер уведомлений (флоу из Профиля)
+
+    /// Полный флоу включения из UI: проверка статуса → запрос при необходимости →
+    /// переход в Настройки при прошлом отказе. При успехе планирует ежедневное
+    /// напоминание + защиту стрика. `onResult(true)` — включено и запланировано;
+    /// `onResult(false)` — включить не удалось, вызывающая сторона должна снять тумблер.
+    /// Инкапсулирует UNUserNotificationCenter/UIApplication, чтобы VM их не касалась.
+    func enableFromSettings(reminderTime: Date, onResult: @escaping @Sendable (Bool) -> Void) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                switch settings.authorizationStatus {
+                case .notDetermined:
+                    self.requestAuthorization { granted in
+                        if granted { self.scheduleReminderWithStreak(at: reminderTime) }
+                        onResult(granted)
+                    }
+                case .denied:
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                    onResult(false)
+                default:
+                    self.scheduleReminderWithStreak(at: reminderTime)
+                    onResult(true)
+                }
+            }
+        }
+    }
+
+    /// Выключение тумблера: снять все запланированные и доставленные уведомления.
+    func disableAll() {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+    }
+
+    private func scheduleReminderWithStreak(at time: Date) {
+        scheduleDailyReminder(at: time)
+        scheduleStreakProtection()
+    }
 }
