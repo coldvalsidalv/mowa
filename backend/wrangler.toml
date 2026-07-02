@@ -8,6 +8,11 @@ workers_dev = true
 ip = "0.0.0.0"
 port = 8787
 
+# Google iOS OAuth client ID for social sign-in (not a secret — embedded in the app).
+# For local dev the same variable lives in .dev.vars.
+[vars]
+GOOGLE_IOS_CLIENT_ID = "690760115922-ps0iul156lu6b3aer0uabhma01a0k8a7.apps.googleusercontent.com"
+
 [[d1_databases]]
 binding = "PRIMARY_DB"
 database_name = "verbum"

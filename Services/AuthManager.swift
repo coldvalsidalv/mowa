@@ -43,6 +43,9 @@ private struct RefreshBody: Encodable {
     let refresh_token: String
 }
 
+/// login-token reads only the Authorization header; no body is needed.
+private struct EmptyBody: Encodable {}
+
 private struct AuthResponse: Decodable {
     let token: String
     let refresh_token: String
@@ -114,6 +117,16 @@ final class AuthManager: ObservableObject {
 
         let body = LoginBody(identity: trimmed, password: password)
         let resp: AuthResponse = try await postAuth(path: "login-password", body: body)
+        storeSession(resp)
+    }
+
+    /// Sign in with an external provider's id_token (Apple identityToken / Google id_token).
+    /// The backend (teenybase /auth/login-token) verifies signature, issuer and audience,
+    /// then finds or creates the user by the token's email.
+    func signIn(externalIdToken idToken: String) async throws {
+        let resp: AuthResponse = try await postAuth(path: "login-token",
+                                                    body: EmptyBody(),
+                                                    authHeader: idToken)
         storeSession(resp)
     }
 

@@ -171,6 +171,8 @@
 "auth.create_account" = "Создай аккаунт";
 "auth.name_placeholder" = "Имя (необязательно)";
 "auth.password_placeholder" = "Пароль (минимум 8 символов)";
+"auth.or" = "или";
+"auth.continue_google" = "Продолжить с Google";
 "error.unknown" = "Что-то пошло не так: %@";
 "error.invalid_credentials" = "Неверный email или пароль";
 "error.email_in_use" = "Этот email уже зарегистрирован";
@@ -180,6 +182,8 @@
 "error.decoding" = "Не получилось прочитать ответ сервера";
 "error.invalid_email" = "Неверный формат email";
 "error.password_short" = "Пароль минимум 8 символов";
+"error.apple_signin" = "Не получилось войти через Apple. Попробуй ещё раз.";
+"error.google_signin" = "Не получилось войти через Google. Попробуй ещё раз.";
 "profile.ach_progress_fmt" = "%d из %d";
 "profile.show_all" = "Показать все";
 "profile.words_count_fmt" = "%d слов";

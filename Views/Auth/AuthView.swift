@@ -1,7 +1,9 @@
 import SwiftUI
+import AuthenticationServices
 
 struct AuthView: View {
     @ObservedObject private var auth = AuthManager.shared
+    @Environment(\.colorScheme) private var colorScheme
 
     enum Mode: Hashable { case signIn, signUp }
     @State private var mode: Mode = .signIn
@@ -48,7 +50,6 @@ struct AuthView: View {
 
                 OnboardingPrimaryButton(title: submitTitle, action: submit)
                     .padding(.horizontal, 32)
-                    .padding(.bottom, 48)
                     .disabled(isSubmitting || !isFormValid)
                     .opacity(isSubmitting || !isFormValid ? 0.6 : 1.0)
                     .overlay(
@@ -58,6 +59,11 @@ struct AuthView: View {
                             }
                         }
                     )
+
+                socialButtons
+                    .padding(.horizontal, 32)
+                    .padding(.top, 16)
+                    .padding(.bottom, 32)
             }
         }
     }
@@ -110,6 +116,49 @@ struct AuthView: View {
         .padding(.horizontal, 32)
     }
 
+    private var socialButtons: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                Rectangle().fill(Color(UIColor.separator)).frame(height: 0.5)
+                Text(L("auth.or"))
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                Rectangle().fill(Color(UIColor.separator)).frame(height: 0.5)
+            }
+            .padding(.bottom, 6)
+
+            SignInWithAppleButton(.continue) { request in
+                request.requestedScopes = [.fullName, .email]
+            } onCompletion: { result in
+                handleAppleResult(result)
+            }
+            .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
+            .frame(height: 50)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            if VerbumConfig.isGoogleSignInConfigured {
+                Button(action: signInWithGoogle) {
+                    HStack(spacing: 8) {
+                        Text("G")
+                            .font(.system(size: 19, weight: .bold, design: .rounded))
+                        Text(L("auth.continue_google"))
+                            .font(.system(size: 17, weight: .medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .foregroundColor(.primary)
+                    .background(Color(UIColor.secondarySystemGroupedBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .strokeBorder(Color(UIColor.separator), lineWidth: 0.5)
+                    )
+                }
+            }
+        }
+        .disabled(isSubmitting)
+    }
+
     // MARK: - Logic
 
     private var submitTitle: String {
@@ -136,6 +185,66 @@ struct AuthView: View {
                                           name: name.isEmpty ? nil : name)
                 }
                 // При успехе RootView перерисуется по isAuthenticated, дёргать ничего не надо.
+            } catch let error as AuthError {
+                errorMessage = error.errorDescription
+            } catch {
+                errorMessage = L("error.unknown", error.localizedDescription)
+            }
+            isSubmitting = false
+        }
+    }
+
+    // MARK: - Social sign-in
+
+    private func handleAppleResult(_ result: Result<ASAuthorization, Error>) {
+        switch result {
+        case .success(let authorization):
+            guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                  let tokenData = credential.identityToken,
+                  let idToken = String(data: tokenData, encoding: .utf8) else {
+                errorMessage = L("error.apple_signin")
+                return
+            }
+            submitExternal(idToken: idToken)
+        case .failure(let error):
+            // User closed the Apple sheet — not an error.
+            if (error as? ASAuthorizationError)?.code == .canceled { return }
+            errorMessage = L("error.apple_signin")
+        }
+    }
+
+    private func signInWithGoogle() {
+        guard !isSubmitting else { return }
+        isSubmitting = true
+        errorMessage = nil
+        focus = nil
+
+        Task {
+            do {
+                let idToken = try await GoogleSignInService.shared.signIn()
+                try await auth.signIn(externalIdToken: idToken)
+            } catch GoogleSignInError.cancelled {
+                // silent
+            } catch let error as AuthError {
+                errorMessage = error.errorDescription
+            } catch let error as GoogleSignInError {
+                errorMessage = error.errorDescription
+            } catch {
+                errorMessage = L("error.unknown", error.localizedDescription)
+            }
+            isSubmitting = false
+        }
+    }
+
+    private func submitExternal(idToken: String) {
+        guard !isSubmitting else { return }
+        isSubmitting = true
+        errorMessage = nil
+        focus = nil
+
+        Task {
+            do {
+                try await auth.signIn(externalIdToken: idToken)
             } catch let error as AuthError {
                 errorMessage = error.errorDescription
             } catch {
