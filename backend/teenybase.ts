@@ -5,6 +5,37 @@ export default {
   appUrl: 'http://localhost:8787',
   jwtSecret: '$JWT_SECRET',
 
+  // Native social sign-in: iOS obtains the provider's id_token and POSTs it to
+  // /api/v1/table/users/auth/login-token (Bearer). Teenybase verifies issuer,
+  // signature and audience, then finds-or-creates the user by email.
+  authProviders: [
+    // Google id_token — verified via tokeninfo endpoint (issuer preset).
+    // Audience must match the iOS OAuth client ID from Google Cloud Console.
+    { name: 'google', clientId: '$GOOGLE_IOS_CLIENT_ID' },
+    // Sign in with Apple — no preset; verified against Apple's JWKS.
+    // Audience for a native app token is the bundle id (public, safe to inline).
+    {
+      name: 'apple',
+      issuer: 'https://appleid.apple.com',
+      jwksUrl: 'https://appleid.apple.com/auth/keys',
+      algorithm: 'RS256',
+      clientId: 'com.coldvalsidalv.Verbum',
+    },
+    // E2E-test issuer (vitest only) — lets tests exercise the full external-login
+    // path offline with HS256 tokens. Dead in production by construction:
+    // $TEST_ISSUER_SECRET is set only in vitest.config.ts bindings, and teenybase
+    // rejects an external issuer whose secret resolves empty (resolveExternalKey →
+    // 401 'External issuer secret not available'), so no token with this issuer
+    // can ever authenticate in a deployed worker.
+    {
+      name: 'test-e2e',
+      issuer: 'verbum-test-issuer',
+      secret: '$TEST_ISSUER_SECRET',
+      algorithm: 'HS256',
+      clientId: '$TEST_ISSUER_AUDIENCE',
+    },
+  ],
+
   tables: [
     // ─── USERS ───────────────────────────────────────────────────────────────
     {
