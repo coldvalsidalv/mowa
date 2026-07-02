@@ -127,6 +127,12 @@ struct AuthView: View {
             }
             .padding(.bottom, 6)
 
+            // TEMPORARY: free Apple Developer accounts can't sign device builds with
+            // the applesignin entitlement, so it's applied to simulator builds only
+            // ("CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]" in project.pbxproj) and
+            // the button is hidden on device. When the paid membership arrives:
+            // make the build setting unconditional and drop this #if.
+            #if targetEnvironment(simulator)
             SignInWithAppleButton(.continue) { request in
                 request.requestedScopes = [.fullName, .email]
             } onCompletion: { result in
@@ -135,6 +141,7 @@ struct AuthView: View {
             .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
             .frame(height: 50)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            #endif
 
             if VerbumConfig.isGoogleSignInConfigured {
                 Button(action: signInWithGoogle) {
