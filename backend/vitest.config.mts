@@ -29,6 +29,10 @@ export default defineConfig(async () => {
             JWT_SECRET: 'canary-top-secret',
             JWT_SECRET_USERS: 'canary-users-secret',
             WRITING_DAILY_LIMIT: '1000',
+            // Enables the 'test-e2e' external issuer from teenybase.ts.
+            // Never set these in a deployed worker — without them the issuer is dead.
+            TEST_ISSUER_SECRET: 'vitest-issuer-hmac-secret',
+            TEST_ISSUER_AUDIENCE: 'verbum-test-aud',
           },
         },
       }),
